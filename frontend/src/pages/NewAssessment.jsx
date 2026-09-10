@@ -13,11 +13,26 @@ const steps = [
 export default function NewAssessment() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({name:"", type:"Mixed-use development", organization:"", description:"", location:"Baner, Pune"});
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   async function finish() {
-    await createAssessment(form);
-    navigate("/assessment/result");
+    if (form.name.trim().length < 2) {
+      setError("Please enter a project name before running the assessment.");
+      setStep(0);
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      await createAssessment(form);
+      navigate("/assessment/result");
+    } catch (requestError) {
+      setError(requestError.message || "The climate analysis could not be completed.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -76,9 +91,10 @@ export default function NewAssessment() {
           <div className="data-ready"><div className="ready-icon"><Check size={22}/></div><div><strong>Structured site inputs are complete</strong><p>Ready to run the climate impact analysis.</p></div></div>
         </div>}
 
+        {error && <p role="alert" style={{color:"#ff9b85", margin:"0 0 1rem"}}>{error}</p>}
         <div className="form-actions">
           {step > 0 ? <button className="secondary-btn" onClick={()=>setStep(step-1)}><ArrowLeft size={16}/> Back</button> : <span/>}
-          {step < 3 ? <button className="primary-btn" onClick={()=>setStep(step+1)}>Continue <ArrowRight size={16}/></button> : <button className="primary-btn" onClick={finish}>Run climate analysis <ArrowRight size={16}/></button>}
+          {step < 3 ? <button className="primary-btn" onClick={()=>setStep(step+1)}>Continue <ArrowRight size={16}/></button> : <button className="primary-btn" onClick={finish} disabled={submitting}>{submitting ? "Analyzing..." : "Run climate analysis"} <ArrowRight size={16}/></button>}
         </div>
       </section>
     </div>

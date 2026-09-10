@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
+  "framework": "vite",
+  "functions": { "api/**/*.js": { "maxDuration": 60 } },
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/index.html" },
+    { "source": "/assessment", "destination": "/index.html" },
+    { "source": "/assessment/result", "destination": "/index.html" },
+    { "source": "/optimizer", "destination": "/index.html" },
+    { "source": "/climate-map", "destination": "/index.html" },
+    { "source": "/reports", "destination": "/index.html" }
+  ]
+}

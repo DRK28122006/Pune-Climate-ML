@@ -116,6 +116,9 @@ export function createApp({ config, store, authService, objectStorage, jobQueue 
       return res.status(202).json({ jobId: job.id, statusUrl: `/api/v1/jobs/assessment-analysis/${job.id}` });
     }
     const project = await createAssessment({ input, ownerId: req.user.sub, config, store, notificationService });
+    if (req.query.includeOptimization === "true") {
+      return res.status(201).json({ assessment: toApiAssessment(project), optimization: optimizeProject(project) });
+    }
     res.status(201).json(toApiAssessment(project));
   }));
 

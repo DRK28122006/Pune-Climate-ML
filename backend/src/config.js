@@ -8,7 +8,7 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT || 4000),
   frontendOrigin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
-  authRequired: process.env.AUTH_REQUIRED !== "false",
+  authRequired: process.env.AUTH_REQUIRED ? process.env.AUTH_REQUIRED !== "false" : !process.env.VERCEL,
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET || "development-access-secret-change-before-deploy",
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || "development-refresh-secret-change-before-deploy",
   accessTokenTtl: process.env.ACCESS_TOKEN_TTL || "15m",
@@ -49,7 +49,7 @@ export const config = {
   },
 };
 
-if (config.nodeEnv === "production") {
+if (config.nodeEnv === "production" && config.authRequired) {
   if (config.jwtAccessSecret.startsWith("development-") || config.jwtRefreshSecret.startsWith("development-")) {
     throw new Error("JWT_ACCESS_SECRET and JWT_REFRESH_SECRET must be set in production");
   }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Check, Sparkles, TreePine, Droplets, Sun, Leaf, RotateCcw } from "lucide-react";
-import { assessment, optimized, recommendations } from "../data/mockData";
+import { assessment as demoAssessment, optimized as demoOptimized, recommendations as demoRecommendations } from "../data/mockData";
+import { optimizeAssessment } from "../services/climateApi";
 import ClimateGauge from "../components/ClimateGauge";
 import SectionHeader from "../components/SectionHeader";
 
@@ -9,6 +10,19 @@ const iconMap = { tree: TreePine, droplets: Droplets, sun: Sun, leaf: Leaf };
 export default function Optimizer() {
   const [applied, setApplied] = useState([]);
   const [showAfter, setShowAfter] = useState(false);
+  const [scenario, setScenario] = useState({ baseline: demoAssessment, optimized: demoOptimized, recommendations: demoRecommendations });
+  const [loading, setLoading] = useState(false);
+  const { baseline: assessment, optimized, recommendations } = scenario;
+
+  async function evaluate() {
+    setLoading(true);
+    try {
+      setScenario(await optimizeAssessment());
+      setShowAfter(true);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const currentScore = showAfter ? optimized.climateScore : assessment.climateScore;
 
@@ -40,7 +54,7 @@ export default function Optimizer() {
               </div>
             })}
           </div>
-          <div className="optimizer-action"><button className="primary-btn" onClick={()=>setShowAfter(true)}><Sparkles size={16}/> Evaluate optimized scenario <ArrowRight size={16}/></button></div>
+          <div className="optimizer-action"><button className="primary-btn" onClick={evaluate} disabled={loading}><Sparkles size={16}/> {loading ? "Evaluating..." : "Evaluate optimized scenario"} <ArrowRight size={16}/></button></div>
         </section>
       </div>
 

@@ -1,5 +1,18 @@
 # Urban Climate Intelligence & Decision Support Platform
 
+## Deploy the complete app to Vercel
+
+The repository is configured as one Vercel project: Vite builds the frontend into
+`frontend/dist`, while `api/[...path].js` exposes the Express backend under `/api`.
+
+1. Import the repository in Vercel (leave the Root Directory as the repository root).
+2. Keep the detected build settings; `vercel.json` supplies the build command and output directory.
+3. Deploy. No environment variables are required for the hackathon demo mode.
+
+For persistent production data, add `DATABASE_URL` and set `STORAGE_DRIVER=postgres`.
+Authentication remains off by default on Vercel for the demo; set `AUTH_REQUIRED=true` plus
+`JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` to enable it.
+
 An MVP decision-support platform for evaluating the climate impact of urban-development projects in Pune, India. The system combines satellite-derived environmental indicators, deterministic engineering calculations, explainable recommendations, and project reporting in one workflow.
 
 > **Project status:** Active MVP development. The backend and climate-scoring workflow are implemented and testable locally. The React interface currently uses mock service responses and is ready to be connected to the API.

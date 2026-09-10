@@ -1,0 +1,246 @@
+{"kind":"deck","id":"pr/5xe1bn","name":"Deck"}
+{"kind":"layout","layoutId":"92614309-de9e-4916-9482-c106ee839290","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"2cbb5bf6-7f3d-4387-b321-6f93537e50ec","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/s1d0cn","slide":1,"title":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textShapes":10}
+{"kind":"shape","id":"sh/t8nutsju","slide":1,"bbox":[0,0,710,681]}
+{"kind":"shape","id":"sh/65cvixk3","slide":1,"bbox":[710,0,570,681]}
+{"kind":"textbox","id":"sh/76lcri1o","slide":1,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[54,53,590,28]}
+{"kind":"textbox","id":"sh/k3udgn2x","slide":1,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[54,127,610,86]}
+{"kind":"shape","id":"sh/l43upsji","slide":1,"bbox":[56,221,130,0]}
+{"kind":"textbox","id":"sh/y1cvedk7","slide":1,"text":"Urban Climate Intelligence\n& Decision Support Platform","textPreview":"Urban Climate Intelligence | & Decision Support Platform","textChars":54,"textLines":2,"bbox":[54,252,590,126]}
+{"kind":"textbox","id":"sh/j2lcni1s","slide":1,"text":"AI for Climate Change","textPreview":"AI for Climate Change","textChars":21,"textLines":1,"bbox":[54,419,470,36]}
+{"kind":"textbox","id":"sh/wzutc321","slide":1,"text":"Climate Intelligence & Environmental Analytics","textPreview":"Climate Intelligence & Environmental Analytics","textChars":46,"textLines":1,"bbox":[54,462,560,32]}
+{"kind":"textbox","id":"sh/x03ul8jm","slide":1,"text":"Team Dishadharti","textPreview":"Team Dishadharti","textChars":16,"textLines":1,"bbox":[54,578,360,28]}
+{"kind":"textbox","id":"sh/xknyxwra","slide":1,"text":"Pune, India","textPreview":"Pune, India","textChars":11,"textLines":1,"bbox":[54,611,240,24]}
+{"kind":"shape","id":"sh/wjex4rqp","slide":1,"bbox":[782,130,420,320]}
+{"kind":"shape","id":"sh/ahwf2h8j","slide":1,"bbox":[805,166,73,86]}
+{"kind":"textbox","id":"sh/pgnytwre","slide":1,"text":"A BETTER DIRECTION\nFOR A BETTER EARTH","textPreview":"A BETTER DIRECTION | FOR A BETTER EARTH","textChars":37,"textLines":2,"bbox":[808,488,370,74]}
+{"kind":"shape","id":"sh/ofex0rqt","slide":1,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/ne5grm98","slide":1,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/2dwfyh8n","slide":1,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"image","id":"im/wnuxkfm1","slide":1,"name":"","alt":"Dishadharti logo and the tagline A better direction for a better Earth","bbox":[805,150,376,262]}
+{"kind":"notes","id":"nt/s1d0cn","slide":1,"text":"Event source: https://www.pccoeigc.com/\nOfficial theme and domain source: https://www.pccoeigc.com/topics\nProject source: repository README.md and supplied Dishadharti logo."}
+{"kind":"slide","id":"sl/hvakqt","slide":2,"title":"DISHADHARTI","textShapes":26}
+{"kind":"textbox","id":"sh/76d43al8","slide":2,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[40,22,230,28]}
+{"kind":"textbox","id":"sh/87mlcvmd","slide":2,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[825,25,410,22]}
+{"kind":"textbox","id":"sh/98vm503y","slide":2,"text":"PITCH MAP","textPreview":"PITCH MAP","textChars":9,"textLines":1,"bbox":[40,61,1180,62]}
+{"kind":"shape","id":"sh/yhk36l4b","slide":2,"bbox":[40,127,120,0]}
+{"kind":"shape","id":"sh/zit4zqlw","slide":2,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/kjml8vmh","slide":2,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/lkvm1032","slide":2,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"textbox","id":"sh/idonip4v","slide":2,"text":"Eight slides built around the Stage I questions and the judging criteria","textPreview":"Eight slides built around the Stage I questions and the judging criteria","textChars":72,"textLines":1,"bbox":[40,145,760,30]}
+{"kind":"textbox","id":"sh/jex4bulg","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[42,219,55,42]}
+{"kind":"shape","id":"sh/nqxcn69g","slide":2,"bbox":[42,274,178,125]}
+{"kind":"textbox","id":"sh/mpobe1sv","slide":2,"text":"Problem","textPreview":"Problem","textChars":7,"textLines":1,"bbox":[58,299,146,32]}
+{"kind":"textbox","id":"sh/9sfupgrm","slide":2,"text":"Decision gap","textPreview":"Decision gap","textChars":12,"textLines":1,"bbox":[58,340,146,30]}
+{"kind":"shape","id":"sh/or6tgba1","slide":2,"bbox":[220,336,24,0]}
+{"kind":"textbox","id":"sh/buxcr69s","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[244,219,55,42]}
+{"kind":"shape","id":"sh/atovi1s7","slide":2,"bbox":[244,274,178,125]}
+{"kind":"textbox","id":"sh/xwzutgri","slide":2,"text":"Objectives","textPreview":"Objectives","textChars":10,"textLines":1,"bbox":[260,299,146,32]}
+{"kind":"textbox","id":"sh/wvqdkbad","slide":2,"text":"Who benefits","textPreview":"Who benefits","textChars":12,"textLines":1,"bbox":[260,340,146,30]}
+{"kind":"shape","id":"sh/jyhcvq9o","slide":2,"bbox":[422,336,24,0]}
+{"kind":"textbox","id":"sh/yx8vmls3","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[446,219,55,42]}
+{"kind":"shape","id":"sh/utsfepcb","slide":2,"bbox":[446,274,178,125]}
+{"kind":"textbox","id":"sh/vulwnutw","slide":2,"text":"Architecture","textPreview":"Architecture","textChars":12,"textLines":1,"bbox":[462,299,146,32]}
+{"kind":"textbox","id":"sh/gfuxgzuh","slide":2,"text":"How it works","textPreview":"How it works","textChars":12,"textLines":1,"bbox":[462,340,146,30]}
+{"kind":"shape","id":"sh/hg3yp4b2","slide":2,"bbox":[624,336,24,0]}
+{"kind":"textbox","id":"sh/6psfa5cf","slide":2,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[648,219,55,42]}
+{"kind":"shape","id":"sh/7q1wjat0","slide":2,"bbox":[648,274,178,125]}
+{"kind":"textbox","id":"sh/8raxcful","slide":2,"text":"Innovation","textPreview":"Innovation","textChars":10,"textLines":1,"bbox":[664,299,146,32]}
+{"kind":"textbox","id":"sh/tsjelkbq","slide":2,"text":"Why it differs","textPreview":"Why it differs","textChars":14,"textLines":1,"bbox":[664,340,146,30]}
+{"kind":"shape","id":"sh/qlcfm9cj","slide":2,"bbox":[826,336,24,0]}
+{"kind":"textbox","id":"sh/rm5gvet4","slide":2,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[850,219,55,42]}
+{"kind":"shape","id":"sh/1g7il8v6","slide":2,"bbox":[850,274,178,125]}
+{"kind":"textbox","id":"sh/0fyhc3el","slide":2,"text":"Outcomes","textPreview":"Outcomes","textChars":8,"textLines":1,"bbox":[866,299,146,32]}
+{"kind":"textbox","id":"sh/zep0jydg","slide":2,"text":"What changes","textPreview":"What changes","textChars":12,"textLines":1,"bbox":[866,340,146,30]}
+{"kind":"shape","id":"sh/edwzatwv","slide":2,"bbox":[1028,336,24,0]}
+{"kind":"textbox","id":"sh/dcnihova","slide":2,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1052,219,55,42]}
+{"kind":"shape","id":"sh/sbeh83ep","slide":2,"bbox":[1052,274,178,125]}
+{"kind":"textbox","id":"sh/ra50fyd4","slide":2,"text":"Conclusion","textPreview":"Conclusion","textChars":10,"textLines":1,"bbox":[1068,299,146,32]}
+{"kind":"textbox","id":"sh/q9wz6twj","slide":2,"text":"Why select it","textPreview":"Why select it","textChars":13,"textLines":1,"bbox":[1068,340,146,30]}
+{"kind":"textbox","id":"sh/x8ritsve","slide":2,"text":"Judges assess innovation, feasibility, clarity and climate alignment","textPreview":"Judges assess innovation, feasibility, clarity and climate alignment","textChars":68,"textLines":1,"bbox":[180,477,920,38]}
+{"kind":"textbox","id":"sh/w7i1knet","slide":2,"text":"The deck connects every claim to a visible workflow, an implemented component or a stated validation need.","textPreview":"The deck connects every claim to a visible workflow, an implemented component or a stated validation need.","textChars":106,"textLines":1,"bbox":[245,529,790,52]}
+{"kind":"notes","id":"nt/hvakqt","slide":2,"text":"Required content structure source: supplied sample ppt format- Indradhanu 2026.pptx.\nJudging criteria source: https://www.pccoeigc.com/timeline"}
+{"kind":"slide","id":"sl/2ba6cm","slide":3,"title":"DISHADHARTI","textShapes":17}
+{"kind":"textbox","id":"sh/nelc3mdw","slide":3,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[40,22,230,28]}
+{"kind":"textbox","id":"sh/8futcreh","slide":3,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[825,25,410,22]}
+{"kind":"textbox","id":"sh/9g3u5wv2","slide":3,"text":"PROBLEM STATEMENT AND IDEA","textPreview":"PROBLEM STATEMENT AND IDEA","textChars":26,"textLines":1,"bbox":[40,61,1180,62]}
+{"kind":"shape","id":"sh/ahcbe1wn","slide":3,"bbox":[40,127,120,0]}
+{"kind":"shape","id":"sh/vi5c76d8","slide":3,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/wjetgrut","slide":3,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/xknu9wve","slide":3,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"textbox","id":"sh/qlsb2xwj","slide":3,"text":"Urban approvals review plans, yet climate consequences often remain fragmented or opaque","textPreview":"Urban approvals review plans, yet climate consequences often remain fragmented or opaque","textChars":88,"textLines":1,"bbox":[42,151,590,93]}
+{"kind":"textbox","id":"sh/rm1sv2d4","slide":3,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[43,280,46,34]}
+{"kind":"shape","id":"sh/j6x8netg","slide":3,"bbox":[93,294,45,0]}
+{"kind":"textbox","id":"sh/i5o7u9cv","slide":3,"text":"Fragmented evidence","textPreview":"Fragmented evidence","textChars":19,"textLines":1,"bbox":[151,279,417,30]}
+{"kind":"textbox","id":"sh/5szqpobm","slide":3,"text":"Satellite, terrain, weather and project data live in separate tools.","textPreview":"Satellite, terrain, weather and project data live in separate tools.","textChars":68,"textLines":1,"bbox":[151,311,417,54]}
+{"kind":"textbox","id":"sh/k76pwju1","slide":3,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[43,380,46,34]}
+{"kind":"shape","id":"sh/v2xojetk","slide":3,"bbox":[93,394,45,0]}
+{"kind":"textbox","id":"sh/a1o7q9cz","slide":3,"text":"Late intervention","textPreview":"Late intervention","textChars":17,"textLines":1,"bbox":[151,379,417,30]}
+{"kind":"textbox","id":"sh/x4f6loba","slide":3,"text":"Teams discover heat, runoff or carbon issues after major design choices.","textPreview":"Teams discover heat, runoff or carbon issues after major design choices.","textChars":72,"textLines":1,"bbox":[151,411,417,54]}
+{"kind":"textbox","id":"sh/w36psjup","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[43,480,46,34]}
+{"kind":"shape","id":"sh/nydofut8","slide":3,"bbox":[93,494,45,0]}
+{"kind":"textbox","id":"sh/mx47mpcn","slide":3,"text":"Unverified advice","textPreview":"Unverified advice","textChars":17,"textLines":1,"bbox":[151,479,417,30]}
+{"kind":"textbox","id":"sh/q9k7ypwf","slide":3,"text":"Text recommendations rarely show which input changed or whether the score improved.","textPreview":"Text recommendations rarely show which input changed or whether the score improved.","textChars":83,"textLines":1,"bbox":[151,511,417,54]}
+{"kind":"shape","id":"sh/bad87ux0","slide":3,"bbox":[660,147,577,417]}
+{"kind":"shape","id":"sh/dwvq94f6","slide":3,"bbox":[646,574,585,69]}
+{"kind":"textbox","id":"sh/yx4r29wr","slide":3,"text":"THE IDEA","textPreview":"THE IDEA","textChars":8,"textLines":1,"bbox":[666,588,105,24]}
+{"kind":"textbox","id":"sh/zyd8bexc","slide":3,"text":"A pre-approval climate intelligence layer for every urban project","textPreview":"A pre-approval climate intelligence layer for every urban project","textChars":65,"textLines":1,"bbox":[774,584,432,44]}
+{"kind":"image","id":"im/7a9sfi5c","slide":3,"name":"","geometry":"roundRect","alt":"Prototype climate risk map for Pune","bbox":[666,153,565,405]}
+{"kind":"notes","id":"nt/2ba6cm","slide":3,"text":"Problem framing source: supplied Urban Climate Intelligence R&D Framework, sections 1, 2, 8 and 11.\nCompetition domain source: https://www.pccoeigc.com/topics\nVisual source: current repository frontend climate-map route. The displayed map is prototype UI data."}
+{"kind":"slide","id":"sl/jb76bl","slide":4,"title":"DISHADHARTI","textShapes":20}
+{"kind":"textbox","id":"sh/fy9szi5k","slide":4,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[40,22,230,28]}
+{"kind":"textbox","id":"sh/gji9sn65","slide":4,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[825,25,410,22]}
+{"kind":"textbox","id":"sh/hkra18nq","slide":4,"text":"OBJECTIVES AND BENEFICIARIES","textPreview":"OBJECTIVES AND BENEFICIARIES","textChars":28,"textLines":1,"bbox":[40,61,1180,62]}
+{"kind":"shape","id":"sh/6tgrmto3","slide":4,"bbox":[40,127,120,0]}
+{"kind":"shape","id":"sh/7up8vy5o","slide":4,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/8vy9o369","slide":4,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/twrqx8nu","slide":4,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"textbox","id":"sh/qpkryxo7","slide":4,"text":"Four objectives define the MVP","textPreview":"Four objectives define the MVP","textChars":30,"textLines":1,"bbox":[44,153,470,40]}
+{"kind":"textbox","id":"sh/rqts725s","slide":4,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[44,222,46,34]}
+{"kind":"shape","id":"sh/nqpsj6ds","slide":4,"bbox":[94,236,45,0]}
+{"kind":"textbox","id":"sh/mpgba1w7","slide":4,"text":"Measure","textPreview":"Measure","textChars":7,"textLines":1,"bbox":[152,221,407,30]}
+{"kind":"textbox","id":"sh/9sralgvy","slide":4,"text":"Combine project inputs with land cover, LST, elevation and climate context.","textPreview":"Combine project inputs with land cover, LST, elevation and climate context.","textChars":75,"textLines":1,"bbox":[152,253,407,54]}
+{"kind":"textbox","id":"sh/oritcbed","slide":4,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[44,322,46,34]}
+{"kind":"shape","id":"sh/bu9snqd4","slide":4,"bbox":[94,336,45,0]}
+{"kind":"textbox","id":"sh/at0belwj","slide":4,"text":"Explain","textPreview":"Explain","textChars":7,"textLines":1,"bbox":[152,321,407,30]}
+{"kind":"textbox","id":"sh/xwrup0vu","slide":4,"text":"Expose component scores, assumptions and confidence instead of a black-box result.","textPreview":"Expose component scores, assumptions and confidence instead of a black-box result.","textChars":82,"textLines":1,"bbox":[152,353,407,54]}
+{"kind":"textbox","id":"sh/wvitgve9","slide":4,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[44,422,46,34]}
+{"kind":"shape","id":"sh/jytcrqd0","slide":4,"bbox":[94,436,45,0]}
+{"kind":"textbox","id":"sh/yx0bilwf","slide":4,"text":"Improve","textPreview":"Improve","textChars":7,"textLines":1,"bbox":[152,421,407,30]}
+{"kind":"textbox","id":"sh/ud4vapgn","slide":4,"text":"Translate risks into concrete design changes and recalculate the outcome.","textPreview":"Translate risks into concrete design changes and recalculate the outcome.","textChars":73,"textLines":1,"bbox":[152,453,407,54]}
+{"kind":"textbox","id":"sh/vedwjux8","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[44,522,46,34]}
+{"kind":"shape","id":"sh/gfmdczyt","slide":4,"bbox":[94,536,45,0]}
+{"kind":"textbox","id":"sh/hgvel4fe","slide":4,"text":"Govern","textPreview":"Govern","textChars":6,"textLines":1,"bbox":[152,521,407,30]}
+{"kind":"textbox","id":"sh/6pkv6pgr","slide":4,"text":"Give each role secure access to projects, reports and review notifications.","textPreview":"Give each role secure access to projects, reports and review notifications.","textChars":75,"textLines":1,"bbox":[152,553,407,54]}
+{"kind":"shape","id":"sh/7qdwfuxc","slide":4,"bbox":[613,145,624,430]}
+{"kind":"textbox","id":"sh/tsveh4f2","slide":4,"text":"Authorities  •  Planners  •  Consultants  •  Public viewers","textPreview":"Authorities  •  Planners  •  Consultants  •  Public viewers","textChars":59,"textLines":1,"bbox":[640,592,580,24]}
+{"kind":"textbox","id":"sh/qlofi9gv","slide":4,"text":"Prototype screen uses fixture assessment data","textPreview":"Prototype screen uses fixture assessment data","textChars":45,"textLines":1,"bbox":[812,632,410,20]}
+{"kind":"image","id":"im/3ahsja18","slide":4,"name":"","geometry":"roundRect","alt":"Prototype assessment result with climate score and risk breakdown","bbox":[619,151,612,418]}
+{"kind":"notes","id":"nt/jb76bl","slide":4,"text":"Objective basis: supplied R&D Framework and repository backend README.md.\nRole model source: backend/src/middleware/auth.js and backend/README.md.\nVisual source: current repository frontend assessment-result route. Values shown are development fixture data."}
+{"kind":"slide","id":"sl/ftslnl","slide":5,"title":"DISHADHARTI","textShapes":32}
+{"kind":"textbox","id":"sh/fa14ve9g","slide":5,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[40,22,230,28]}
+{"kind":"textbox","id":"sh/0ba54zq1","slide":5,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[825,25,410,22]}
+{"kind":"textbox","id":"sh/1cjmx4rm","slide":5,"text":"PROPOSED SOLUTION AND ARCHITECTURE","textPreview":"PROPOSED SOLUTION AND ARCHITECTURE","textChars":34,"textLines":1,"bbox":[40,61,1180,62]}
+{"kind":"shape","id":"sh/2dsn6987","slide":5,"bbox":[40,127,120,0]}
+{"kind":"shape","id":"sh/ne1oze9s","slide":5,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/ofa58jqx","slide":5,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/pg361ori","slide":5,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"textbox","id":"sh/ih8nupsn","slide":5,"text":"One traceable path from site evidence to a revised design","textPreview":"One traceable path from site evidence to a revised design","textChars":57,"textLines":1,"bbox":[42,145,720,34]}
+{"kind":"shape","id":"sh/3ih4nu98","slide":5,"bbox":[48,245,170,150]}
+{"kind":"shape","id":"sh/jmxo3a5w","slide":5,"bbox":[48,245,170,39]}
+{"kind":"textbox","id":"sh/ilonu54b","slide":5,"text":"PROJECT INPUT","textPreview":"PROJECT INPUT","textChars":13,"textLines":1,"bbox":[58,255,150,22]}
+{"kind":"textbox","id":"sh/5of65kn2","slide":5,"text":"Location\nPlans + materials","textPreview":"Location | Plans + materials","textChars":26,"textLines":2,"bbox":[62,307,142,64]}
+{"kind":"shape","id":"sh/4n6pwfmh","slide":5,"bbox":[250,245,170,150]}
+{"kind":"shape","id":"sh/vidozq50","slide":5,"bbox":[250,245,170,39]}
+{"kind":"textbox","id":"sh/uh4nql4f","slide":5,"text":"SPATIAL + ML","textPreview":"SPATIAL + ML","textChars":12,"textLines":1,"bbox":[260,255,150,22]}
+{"kind":"textbox","id":"sh/hkv610n6","slide":5,"text":"GEE data\nSegFormer land cover","textPreview":"GEE data | SegFormer land cover","textChars":29,"textLines":2,"bbox":[264,307,142,64]}
+{"kind":"shape","id":"sh/wjm5svml","slide":5,"bbox":[452,245,170,150]}
+{"kind":"shape","id":"sh/7udovq5o","slide":5,"bbox":[452,245,170,39]}
+{"kind":"textbox","id":"sh/mtknml4j","slide":5,"text":"4 MODULES","textPreview":"4 MODULES","textChars":9,"textLines":1,"bbox":[462,255,150,22]}
+{"kind":"textbox","id":"sh/apk7ylob","slide":5,"text":"Heat  |  Flood\nGreen  |  Carbon","textPreview":"Heat  |  Flood | Green  |  Carbon","textChars":31,"textLines":2,"bbox":[466,307,142,64]}
+{"kind":"shape","id":"sh/bqto7qpw","slide":5,"bbox":[654,245,170,150]}
+{"kind":"shape","id":"sh/cr2p0b6h","slide":5,"bbox":[654,245,170,39]}
+{"kind":"textbox","id":"sh/xsb69g7m","slide":5,"text":"SCORE","textPreview":"SCORE","textChars":5,"textLines":1,"bbox":[664,255,150,22]}
+{"kind":"textbox","id":"sh/ytk72lo7","slide":5,"text":"Impact + climate\nConfidence","textPreview":"Impact + climate | Confidence","textChars":27,"textLines":2,"bbox":[668,307,142,64]}
+{"kind":"shape","id":"sh/zed8bqps","slide":5,"bbox":[856,245,170,150]}
+{"kind":"shape","id":"sh/kfmp4v6d","slide":5,"bbox":[856,245,170,39]}
+{"kind":"textbox","id":"sh/lgvqd07y","slide":5,"text":"GUIDANCE","textPreview":"GUIDANCE","textChars":8,"textLines":1,"bbox":[866,255,150,22]}
+{"kind":"textbox","id":"sh/mh4765oj","slide":5,"text":"Prioritized\nrecommendations","textPreview":"Prioritized | recommendations","textChars":27,"textLines":2,"bbox":[870,307,142,64]}
+{"kind":"shape","id":"sh/7id8fap4","slide":5,"bbox":[1058,245,170,150]}
+{"kind":"shape","id":"sh/hcfa54r6","slide":5,"bbox":[1058,245,170,39]}
+{"kind":"textbox","id":"sh/wb69wzql","slide":5,"text":"REASSESS","textPreview":"REASSESS","textChars":8,"textLines":1,"bbox":[1068,255,150,22]}
+{"kind":"textbox","id":"sh/vaxs3u90","slide":5,"text":"Before / after\nPDF report","textPreview":"Before / after | PDF report","textChars":25,"textLines":2,"bbox":[1072,307,142,64]}
+{"kind":"shape","id":"sh/u9orup8f","slide":5,"bbox":[218,320,32,0]}
+{"kind":"shape","id":"sh/5gza94r2","slide":5,"bbox":[420,320,32,0]}
+{"kind":"shape","id":"sh/4fq90zqh","slide":5,"bbox":[622,320,32,0]}
+{"kind":"shape","id":"sh/jehs7e9c","slide":5,"bbox":[824,320,32,0]}
+{"kind":"shape","id":"sh/idory98r","slide":5,"bbox":[1026,320,32,0]}
+{"kind":"textbox","id":"sh/t4zadore","slide":5,"text":"BACKEND FABRIC","textPreview":"BACKEND FABRIC","textChars":14,"textLines":1,"bbox":[46,456,175,30]}
+{"kind":"shape","id":"sh/s3qt4jqt","slide":5,"bbox":[222,471,1000,0]}
+{"kind":"textbox","id":"sh/ozudcna1","slide":5,"text":"Express 5","textPreview":"Express 5","textChars":9,"textLines":1,"bbox":[48,510,178,28]}
+{"kind":"textbox","id":"sh/p03u5sbm","slide":5,"text":"API gateway","textPreview":"API gateway","textChars":11,"textLines":1,"bbox":[48,545,178,26]}
+{"kind":"textbox","id":"sh/2xcvadsv","slide":5,"text":"JWT + RBAC","textPreview":"JWT + RBAC","textChars":10,"textLines":1,"bbox":[250,510,178,28]}
+{"kind":"textbox","id":"sh/nylc3itg","slide":5,"text":"5 role profiles","textPreview":"5 role profiles","textChars":15,"textLines":1,"bbox":[250,545,178,26]}
+{"kind":"textbox","id":"sh/0bad83ap","slide":5,"text":"PostGIS","textPreview":"PostGIS","textChars":7,"textLines":1,"bbox":[452,510,178,28]}
+{"kind":"textbox","id":"sh/1cju18ba","slide":5,"text":"Spatial records","textPreview":"Spatial records","textChars":15,"textLines":1,"bbox":[452,545,178,26]}
+{"kind":"textbox","id":"sh/e9sv6dsz","slide":5,"text":"Redis + BullMQ","textPreview":"Redis + BullMQ","textChars":14,"textLines":1,"bbox":[654,510,178,28]}
+{"kind":"textbox","id":"sh/fa1czytk","slide":5,"text":"Background jobs","textPreview":"Background jobs","textChars":15,"textLines":1,"bbox":[654,545,178,26]}
+{"kind":"textbox","id":"sh/k7edk7a9","slide":5,"text":"S3 / Firebase","textPreview":"S3 / Firebase","textChars":13,"textLines":1,"bbox":[856,510,178,28]}
+{"kind":"textbox","id":"sh/l8nedcbu","slide":5,"text":"Private files","textPreview":"Private files","textChars":13,"textLines":1,"bbox":[856,545,178,26]}
+{"kind":"textbox","id":"sh/vy9ozqh8","slide":5,"text":"Email / SMS","textPreview":"Email / SMS","textChars":11,"textLines":1,"bbox":[1058,510,178,28]}
+{"kind":"textbox","id":"sh/ud07q5gn","slide":5,"text":"In-app alerts","textPreview":"In-app alerts","textChars":13,"textLines":1,"bbox":[1058,545,178,26]}
+{"kind":"textbox","id":"sh/h0r610zy","slide":5,"text":"Formula calculations remain deterministic. The recommendation layer interprets results and proposes parameter changes.","textPreview":"Formula calculations remain deterministic. The recommendation layer interprets results and proposes parameter changes.","textChars":118,"textLines":1,"bbox":[183,608,914,34]}
+{"kind":"notes","id":"nt/ftslnl","slide":5,"text":"Architecture basis: repository backend source, backend/README.md and supplied Urban Climate Intelligence R&D Framework.\nThe editable diagram simplifies the full MVP architecture into the judging flow.\nGoogle Earth Engine: https://earthengine.google.com/"}
+{"kind":"slide","id":"sl/0veswo","slide":6,"title":"DISHADHARTI","textShapes":19}
+{"kind":"textbox","id":"sh/6hsnm983","slide":6,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[40,22,230,28]}
+{"kind":"textbox","id":"sh/tkj6x4re","slide":6,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[825,25,410,22]}
+{"kind":"textbox","id":"sh/sja5ozq9","slide":6,"text":"UNIQUE FEATURES AND INNOVATION","textPreview":"UNIQUE FEATURES AND INNOVATION","textChars":30,"textLines":1,"bbox":[40,61,1180,62]}
+{"kind":"shape","id":"sh/fmloze9k","slide":6,"bbox":[40,127,120,0]}
+{"kind":"shape","id":"sh/uls7q98z","slide":6,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/ho361orq","slide":6,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/gnupsjq5","slide":6,"text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"shape","id":"sh/bqhona9g","slide":6,"bbox":[38,148,676,450]}
+{"kind":"textbox","id":"sh/sju9wril","slide":6,"text":"What makes Dishadharti different","textPreview":"What makes Dishadharti different","textChars":32,"textLines":1,"bbox":[754,153,445,39]}
+{"kind":"textbox","id":"sh/tkna5wj6","slide":6,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[754,221,46,34]}
+{"kind":"shape","id":"sh/6hcru10f","slide":6,"bbox":[804,235,45,0]}
+{"kind":"textbox","id":"sh/rils3m10","slide":6,"text":"Transparent scoring","textPreview":"Transparent scoring","textChars":19,"textLines":1,"bbox":[862,220,342,30]}
+{"kind":"textbox","id":"sh/gnet0bih","slide":6,"text":"Four formula modules reveal the reason behind every result.","textPreview":"Four formula modules reveal the reason behind every result.","textChars":59,"textLines":1,"bbox":[862,252,342,54]}
+{"kind":"textbox","id":"sh/1ona9gj2","slide":6,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[754,315,46,34]}
+{"kind":"shape","id":"sh/elwry10r","slide":6,"bbox":[804,329,45,0]}
+{"kind":"textbox","id":"sh/fm5s761w","slide":6,"text":"Guardrailed AI","textPreview":"Guardrailed AI","textChars":14,"textLines":1,"bbox":[862,314,342,30]}
+{"kind":"textbox","id":"sh/wra9o7id","slide":6,"text":"AI explains and recommends. It never invents the climate score.","textPreview":"AI explains and recommends. It never invents the climate score.","textChars":63,"textLines":1,"bbox":[862,346,342,54]}
+{"kind":"textbox","id":"sh/hs3axcjy","slide":6,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[754,409,46,34]}
+{"kind":"shape","id":"sh/xovql8bm","slide":6,"bbox":[804,423,45,0]}
+{"kind":"textbox","id":"sh/cn2ps3u1","slide":6,"text":"Verified improvement","textPreview":"Verified improvement","textChars":20,"textLines":1,"bbox":[862,408,342,30]}
+{"kind":"textbox","id":"sh/bmt8zytg","slide":6,"text":"A recommendation changes inputs and triggers a genuine reassessment.","textPreview":"A recommendation changes inputs and triggers a genuine reassessment.","textChars":68,"textLines":1,"bbox":[862,440,342,54]}
+{"kind":"textbox","id":"sh/alk7qtcb","slide":6,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[754,503,46,34]}
+{"kind":"shape","id":"sh/lcvqp8by","slide":6,"bbox":[804,517,45,0]}
+{"kind":"textbox","id":"sh/kbmpwnud","slide":6,"text":"Confidence-aware","textPreview":"Confidence-aware","textChars":16,"textLines":1,"bbox":[862,502,342,30]}
+{"kind":"textbox","id":"sh/zad8nits","slide":6,"text":"Missing or proxy data lowers confidence instead of creating false precision.","textPreview":"Missing or proxy data lowers confidence instead of creating false precision.","textChars":76,"textLines":1,"bbox":[862,534,342,54]}
+{"kind":"textbox","id":"sh/y947udc7","slide":6,"text":"Prototype screen uses fixture assessment data","textPreview":"Prototype screen uses fixture assessment data","textChars":45,"textLines":1,"bbox":[302,623,405,20]}
+{"kind":"image","id":"im/b2t0f6tg","slide":6,"name":"","geometry":"roundRect","alt":"Prototype recommendation and before-after optimization screen","bbox":[44,154,664,438]}
+{"kind":"notes","id":"nt/0veswo","slide":6,"text":"Innovation basis: supplied R&D Framework, especially score design, confidence, reassessment and LLM role.\nImplementation basis: ml_pipeline/scorer.py, ml_pipeline/optimizer.py, backend/src/domain/scoring.js and backend/src/services/recommendationService.js.\nVisual source: current repository frontend optimizer route. Displayed values are development fixture data."}
+{"kind":"slide","id":"sl/mmz47l","slide":7,"title":"DISHADHARTI","textShapes":17}
+{"kind":"textbox","id":"sh/fqpsvmx0","slide":7,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[40,22,230,28]}
+{"kind":"textbox","id":"sh/0rytorel","slide":7,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[825,25,410,22]}
+{"kind":"textbox","id":"sh/1c7axcf6","slide":7,"text":"EXPECTED OUTCOMES AND SCALE PATH","textPreview":"EXPECTED OUTCOMES AND SCALE PATH","textChars":32,"textLines":1,"bbox":[40,61,1180,62]}
+{"kind":"shape","id":"sh/qlwrixwj","slide":7,"bbox":[40,127,120,0]}
+{"kind":"shape","id":"sh/rmpsr2x4","slide":7,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/sny9k7ep","slide":7,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/do7atcfu","slide":7,"text":"7","textPreview":"7","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"textbox","id":"sh/ah0bu1wn","slide":7,"text":"Prototype evidence","textPreview":"Prototype evidence","textChars":18,"textLines":1,"bbox":[43,153,350,36]}
+{"kind":"textbox","id":"sh/bi9s36x8","slide":7,"text":"19","textPreview":"19","textChars":2,"textLines":1,"bbox":[44,221,90,65]}
+{"kind":"textbox","id":"sh/f6l43m58","slide":7,"text":"API routes","textPreview":"API routes","textChars":10,"textLines":1,"bbox":[44,283,155,25]}
+{"kind":"textbox","id":"sh/u5c3a1on","slide":7,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[232,221,70,65]}
+{"kind":"textbox","id":"sh/h8nm5wne","slide":7,"text":"automated tests","textPreview":"automated tests","textChars":15,"textLines":1,"bbox":[232,283,165,25]}
+{"kind":"textbox","id":"sh/g7ulcr6t","slide":7,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[427,221,70,65]}
+{"kind":"textbox","id":"sh/3a547654","slide":7,"text":"file providers","textPreview":"file providers","textChars":14,"textLines":1,"bbox":[427,283,155,25]}
+{"kind":"textbox","id":"sh/29w3e1oj","slide":7,"text":"Near-term","textPreview":"Near-term","textChars":9,"textLines":1,"bbox":[44,352,160,31]}
+{"kind":"textbox","id":"sh/pwnm9gna","slide":7,"text":"Compare proposals before approval\nExport decision-ready reports\nNotify reviewers when analysis completes","textPreview":"Compare proposals before approval | Export decision-ready reports | Notify reviewers when analysis completes","textChars":104,"textLines":3,"bbox":[44,389,490,103]}
+{"kind":"textbox","id":"sh/4ve5gb6p","slide":7,"text":"Scale path","textPreview":"Scale path","textChars":10,"textLines":1,"bbox":[44,527,160,31]}
+{"kind":"textbox","id":"sh/ry54b65g","slide":7,"text":"Pune pilot  /  multi-project portfolio  /  configurable regional factors","textPreview":"Pune pilot  /  multi-project portfolio  /  configurable regional factors","textChars":72,"textLines":1,"bbox":[44,565,510,57]}
+{"kind":"shape","id":"sh/qxwnilov","slide":7,"bbox":[614,147,623,442]}
+{"kind":"shape","id":"sh/nu9o3apo","slide":7,"bbox":[649,603,552,42]}
+{"kind":"textbox","id":"sh/ovipcfq9","slide":7,"text":"Earlier evidence enables lower-impact design choices before construction","textPreview":"Earlier evidence enables lower-impact design choices before construction","textChars":72,"textLines":1,"bbox":[666,614,520,24]}
+{"kind":"image","id":"im/pcfil4bu","slide":7,"name":"","geometry":"roundRect","alt":"Prototype dashboard for project portfolio and environmental risks","bbox":[620,153,611,430]}
+{"kind":"notes","id":"nt/mmz47l","slide":7,"text":"Prototype metrics source: current backend source and tests. Route count includes the health route.\nVisual source: current repository frontend dashboard route. Dashboard values are mock portfolio data, not measured deployment outcomes.\nScale path is a proposed roadmap, not a completed deployment."}
+{"kind":"slide","id":"sl/fdd1bi","slide":8,"title":"DISHADHARTI","textShapes":15}
+{"kind":"textbox","id":"sh/ut87ep4v","slide":8,"text":"DISHADHARTI","textPreview":"DISHADHARTI","textChars":11,"textLines":1,"bbox":[48,28,250,28]}
+{"kind":"textbox","id":"sh/hwzq9kn6","slide":8,"text":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textPreview":"PCCOE INTERNATIONAL GRAND CHALLENGE 2026","textChars":40,"textLines":1,"bbox":[822,30,410,22]}
+{"kind":"textbox","id":"sh/wvqpgfm1","slide":8,"text":"WHY DISHADHARTI\nMERITS SELECTION","textPreview":"WHY DISHADHARTI | MERITS SELECTION","textChars":32,"textLines":2,"bbox":[48,94,610,120]}
+{"kind":"shape","id":"sh/jyh8bu5c","slide":8,"bbox":[49,231,125,0]}
+{"kind":"textbox","id":"sh/ix87ip4r","slide":8,"text":"INNOVATION","textPreview":"INNOVATION","textChars":10,"textLines":1,"bbox":[49,292,230,28]}
+{"kind":"textbox","id":"sh/50jqd4ni","slide":8,"text":"Satellite intelligence meets deterministic scoring and guardrailed recommendations.","textPreview":"Satellite intelligence meets deterministic scoring and guardrailed recommendations.","textChars":83,"textLines":1,"bbox":[49,332,520,78]}
+{"kind":"textbox","id":"sh/4zqpkzmx","slide":8,"text":"FEASIBILITY","textPreview":"FEASIBILITY","textChars":11,"textLines":1,"bbox":[648,292,230,28]}
+{"kind":"textbox","id":"sh/z2xoza58","slide":8,"text":"A working React prototype, Express backend, ML bridge and test suite already exist.","textPreview":"A working React prototype, Express backend, ML bridge and test suite already exist.","textChars":83,"textLines":1,"bbox":[648,332,520,78]}
+{"kind":"textbox","id":"sh/y1o7654n","slide":8,"text":"CLARITY","textPreview":"CLARITY","textChars":7,"textLines":1,"bbox":[49,448,230,28]}
+{"kind":"textbox","id":"sh/svaho769","slide":8,"text":"Every score exposes components, assumptions, confidence and before-after change.","textPreview":"Every score exposes components, assumptions, confidence and before-after change.","textChars":80,"textLines":1,"bbox":[49,488,520,78]}
+{"kind":"textbox","id":"sh/twjyhcnu","slide":8,"text":"CLIMATE ALIGNMENT","textPreview":"CLIMATE ALIGNMENT","textChars":17,"textLines":1,"bbox":[648,448,230,28]}
+{"kind":"textbox","id":"sh/6tszmhoj","slide":8,"text":"The platform supports climate risk assessment and sustainable urban development.","textPreview":"The platform supports climate risk assessment and sustainable urban development.","textChars":80,"textLines":1,"bbox":[648,488,520,78]}
+{"kind":"textbox","id":"sh/ru1gf2p4","slide":8,"text":"Ready for Stage II prototype validation","textPreview":"Ready for Stage II prototype validation","textChars":39,"textLines":1,"bbox":[48,604,720,42]}
+{"kind":"textbox","id":"sh/gzahsr6l","slide":8,"text":"github.com/GitWithEkam/Pune-Climate-ML","textPreview":"github.com/GitWithEkam/Pune-Climate-ML","textChars":38,"textLines":1,"bbox":[786,612,445,26]}
+{"kind":"shape","id":"sh/103ilwn6","slide":8,"bbox":[0,681,1280,39]}
+{"kind":"textbox","id":"sh/exszqhof","slide":8,"text":"TEAM DISHADHARTI","textPreview":"TEAM DISHADHARTI","textChars":16,"textLines":1,"bbox":[480,689,320,22]}
+{"kind":"textbox","id":"sh/fy1gjm50","slide":8,"text":"8","textPreview":"8","textChars":1,"textLines":1,"bbox":[1210,687,34,24]}
+{"kind":"notes","id":"nt/fdd1bi","slide":8,"text":"Selection criteria source: https://www.pccoeigc.com/timeline\nClimate domains source: https://www.pccoeigc.com/topics\nImplementation evidence source: current repository README.md, backend/README.md, source code and tests."}

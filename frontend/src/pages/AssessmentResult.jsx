@@ -1,16 +1,21 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Sparkles, Download, Info, CheckCircle2, AlertTriangle } from "lucide-react";
-import { assessment } from "../data/mockData";
+import { assessment as demoAssessment } from "../data/mockData";
+import { getAssessment, getReportUrl } from "../services/climateApi";
 import ClimateGauge from "../components/ClimateGauge";
 import RiskCard from "../components/RiskCard";
 import SectionHeader from "../components/SectionHeader";
 
 export default function AssessmentResult() {
+  const [assessment, setAssessment] = useState(demoAssessment);
+  useEffect(() => { getAssessment().then((value) => value && setAssessment(value)).catch(() => {}); }, []);
+
   return (
     <div className="page">
       <div className="result-top">
         <div><Link to="/dashboard" className="back-link"><ArrowLeft size={15}/> Dashboard</Link><div className="eyebrow">ASSESSMENT · 05 SEP 2026</div><h1>{assessment.projectName}</h1><p>📍 {assessment.location} · {assessment.projectType}</p></div>
-        <div className="result-actions"><button className="secondary-btn"><Download size={16}/> Export</button><Link to="/optimizer" className="primary-btn"><Sparkles size={16}/> Optimize this site</Link></div>
+        <div className="result-actions">{assessment.id && <a className="secondary-btn" href={getReportUrl(assessment.id)} target="_blank" rel="noreferrer"><Download size={16}/> Export</a>}<Link to="/optimizer" className="primary-btn"><Sparkles size={16}/> Optimize this site</Link></div>
       </div>
 
       <div className="result-hero">
