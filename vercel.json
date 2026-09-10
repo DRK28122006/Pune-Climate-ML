@@ -5,6 +5,7 @@
   "framework": "vite",
   "functions": { "api/**/*.js": { "maxDuration": 60 } },
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api" },
     { "source": "/dashboard", "destination": "/index.html" },
     { "source": "/assessment", "destination": "/index.html" },
     { "source": "/assessment/result", "destination": "/index.html" },
