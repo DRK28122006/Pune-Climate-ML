@@ -15,6 +15,31 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Geospatial data — large binaries, re-downloadable via scripts/download_data.py
+# Do NOT commit: repo bloat and upstream data licensing.
+*.csv
+
+# The PMC Tree Census: 17 parts, ~1.2 GB. Fetched, never committed.
+# Re-derive with: ml_pipeline/data/fetch_census_parts.py --all
+# then: ml_pipeline/cli.py build-data
+ml_pipeline/data/census/
+*.kml
+*.geojson
+*.tif
+*.tiff
+*.nc
+*.pbf
+*.sqlite
+*.db
+data/
+geodata/
+
+# Exception: the tree-index BUILDER is source code and must be tracked.
+# Only the built .sqlite (52 MB, re-derivable from the census) is ignored.
+!ml_pipeline/data/
+!ml_pipeline/data/*.py
+!ml_pipeline/data/__init__.py
+
 node_modules/
 dist/
 .env

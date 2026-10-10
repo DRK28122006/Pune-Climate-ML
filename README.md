@@ -1,271 +1,217 @@
-# Urban Climate Intelligence & Decision Support Platform
+# Dishadharti — climate screening for building proposals in Pune
 
-An MVP decision-support platform for evaluating the climate impact of urban-development projects in Pune, India. The system combines satellite-derived environmental indicators, deterministic engineering calculations, explainable recommendations, and project reporting in one workflow.
+When a builder brings a development proposal to the municipal corporation,
+no one can currently say what it will do to the city's climate: how much
+rain it will shed as runoff, how much heat its concrete mass will hold,
+how many trees it removes, how much carbon its materials carry. This
+system answers those four questions with a score from 0 to 100
+(high = worse), a plain-English explanation, and redesign conditions whose
+effects are measured, not asserted.
 
-> **Project status:** Active MVP development. The backend and climate-scoring workflow are implemented and testable locally. The React interface currently uses mock service responses and is ready to be connected to the API.
+Scope: Pune Municipal Corporation only — its real boundary, its 41 wards,
+its 2019 tree census, its 2024 satellite record.
 
-## Overview
+## How the system works
 
-The platform helps planners and environmental teams assess a proposed site across four climate dimensions:
+The work splits into two phases with very different costs.
 
-- **Flood risk** using land-cover data and the SCS Curve Number runoff method.
-- **Heat impact** using Land Surface Temperature and Pune-specific baselines.
-- **Green-cover pressure** using vegetation, impervious-surface, and water coverage.
-- **Embodied carbon** using project material quantities and built-up area.
+**Phase 1 runs once, offline.** Satellites and census files are processed
+into two baked artefacts:
 
-These results are combined into a transparent climate score, accompanied by data-quality indicators, assumptions, recommendations, optimized scenarios, and downloadable reports.
+- `epoch_cube.json` — Pune divided into 864 squares of about 1 km. Each
+  square holds its 2024 land cover (built, vegetation, water, bare soil,
+  tree canopy), day and night surface temperature, and elevation, all
+  reduced server-side in Google Earth Engine.
+- `tree_index.sqlite` — 4,009,623 census trees, deduplicated and
+  spatially indexed, so any plot polygon can ask "which trees stand here"
+  in seconds.
 
-## System Architecture
+**Phase 2 runs per proposal, in about 10 seconds, with no internet.** The
+officer pins the plot and enters built-up area, plot area, and a bill of
+quantities. The pipeline looks up the square the plot sits in, reads its
+numbers, walks the tree ledger for that exact polygon, and computes. A
+language model then narrates the result. It reads the numbers aloud; it
+never touches them.
 
-```mermaid
-flowchart LR
-    UI[React + Vite frontend] -->|REST / JWT| API[Node.js + Express API]
-    API --> AUTH[Authentication and RBAC]
-    API --> ASSESS[Assessment and scoring services]
-    API --> FILES[Private document storage]
-    API --> REPORTS[PDF report generation]
-    ASSESS --> ML[Python climate pipeline]
-    ML --> GEE[Google Earth Engine]
-    ML --> SEG[SegFormer land-cover model]
-    ASSESS --> DB[(JSON or PostgreSQL/PostGIS)]
-    API --> REDIS[(Redis + BullMQ)]
-    REDIS --> WORKERS[Analysis and notification workers]
-    WORKERS --> CHANNELS[In-app / Email / SMS]
-```
+<img src="docs/assets/city_grid.png" width="520" alt="PMC built-up grid">
+*Takeaway: the dense urban core reads near 100% built-up; the southern
+and western fringe near zero. Every flood score in this system comes out
+of this partition.*
 
-The backend is organized as a modular monolith for the MVP. Its service boundaries can later be separated without introducing premature microservice overhead.
+## The data we built
 
-## Repository Structure
+| artefact | what it is | size / count |
+|---|---|---|
+| epoch cube | 2024 land cover + temperatures + elevation, 864 cells | 864/864 cells complete |
+| tree index | deduplicated 2019 census with spatial lookup | 4,009,623 trees |
+| rainfall series | 124 annual 1-day maxima, IMD grids 1901–2024 | `imd_pune_annual_max.csv` |
+| emission table | 38 materials, 102 name aliases, India factors | `materials.json` |
+| species table | census-derived species data, audited against full index | `species.json` |
 
-```text
-Pune-Climate-ML/
-├── backend/                  # Express API, persistence, workers and tests
-│   ├── examples/             # Ready-to-use mock assessment payloads
-│   ├── python/               # Node-to-Python ML bridge
-│   ├── src/                  # Application source code
-│   └── test/                 # API and scoring tests
-├── frontend/                 # React + Vite user interface
-├── ml_pipeline/              # Extraction, scoring and optimization modules
-├── train_segformer.py        # SegFormer training entry point
-└── README.md
-```
+The land-cover partition was the hard part. An early version silently
+dropped every water pixel (a class-label filtering bug), read vegetation
+from the wrong sensor at half its true value, and spread classifier
+uncertainty into phantom snow in a tropical city. All three were found by
+measurement, fixed, and gated: the cube now refuses to build unless its
+nine land classes sum to one in every cell. Water went from 0 to 258
+cells; vegetation median rose 6.3% to 30.2%.
 
-## Technology Stack
+## Flood: stormwater runoff
 
-| Layer | Technologies |
-|---|---|
-| Frontend | React 18, Vite, React Router, Recharts, Lucide |
-| Backend | Node.js 20+, Express 5, Zod, Pino |
-| Authentication | JWT access/refresh tokens, bcrypt, role-based permissions |
-| Data | Local JSON for development; PostgreSQL + PostGIS for production |
-| Jobs and cache | Redis, BullMQ |
-| File storage | Private local storage, AWS S3, or Firebase Storage |
-| Climate intelligence | Python, Google Earth Engine, PyTorch, SegFormer |
-| Notifications | In-app, SMTP email, Twilio SMS |
-| Reports | PDFKit |
+**Method.** Standard SCS curve-number hydrology (NRCS TR-55): each surface
+type carries a published runoff coefficient, the site's area-weighted
+number is compared against a vegetated baseline, and the excess runoff at
+the design storm becomes the score. Engineered drain proximity can only
+ever lower the score; natural streams never count as drainage.
 
-## Key Capabilities
+**The design storm is measured.** An early 150 mm placeholder was replaced
+by fitting a Gumbel distribution to 124 years of IMD gridded rainfall at
+the Pune cell: 100-year 1-day storm = 214 mm (fit quality p = 0.95,
+interval 191–234). The 2005 peak in the series lands exactly on 26 July,
+the Maharashtra flood day — the extraction is on the right cell.
 
-- Project assessment creation, retrieval, optimization, and reassessment.
-- Deterministic flood, heat, green-cover, carbon, and composite scoring.
-- Fixture, request-provided, and Python/GEE-backed ML input modes.
-- JWT authentication with rotating, revocable refresh sessions.
-- Role permissions for administrators, municipal authorities, planners, consultants, and public viewers.
-- Document upload and authenticated download through private storage adapters.
-- Redis/BullMQ workers for asynchronous analysis and notification delivery.
-- In-app notifications with optional email and SMS channels.
-- Dashboard summaries and downloadable PDF assessment reports.
-- Rate limiting, request IDs, structured logging, validation, and security headers.
+<img src="docs/assets/gumbel.png" width="680" alt="Gumbel design storm fit">
+*Takeaway: the old 150 mm sat between the 10- and 25-year storms. The
+measured 100-year value is 214 mm. Larger storms shrink excess fractions,
+so adopting it moved flood scores down, honestly.*
 
-## Quick Start
+**Measured state.** Across 41 wards with identical test proposals:
+14.5–53.3. Built-up share predicts flood at r = +0.92, vegetation cover
+predicts it inversely at r = −0.95. Both directions correct, both strong.
 
-### Prerequisites
+<img src="docs/assets/correlations.png" width="680" alt="Factor correlation scatters">
+*Takeaway: more concrete means more runoff; more vegetation means less.
+The relationships are tight enough to trust and pointed the right way.*
 
-- [Node.js](https://nodejs.org/) 20 or newer
-- npm
-- Python 3.10 or newer for the real ML pipeline
-- Docker Desktop only when using PostgreSQL/PostGIS or Redis locally
-- Google Earth Engine access and model weights only when using real ML inference
+## Heat: night-time stored warmth
 
-### 1. Clone the repository
+**Method.** Night surface temperature of the site's square minus a rural
+vegetated ring around the city, divided by the city's measured 5.0 C
+span. The city averages +1.62 C above rural at night (independently
+anchored: Yale's YCEO dataset sampled live at +1.139).
 
-```bash
-git clone https://github.com/GitWithEkam/Pune-Climate-ML.git
-cd Pune-Climate-ML
-```
+**Why night, not day.** Three separate measurements killed the daytime
+factor. Mid-morning contrast is +0.11 C with the sign flipping by season.
+Afternoon satellite coverage gives 3 usable scenes where 10 are needed.
+Even 1:30pm peak-hour data shows −0.14 C — dry countryside soil out-heats
+shaded city by day, a documented dryland effect. Afternoon danger is real,
+but it lives in air temperature, not surface contrast, so the report says
+so in words instead of faking a score.
 
-### 2. Start the backend
+<img src="docs/assets/heat_contrast.png" width="620" alt="Day vs night heat contrast">
+*Takeaway: only the night column carries signal. The factor scores stored
+heat release, labelled as such on every report.*
 
-```powershell
-cd backend
-npm install
-Copy-Item .env.example .env
-npm run dev
-```
+**Measured state.** 0.8–99.0 across wards — the widest spread of any
+factor, driven by real night contrast.
 
-The API runs at `http://localhost:4000`, with versioned routes under `http://localhost:4000/api/v1`.
+## Green cover: trees kept versus trees lost
 
-For a zero-infrastructure local run, set `REDIS_URL=` in `.env`. This mode uses local persistence, local private file storage, synchronous processing, and deterministic fixture ML data. PostgreSQL, Redis, cloud credentials, and trained model weights are not required.
+**Method.** Census canopy counts 70%, satellite ground vegetation 30%,
+stratified so the same tree is never counted twice. Missing tree data
+returns "unavailable," never a perfect score. Fellings carry
+age-equivalent compensation as a range (162–441 saplings for a typical
+assessment), never a single number, under the 1975 Trees Act as amended
+in 2021. The 90 cm preservation rule is stated as house policy, not law.
 
-### 3. Load mock assessments
+**Measured state.** 62–100 across wards, r = −0.81 against vegetation.
+The census total (4,009,623 indexed) matches the published 40,09,623
+exactly. Independent satellite cross-check (GEDI LiDAR heights) found no
+ward-level contradiction; one ward's overlapping crowns summing past 100%
+is now labelled as a density index rather than a fraction.
 
-Keep the backend running, then open another terminal:
+## Carbon: the materials ledger
 
-```powershell
-cd backend
-npm run seed
-```
+**Method.** Each bill-of-quantities line times its India-specific
+cradle-to-gate factor: cement 0.91, steel rebar 2.6, brick 0.39 (IFC India
+database), aluminium 20.88 (CEEW Indian smelter average). Result divided
+by built-up area, scored against a 1200 scale, banded Low to Very High.
+More than 10% unrecognised mass withholds the score instead of computing
+on partial data. Anchors: IGBC near-net-zero at 700 kg/m2, observed
+Indian high-rise mean 454.
 
-Reusable request bodies are available in:
+<img src="docs/assets/carbon.png" width="680" alt="Demo BOQ carbon breakdown">
+*Takeaway: the demo bill totals 602 tonnes, steel first at 247 t.
+The chart is also the audit trail — every bar multiplies out by hand.*
 
-- `backend/examples/mock-assessment.json`
-- `backend/examples/mock-assessment-with-ml.json`
+**Measured state.** Flat across wards for an identical bill, which is
+correct: materials don't vary by location.
+A 120-tonne-cement, 45-tonne-steel assessment hand-checks exactly to
+226,200 kg at 75.4 kg/m2, band Low.
 
-### 4. Start the frontend
+## The whole picture, per ward
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
+<img src="docs/assets/dispersion.png" width="680" alt="Factor dispersion across wards">
+*Takeaway: flood and green spread on real gradients, heat spreads widest
+on night contrast, carbon is flat by design. Nothing is compressed into a
+meaningless band.*
 
-Open `http://localhost:5173`. The interface currently reads from `frontend/src/data/mockData.js`; connect `frontend/src/services/climateApi.js` to the endpoints below to use live backend data.
+## What the system refuses to do
 
-## API Summary
+These are enforced in code and tests, not intentions:
 
-All protected routes require `Authorization: Bearer <accessToken>`.
+- Score a factor from missing data (it drops out; weights redistribute).
+- Let the narrator compute or adjust any number (prompt rules + tests;
+  a live run once caught verdict-softening and it is now locked).
+- Attribute an unsourced number to a standard (carbon bands, soil group
+  and cost data stay labelled UNSOURCED).
+- Train a neural scorer. One candidate model was trained for heat, failed
+  its own bars, and ships nothing. Permit arithmetic stays exact.
 
-| Area | Method | Endpoint |
-|---|---:|---|
-| Health | `GET` | `/api/health` |
-| Authentication | `POST` | `/api/v1/auth/register` |
-| Authentication | `POST` | `/api/v1/auth/login` |
-| Authentication | `POST` | `/api/v1/auth/refresh` |
-| Authentication | `POST` | `/api/v1/auth/logout` |
-| Assessments | `POST` | `/api/v1/assessments` |
-| Assessments | `GET` | `/api/v1/assessments` |
-| Assessments | `GET` | `/api/v1/assessments/:id` |
-| Optimization | `POST` | `/api/v1/assessments/:id/optimize` |
-| Reassessment | `POST` | `/api/v1/assessments/:id/reassess` |
-| Documents | `POST` | `/api/v1/assessments/:id/documents` |
-| Documents | `GET` | `/api/v1/assessments/:id/documents/:documentId` |
-| Reports | `GET` | `/api/v1/assessments/:id/report` |
-| Dashboard | `GET` | `/api/v1/dashboard` |
-| Notifications | `GET` | `/api/v1/notifications` |
-| Jobs | `GET` | `/api/v1/jobs/:queue/:id` |
-
-For authentication rules, payload details, storage providers, and operational configuration, see the [backend documentation](backend/README.md).
-
-## Climate Intelligence Pipeline
-
-### Satellite and spatial extraction
-
-`ml_pipeline/extractor.py` combines Google Earth Engine data with a fine-tuned SegFormer-B0 model to derive:
-
-- Vegetation, impervious-surface, and water percentages.
-- Landsat Land Surface Temperature.
-- Copernicus DEM elevation and slope.
-- NDVI, NDBI, and NDWI spectral indices.
-
-### Deterministic scoring
-
-`ml_pipeline/scorer.py` calculates the impact components using explicit, reproducible formulas. The current Pune weighting is:
-
-| Component | Weight |
-|---|---:|
-| Flood | 30% |
-| Heat | 30% |
-| Green cover | 20% |
-| Embodied carbon | 20% |
-
-`impactScore` and component risk scores are pressures, where higher values are worse. `climateScore` is a positive resilience score calculated as `100 - impactScore`, where higher values are better.
-
-### Optimization
-
-`ml_pipeline/optimizer.py` can request structured recommendations from Gemini. Proposed changes are reapplied to the deterministic scorer so that reported improvements are calculated rather than invented by the language model.
-
-## Running with Real ML Data
-
-The backend starts in `fixture` mode for predictable local development. To invoke the Python GEE + SegFormer pipeline:
-
-1. Install the Python packages used by `ml_pipeline/`, including Earth Engine, geemap, NumPy, PyTorch, Transformers, Google Gen AI, Pydantic, and python-dotenv.
-2. Authenticate Google Earth Engine locally or configure a service account.
-3. Train or provide compatible SegFormer weights.
-4. Configure these values in `backend/.env`:
-
-```env
-ML_MODE=python
-PYTHON_COMMAND=python
-GEE_PROJECT_ID=your-project-id
-GEE_SERVICE_ACCOUNT=your-service-account-email
-GEE_KEY_PATH=path/to/service-account-key.json
-MODEL_PATH=../models/segformer-pune
-```
-
-5. Include valid Pune coordinates when creating an assessment.
-
-To train the model:
+## Running it
 
 ```bash
-python train_segformer.py
+.venv/bin/python -m ml_pipeline.cli assess \
+  --ward 12 --built-up 3000 --plot 8000 \
+  --materials '[{"name":"cement_opc","quantityKg":120000}]' \
+  --role municipal_authority --json-out /tmp/out.json
+
+.venv/bin/python ml_pipeline/tests/test_scoring.py        # 48/48
+.venv/bin/python ml_pipeline/tests/test_data_integrity.py # 8/8
+.venv/bin/python ml_pipeline/tests/test_e2e_ward12.py
+.venv/bin/python ml_pipeline/tests/test_narrative.py     # 22/22
+.venv/bin/python engine/tests/test_engine.py             # 23/23
+PYTHONPATH=. .venv/bin/python ml_pipeline/data/ward_sweep.py
 ```
 
-Training requires valid Earth Engine authentication and writes the fine-tuned model artifacts to the configured model directory.
-
-## Optional Infrastructure
-
-From the `backend` directory, start the services you need:
+Chatbot narration (key in `.env`, never in chat or git):
 
 ```bash
-docker compose up -d database
-docker compose up -d redis
+.venv/bin/python ml_pipeline/report/narrative.py /tmp/out.json \
+  --role municipal_authority
 ```
 
-- Set `STORAGE_DRIVER=postgres` to use PostgreSQL/PostGIS.
-- Set `REDIS_URL=redis://localhost:6379` and run `npm run worker` to enable BullMQ processing.
-- Set `FILE_STORAGE_PROVIDER=s3` or `firebase` and provide the corresponding credentials for cloud object storage.
-- Configure `SMTP_*` or `TWILIO_*` values for external notifications. In-app notifications work without either provider.
+## Reuse in another city
 
-Never commit `.env` files, cloud credentials, service-account keys, or trained-model secrets.
+`engine/` scores any region supplying four things: a config file, a
+satellite cube, a census index, ward polygons. The scorer holds no city
+knowledge; a 23-test synthetic region proves the path. The contract is
+documented in code (`engine/region.py`, `validate_config`).
 
-## Testing and Verification
+## Known limits
 
-Run the backend validation suite from `backend/`:
+1. Flood and heat score a ~1 km square, not the plot. Carbon and green
+   are per-site.
+2. Daytime surface heat carries no signal here; afternoons are described
+   in words, not scored.
+3. Carbon bands are house bands with sourced anchors, awaiting
+   re-derivation.
+4. A plausible-but-wrong input inside 0–100 is undetectable without a
+   second source.
+5. No trained model exists in this project, deliberately.
 
-```bash
-npm test
-npm run check
+## Repository map
+
 ```
-
-Build the frontend before submitting UI changes:
-
-```bash
-cd frontend
-npm run build
+ml_pipeline/cli.py          entry point: assess | ward-profile | build-data
+ml_pipeline/core/           scoring, canopy ledger, geometry, mitigations
+ml_pipeline/intake/         input validation (shape, quantities, units)
+ml_pipeline/report/         officer report + chatbot narrator
+ml_pipeline/config/         pune, materials (India factors), species (audited)
+ml_pipeline/data/           cube + tree index + measured evidence + methods
+ml_pipeline/data/archive/   retired probes (nothing imports them)
+ml_pipeline/tests/          the suites listed above
+ml_pipeline/ui/             864-cell visual map (regenerate: build_map.py)
+engine/                     any-region package + contract + self-tests
+docs/                       this file's figures (regenerate: make_figures.py)
 ```
-
-## Development Notes
-
-- Formula-based scores are the system of record; generative recommendations do not replace them.
-- Fixture responses are labeled as development data and should not be presented as measured site results.
-- Local JSON persistence is intended for single-process development. Use PostgreSQL when running distributed workers.
-- Uploaded files remain private and are served only through authenticated API routes.
-- Production deployments should add managed secrets, TLS, database backups, upload malware scanning, and external monitoring.
-
-## Contributing
-
-1. Create a focused feature branch.
-2. Keep frontend, backend, and ML changes within their relevant modules.
-3. Add or update tests for behavior changes.
-4. Run backend checks and the frontend production build.
-5. Open a pull request describing the change, verification performed, and any configuration impact.
-
-## Documentation
-
-- [Backend API and operations guide](backend/README.md)
-- [Mock assessment payload](backend/examples/mock-assessment.json)
-- [Mock assessment with supplied ML output](backend/examples/mock-assessment-with-ml.json)
-
-## Disclaimer
-
-This MVP provides planning and decision-support indicators. Its outputs are not a substitute for statutory environmental clearance, certified engineering analysis, flood modelling, or professional site investigation.

@@ -1,0 +1,348 @@
+{
+  "provenance": "Derived empirically from PMC Tree Census 2019 (250,000-row sample of CKAN package f00d83b8-c70f-4fff-9ac7-9a6ab4255edf). Species strings are the census' own botanical_name values including taxonomic suffix.",
+  "sample_size": 250000,
+  "city_tree_count": 4090000,
+  "sample_findings": {
+    "status": "STALE_VS_FULL_INDEX_2026-10-10",
+    "status_note": "This 250k-sample block predates the full 4,009,623-tree index audit below and contradicts it: dominant order here (Leucaena first at 15.68%) vs full index (Gliricidia first at 23.21%), and its top-3 shares (15.68+9.79+9.61=35.08) do not sum to its stated top_3_share_pct 32.02. The classification lists (non_native/native_priority) are unaffected -- only this statistics block is stale. Prefer full_index_audit; do not quote sample_findings shares as city figures.",
+    "distinct_species": 298,
+    "top_3_share_pct": 32.02,
+    "top_30_share_pct": 74.52,
+    "median_girth_cm": 35.0,
+    "girth_p75_cm": 74.0,
+    "girth_p90_cm": 119.0,
+    "rare_flag_rate_pct": 2.15,
+    "condition_breakdown": {
+      "Healthy": 232351,
+      "Average": 11251,
+      "Poor": 873,
+      "Dead": 5524
+    },
+    "dominant_species": [
+      {
+        "name": "Leucaena leucocephala",
+        "share_pct": 15.68,
+        "status": "non_native"
+      },
+      {
+        "name": "Gliricidia sepium",
+        "share_pct": 9.79,
+        "status": "non_native"
+      },
+      {
+        "name": "Polyalthia longifolia",
+        "share_pct": 9.61,
+        "status": "non_native"
+      },
+      {
+        "name": "Mangifera indica",
+        "share_pct": 3.47,
+        "status": "native"
+      },
+      {
+        "name": "Cocos nucifera",
+        "share_pct": 3.36,
+        "status": "non_local"
+      },
+      {
+        "name": "Azadirachta indica",
+        "share_pct": 3.18,
+        "status": "native"
+      },
+      {
+        "name": "Dalbergia melanoxylon",
+        "share_pct": 1.93,
+        "status": "native"
+      },
+      {
+        "name": "Santalum album",
+        "share_pct": 1.81,
+        "status": "special"
+      }
+    ]
+  },
+  "full_index_audit": {
+    "measured": "2026-10-10",
+    "method": "Direct SQL over ml_pipeline/data/tree_index.sqlite (4,009,623 rows). Species grouped by species_key rule (first two tokens). Externally convergent: OpenCity explainer reports the identical top-3 in the identical order at 47%; HT May-2019 reports 407 spp.",
+    "indexed_trees": 4009623,
+    "distinct_botanical_strings": 414,
+    "median_girth_cm": 28.0,
+    "rare_flag_rate_pct": 1.28,
+    "top_species": [
+      {"name": "Gliricidia sepium", "share_pct": 23.21, "status": "non_native"},
+      {"name": "Leucaena leucocephala", "share_pct": 18.43, "status": "non_native"},
+      {"name": "Dalbergia melanoxylon", "share_pct": 6.9, "status": "native"},
+      {"name": "Acacia nilotica", "share_pct": 2.74, "status": "non_native"},
+      {"name": "Azadirachta indica", "share_pct": 2.71, "status": "native"},
+      {"name": "Prosopis juliflora", "share_pct": 2.51, "status": "non_native"},
+      {"name": "Acacia catechu", "share_pct": 2.1, "status": "non_native"},
+      {"name": "Polyalthia longifolia", "share_pct": 2.07, "status": "non_native"}
+    ],
+    "top_3_share_pct": 48.54
+  },
+  "matching_note": "Species matched by first two tokens of the census string (genus + epithet). Tolerates the taxonomic suffix; will also match a variety when the variety name is token 3. NOTE: the census misspells several taxa. Psidium gaujava, Eucalyptus globulus and Tecoma stans are recorded as the census spells them; both spellings are listed where they differ.",
+  "non_native": {
+    "Leucaena leucocephala": {
+      "origin": "Central America",
+      "note": "Second-largest non-native share in the city (full-index audit)."
+    },
+    "Gliricidia sepium": {
+      "origin": "Central America",
+      "note": "Largest non-native share in the city (full-index audit). Nitrogen-fixing plantation."
+    },
+    "Polyalthia longifolia": {
+      "origin": "SE Asia / Indian Ocean",
+      "note": "Commercial False Ashoka. Three census spellings exist; all non-native."
+    },
+    "Cocos nucifera": {
+      "origin": "Naturalised coastal",
+      "note": "Not a native PMC tree."
+    },
+    "Grevillea robusta": {
+      "origin": "Australia",
+      "note": "Silky oak, nursery origin."
+    },
+    "Santalum album": {
+      "origin": "Special / hemiparasitic",
+      "note": "Sandalwood. Special category, not simply non-native."
+    },
+    "Ficus benjamina": {
+      "origin": "Horticultural",
+      "note": "Ornamental Ficus, distinct from native Ficus religiosa/benghalensis."
+    },
+    "Millingtonia hortensis": {
+      "origin": "SE Asia",
+      "note": "Nightingale palm, avenue tree."
+    },
+    "Delonix regia": {
+      "origin": "Madagascar",
+      "note": "Gulmohar. State flower of Maharashtra but non-native."
+    },
+    "Peltophorum pterocarpum": {
+      "origin": "Non-local / naturalised",
+      "note": "Commonly listed non-native to the Deccan."
+    },
+    "Tecoma stans": {
+      "origin": "Americas",
+      "note": "Ornamental."
+    },
+    "Jacaranda mimosifolia": {
+      "origin": "South America",
+      "note": "Ornamental."
+    },
+    "Eucalyptus globulus": {
+      "origin": "Australia",
+      "note": "Plantation."
+    },
+    "Bauhinia purpurea": {
+      "origin": "S/SE Asia",
+      "note": "Naturalised."
+    },
+    "Senna siamea": {
+      "origin": "SE Asia",
+      "note": "Naturalised plantation."
+    },
+    "Albizia saman": {
+      "origin": "Central/South America",
+      "note": "Rain tree, non-native."
+    },
+    "Plumeria alba": {
+      "origin": "Central America",
+      "note": "Ornamental."
+    },
+    "Roystonea regia": {
+      "origin": "Central America",
+      "note": "Royal palm, non-native."
+    },
+    "Annona squamosa": {
+      "origin": "Central/South America",
+      "note": "Custard apple, non-native."
+    },
+    "Psidium guajava": {
+      "origin": "Central/South America",
+      "note": "Guava, naturalised."
+    },
+    "Acacia nilotica": {
+      "origin": "Africa / Middle East",
+      "note": "Babul. Naturalised, not native."
+    },
+    "Psidium gaujava": {
+      "origin": "Central/South America",
+      "note": "Classified from the census distribution."
+    },
+    "Terminalia catappa": {
+      "origin": "SE Asia / Malesia, naturalised",
+      "note": "Classified from the census distribution."
+    },
+    "Spathodea campanulata": {
+      "origin": "Tropical Africa",
+      "note": "Classified from the census distribution."
+    },
+    "Cascabela thevetia": {
+      "origin": "Tropical America",
+      "note": "Classified from the census distribution."
+    },
+    "Pithecellobium dulce": {
+      "origin": "Mexico / Central America",
+      "note": "Classified from the census distribution."
+    },
+    "Plumeria obtusa": {
+      "origin": "Central America",
+      "note": "Classified from the census distribution."
+    },
+    "Casuarina equisetifolia": {
+      "origin": "Australia / SE Asia",
+      "note": "Classified from the census distribution."
+    },
+    "Manilkara zapota": {
+      "origin": "Mexico / Central America",
+      "note": "Classified from the census distribution."
+    },
+    "Broussonetia papyrifera": {
+      "origin": "Indian subcontinent, naturalised",
+      "note": "Classified from the census distribution."
+    }
+  },
+  "native_priority": [
+    {
+      "name": "Mangifera indica",
+      "share_pct": 3.47,
+      "role": "Large-canopy native. Primary compensatory species."
+    },
+    {
+      "name": "Azadirachta indica",
+      "share_pct": 3.18,
+      "role": "Native canopy, high ecological value, proven on PMC streets."
+    },
+    {
+      "name": "Dalbergia melanoxylon",
+      "share_pct": 1.93,
+      "role": "Native, drought tolerant."
+    },
+    {
+      "name": "Ficus benghalensis",
+      "share_pct": 0.43,
+      "role": "Banyan. Heritage native, sacred grove value."
+    },
+    {
+      "name": "Ficus religiosa",
+      "share_pct": 0.53,
+      "role": "Peepal. Heritage native."
+    },
+    {
+      "name": "Ficus racemosa",
+      "share_pct": 1.08,
+      "role": "Native fig, keystone for birds."
+    },
+    {
+      "name": "Syzygium cumini",
+      "share_pct": 1.24,
+      "role": "Jamun. Native shade tree."
+    },
+    {
+      "name": "Tamarindus indica",
+      "share_pct": 0.72,
+      "role": "Native, long-lived."
+    },
+    {
+      "name": "Pongamia pinnata",
+      "share_pct": 1.09,
+      "role": "Native karanja, N-fixing."
+    },
+    {
+      "name": "Caryota urens",
+      "share_pct": 0.95,
+      "role": "Native fish-tailed palm."
+    },
+    {
+      "name": "Madhuca longifolia",
+      "share_pct": 0.03,
+      "role": "Mahua. Rare in census, high value."
+    },
+    {
+      "name": "Michelia champaca",
+      "share_pct": null,
+      "role": "Champaca. Native, valued avenue tree."
+    },
+    {
+      "name": "Nyctanthes arbor-tristis",
+      "share_pct": null,
+      "role": "Parijat. Native, night-flowering, PMC staple."
+    },
+    {
+      "name": "Holoptelia integrifolia",
+      "share_pct": null,
+      "role": "Koombar / Indian elm. Native, drought tolerant."
+    },
+    {
+      "name": "Areca catechu",
+      "share_pct": null,
+      "role": "Betel palm. Native to the subcontinent."
+    },
+    {
+      "name": "Citrus aurantiifolia",
+      "share_pct": null,
+      "role": "Lime. Native to the subcontinent."
+    },
+    {
+      "name": "Artocarpus heterophyllus",
+      "share_pct": null,
+      "role": "Jackfruit. Native, large canopy, valued food tree."
+    },
+    {
+      "name": "Putranjiva roxburghii",
+      "share_pct": null,
+      "role": "Native evergreen."
+    },
+    {
+      "name": "Moringa oleifera",
+      "share_pct": null,
+      "role": "Drumstick tree. Native to the subcontinent."
+    }
+  ],
+  "transplant_hardy": [
+    {
+      "name": "Azadirachta indica",
+      "max_girth_cm": 45,
+      "note": "Transplants well as sapling/young."
+    },
+    {
+      "name": "Ficus benghalensis",
+      "max_girth_cm": 30,
+      "note": "Low girth only; banyan roots are extensive."
+    },
+    {
+      "name": "Syzygium cumini",
+      "max_girth_cm": 30,
+      "note": "Low girth only."
+    },
+    {
+      "name": "Terminalia catappa",
+      "max_girth_cm": 30,
+      "note": "Non-local but transplant tolerant."
+    }
+  ],
+  "transplant_hardy_ceiling_cm": 45,
+  "transplant_hardy_ceiling_note": "Above ~45 cm girth root-ball transplantation has poor survival. Census median girth is 35 cm and p75 is 74 cm, so most mature city trees are past practical transplantation. This is why the ledger defaults to FELL+COMPENSATE for most in-footprint mature trees.",
+  "legal": {
+    "act": "The Maharashtra (Urban Areas) Preservation of Trees Act, 1975 (Mah. XLIV of 1975), as amended July 2021",
+    "authority": "Tree Officer / Tree Authority constituted under the Act",
+    "permission_required_for_felling": true,
+    "compensation_rule": "The 1975 Act (as amended July 2021) requires compensatory plantation of trees 'in such number equal to the age of the tree being transplanted', of the same or another local/native variety, under expert guidance, with survival monitored. The July 2021 amendment made this cumulative AGE rather than a flat 1:3 ratio. (Section number deliberately not cited: primary Act text unverified 2026-10-10.)",
+    "compensation_rule_status": "AGE_BASED_CONFIRMED",
+    "age_girth_cm_per_year": 2.0,
+    "age_girth_cm_per_year_note": "Central girth-increment proxy driving CanopyLedger.age_cm_per_year (added 2026-10-10; value unchanged from the hardcoded 2.0). Crude species-blind proxy -- report compensation as a RANGE, never a point.",    "compensation_rule_note": "MATERIAL CORRECTION: the earlier assumption of a flat 3-5 saplings per tree is wrong. Statutory basis is age-equivalence. The census has NO age column, so age must be estimated from girth and reported as a RANGE with wide uncertainty. A flat ratio understates liability in every case.",
+    "girth_90cm_rule": "NO_SUPPORTS",
+    "girth_90cm_rule_note": "A 'girth >= 90 cm therefore MUST_PRESERVE' rule is OUR OWN engineering policy, not a provision of the 1975 Act. The Act requires Tree Officer permission without a girth-based automatic prohibition. Maharashtra Forest Dept selection-girth schedules (90 cm etc.) apply to forests, not urban areas. Must always be labelled house policy, never law."
+  },
+  "rare_species_flag": {
+    "field": "is_rare",
+    "observed_rate_pct": 2.15,
+    "note": "The census' own flag. Trust the surveyors' assertion; do not recompute rarity from a species list."
+  },
+  "classification_coverage": {
+    "sample_size": 250000,
+    "unclassified_share_pct": null,
+    "note": "Species absent from both lists default to NATIVE-conservative for compensation: more saplings are demanded, because under-planting is the failure mode that damages the city, while over-planting is only a cost. The default still recommends a native-weighted mix."
+  }
+}

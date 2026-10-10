@@ -1,0 +1,130 @@
+{
+  "rows": [
+    {
+      "ward": 3,
+      "score": 40.4,
+      "impact": 59.6,
+      "risk_band": "Moderate",
+      "complete": true,
+      "built_pct": 51.67,
+      "veg_pct": 0.74,
+      "lst_mean_c": 41.7982,
+      "lst_ref_c": 41.259,
+      "uhi_delta_c": 0.539200000000001,
+      "trees_loaded": 133435,
+      "tree_canopy_pct": 1.99,
+      "trees_reliable": true,
+      "sub_scores": {
+        "flood": 57.6,
+        "heat": 27.0,
+        "green": 99.8,
+        "carbon": 71.5
+      }
+    },
+    {
+      "ward": 7,
+      "score": 38.9,
+      "impact": 61.1,
+      "risk_band": "High",
+      "complete": true,
+      "built_pct": 60.97,
+      "veg_pct": 8.129999999999999,
+      "lst_mean_c": 35.2073,
+      "lst_ref_c": 34.4085,
+      "uhi_delta_c": 0.7988,
+      "trees_loaded": 209984,
+      "tree_canopy_pct": 25.42,
+      "trees_reliable": true,
+      "sub_scores": {
+        "flood": 51.0,
+        "heat": 39.9,
+        "green": 97.6,
+        "carbon": 71.5
+      }
+    },
+    {
+      "ward": 12,
+      "score": 47.1,
+      "impact": 52.9,
+      "risk_band": "Moderate",
+      "complete": true,
+      "built_pct": 64.91,
+      "veg_pct": 6.800000000000001,
+      "lst_mean_c": 34.8842,
+      "lst_ref_c": 34.6637,
+      "uhi_delta_c": 0.22050000000000125,
+      "trees_loaded": 44468,
+      "tree_canopy_pct": 23.42,
+      "trees_reliable": true,
+      "sub_scores": {
+        "flood": 52.4,
+        "heat": 11.0,
+        "green": 98.0,
+        "carbon": 71.5
+      }
+    },
+    {
+      "ward": 13,
+      "score": 30.6,
+      "impact": 69.4,
+      "risk_band": "High",
+      "complete": true,
+      "built_pct": 57.3,
+      "veg_pct": 5.17,
+      "lst_mean_c": 37.0202,
+      "lst_ref_c": 35.7248,
+      "uhi_delta_c": 1.2954000000000008,
+      "trees_loaded": 36785,
+      "tree_canopy_pct": 17.07,
+      "trees_reliable": true,
+      "sub_scores": {
+        "flood": 53.3,
+        "heat": 64.8,
+        "green": 98.4,
+        "carbon": 71.5
+      }
+    },
+    {
+      "ward": 21,
+      "score": 36.2,
+      "impact": 63.8,
+      "risk_band": "High",
+      "complete": true,
+      "built_pct": 61.199999999999996,
+      "veg_pct": 6.58,
+      "lst_mean_c": 36.8692,
+      "lst_ref_c": 35.9234,
+      "uhi_delta_c": 0.9457999999999984,
+      "trees_loaded": 41295,
+      "tree_canopy_pct": 14.5,
+      "trees_reliable": true,
+      "sub_scores": {
+        "flood": 52.3,
+        "heat": 47.3,
+        "green": 98.0,
+        "carbon": 71.5
+      }
+    },
+    {
+      "ward": 25,
+      "score": 39.6,
+      "impact": 60.4,
+      "risk_band": "High",
+      "complete": true,
+      "built_pct": 67.42,
+      "veg_pct": 1.06,
+      "lst_mean_c": 37.0143,
+      "lst_ref_c": 36.4209,
+      "uhi_delta_c": 0.5933999999999955,
+      "trees_loaded": 9782,
+      "tree_canopy_pct": 9.98,
+      "trees_reliable": true,
+      "sub_scores": {
+        "flood": 57.5,
+        "heat": 29.7,
+        "green": 99.7,
+        "carbon": 71.5
+      }
+    }
+  ]
+}
