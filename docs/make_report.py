@@ -98,9 +98,11 @@ def main() -> int:
     story = []
     A = story.append
     A(Paragraph("Dishadharti — ML Technical Report", sTitle))
-    A(Paragraph("Climate screening for building proposals in Pune: data, "
-                "methods, measurements, and sources. Every number below was "
-                "read off a real run.", sSub))
+    A(Paragraph("Everything the ML track built: inputs, data, methods per "
+                "factor, measurements, decisions, sources with links, and "
+                "how to run and reuse it. Written so every teammate — "
+                "technical or not — knows exactly what is done. Every "
+                "number below was read off a real run.", sSub))
     A(rule())
 
     A(Paragraph("1. Problem and use cases", sH1))
@@ -130,7 +132,28 @@ def main() -> int:
                "census + wards, same scorer."]],
              widths=[38 * mm, 32 * mm, 100 * mm]))
 
-    A(Paragraph("2. System architecture", sH1))
+    A(Paragraph("2. Inputs: what the builder hands over", sH1))
+    A(Paragraph("Four things, nothing else trusted. Storeys and project "
+                "type are framing words only — they never change a number.",
+                sBody))
+    A(stable(["Input", "Example", "How it is used"],
+             [["Site boundary", "Map pin / GeoJSON / KML polygon",
+               "Decides the ward and exactly which census trees stand "
+               "inside the footprint (point-in-polygon, never a ward-id "
+               "join)."],
+              ["Built-up area", "3,000 m2",
+               "Drives flood (impervious fraction) and divides carbon "
+               "intensity. Must not exceed plot area — rejected otherwise."],
+              ["Plot area", "8,000 m2",
+               "The site extent. Canopy percentage divides by this; "
+               "zero or missing plot fails validation with reasons."],
+              ["Bill of quantities", "cement 120,000 kg; steel 45,000 kg",
+               "Each line times its emission factor. 102 name aliases "
+               "resolve real-world spellings; over 10% unrecognised mass "
+               "withholds the carbon score instead of guessing."]],
+             widths=[32 * mm, 52 * mm, 86 * mm]))
+
+    A(Paragraph("3. System architecture", sH1))
     A(Paragraph("Two phases. Phase 1 runs once, offline: satellites and "
                 "census files are baked into two artefacts — epoch_cube.json "
                 "(864 one-km Pune cells: land cover, day/night surface "
@@ -146,7 +169,7 @@ def main() -> int:
                 "Every flood score in the system comes out of this "
                 "partition.", sCap))
 
-    A(Paragraph("3. Data built", sH1))
+    A(Paragraph("4. Data built", sH1))
     A(stable(["Artefact", "Content", "Count / status"],
              [["Epoch cube", "2024 land cover + temperatures + elevation",
                "864/864 cells complete"],
@@ -167,7 +190,7 @@ def main() -> int:
                 "its nine land classes sum to one per cell. Water went 0 to "
                 "258 cells; vegetation median 6.3% to 30.2%.", sBody))
 
-    A(Paragraph("4. Flood", sH1))
+    A(Paragraph("5. Flood", sH1))
     A(Paragraph("Standard SCS curve-number hydrology (NRCS TR-55): "
                 "area-weighted coefficients versus a vegetated baseline, "
                 "excess runoff at the design storm. Drainage proximity can "
@@ -183,7 +206,7 @@ def main() -> int:
     A(Paragraph("Figure 3. Flood rises with concrete, green cover falls "
                 "with vegetation loss. Both point the right way.", sCap))
 
-    A(Paragraph("5. Heat", sH1))
+    A(Paragraph("6. Heat", sH1))
     A(Paragraph("Night surface temperature minus a rural vegetated ring, "
                 "over a measured 5.0 C span. City mean +1.62 C above rural "
                 "(Yale YCEO anchor sampled live at +1.139). Daytime was "
@@ -196,7 +219,7 @@ def main() -> int:
     A(fig("heat_contrast.png", width_mm=130))
     A(Paragraph("Figure 4. Only the night column carries signal.", sCap))
 
-    A(Paragraph("6. Green cover and carbon", sH1))
+    A(Paragraph("7. Green cover and carbon", sH1))
     A(Paragraph("Green: census canopy (70%) + satellite ground vegetation "
                 "(30%), stratified against double-counting; missing data "
                 "returns unavailable, never perfect. Compensation is "
@@ -213,7 +236,7 @@ def main() -> int:
     A(Paragraph("Figure 6. All four factors across 41 wards. Carbon is flat "
                 "because materials do not vary by location.", sCap))
 
-    A(Paragraph("7. What the system refuses", sH1))
+    A(Paragraph("8. What the system refuses", sH1))
     A(Paragraph("Missing data drops a factor out (weights redistribute) — "
                 "never zero-filled. The narrator cannot alter numbers "
                 "(prompt rules + tests; one live verdict-softening caught "
@@ -221,7 +244,7 @@ def main() -> int:
                 "soil group). No neural scorer: one candidate heat model was "
                 "trained, failed its own bars, and ships nothing.", sBody))
 
-    A(Paragraph("8. Verification ledger", sH1))
+    A(Paragraph("9. Verification ledger", sH1))
     A(stable(["Claim", "Evidence"],
              [["Flood tracks built cover", "r = +0.92, n = 41 real runs"],
               ["Flood tracks vegetation", "r = −0.95"],
@@ -236,42 +259,93 @@ def main() -> int:
              widths=[60 * mm, 110 * mm]))
 
     A(PageBreak())
-    A(Paragraph("9. Sources", sH1))
+    A(Paragraph("10. Sources", sH1))
     A(Paragraph("Datasets", sH2))
-    A(stable(["Dataset", "Source"],
+    A(stable(["Dataset", "Source", "Link"],
              [["PMC Tree Census 2019 (17 parts)",
-               "data.opencity.in, CKAN f00d83b8-c70f-4fff-9ac7-9a6ab4255edf"],
-              ["IMD 0.25-degree daily rainfall 1901–2024",
-               "imdpune.gov.in/cmpg/Griddata (Pai et al. 2014, MAUSAM)"],
+               "OpenCity CKAN package f00d83b8",
+               "data.opencity.in"],
+              ["IMD 0.25-degree daily rainfall 1901-2024 (Pai et al. 2014)",
+               "IMD Pune, Climate Monitoring group",
+               "imdpune.gov.in/cmpg/Griddata"],
               ["Landsat 8/9 C2L2 surface temperature",
-               "USGS; GEE LANDSAT/LC08/C02/T1_L2, LC09/C02/T1_L2"],
-              ["MODIS day/night LST (Terra + Aqua)",
-               "NASA; GEE MODIS/061/MOD11A1, MYD11A1 (overpasses 10:30 / 1:30)"],
-              ["Dynamic World land cover", "Google; GOOGLE/DYNAMICWORLD/V1"],
-              ["ECOSTRESS night LST", "NASA/JPL; NASA/ECOSTRESS/L2T_LSTE/V2"],
-              ["Yale YCEO urban heat", "YALE/YCEO/UHI/UHI_yearly_averaged/v4"],
-              ["GEDI canopy height", "NASA; LARSE/GEDI/GEDI02_A_002_MONTHLY"],
-              ["IFC India materials database",
-               "IFC/EU Eco-cities 2017, Table 16 GWP"],
-              ["PMC ward boundaries", "pmc_wards_2025.kml (41 wards)"]],
-             widths=[60 * mm, 110 * mm]))
+               "USGS via Google Earth Engine",
+               "LANDSAT/LC08/C02/T1_L2 (GEE catalog)"],
+              ["MODIS day/night LST, Terra + Aqua (10:30 / 1:30)",
+               "NASA via Google Earth Engine",
+               "MODIS/061/MOD11A1 + MYD11A1 (GEE catalog)"],
+              ["Dynamic World land cover (9 classes)",
+               "Google via Google Earth Engine",
+               "GOOGLE/DYNAMICWORLD/V1 (GEE catalog)"],
+              ["ECOSTRESS night LST (70 m)",
+               "NASA/JPL via Google Earth Engine",
+               "NASA/ECOSTRESS/L2T_LSTE/V2 (GEE catalog)"],
+              ["Yale YCEO urban heat (yearly)",
+               "Yale via Google Earth Engine",
+               "YALE/YCEO/UHI/UHI_yearly_averaged/v4 (GEE catalog)"],
+              ["GEDI canopy height (RH95)",
+               "NASA via Google Earth Engine",
+               "LARSE/GEDI/GEDI02_A_002_MONTHLY (GEE catalog)"],
+              ["IFC India materials database (Table 16 GWP)",
+               "IFC / EU Eco-cities 2017",
+               "edgebuildings.com (IFC India DB methodology report)"],
+              ["PMC ward boundaries (41 wards)",
+               "pmc_wards_2025.kml, repo file",
+               "repo: pmc_wards_2025.kml"]],
+             widths=[48 * mm, 62 * mm, 60 * mm]))
     A(Paragraph("Papers and standards", sH2))
-    A(stable(["Reference", "Used for"],
-             [["USDA SCS TR-55 (1986)", "Curve numbers, runoff equation"],
-              ["Vivekanandan (2022), JWRE", "Gumbel/EV1 choice for Pune"],
-              ["Das et al. (2022), MAUSAM", "Gumbel IDF precedent, India"],
-              ["Chow / Maidment / Mays (1988)", "Annual-maximum method"],
-              ["Stewart & Oke (2012)", "Local Climate Zones language"],
-              ["Karadumpa et al. (2024)", "Indian cement plant factors"],
-              ["CEEW (steel; aluminium)", "Indian industry factors"],
-              ["Akshatha et al. (2025)", "High-rise mean 454"],
-              ["IGBC Net Zero Carbon rating", "700 kgCO2e/m2 anchor"],
-              ["WRI India Pune tree-cover note", "620 ha loss; census caveats"],
-              ["Maharashtra Trees Act 1975 + 2021 amendment",
-               "Felling permission; age-equivalent compensation"]],
-             widths=[60 * mm, 110 * mm]))
+    A(stable(["Reference", "Used for", "Find it"],
+             [["USDA SCS TR-55 (1986)", "Curve numbers, runoff equation",
+               "USDA NRCS (TR-55)"],
+              ["Vivekanandan (2022), JWRE journalspub",
+               "Gumbel/EV1 choice for Pune",
+               "civil.journalspub.info (JWRE Vol.8 No.1)"],
+              ["Das et al. (2022), MAUSAM journal",
+               "Gumbel IDF precedent, India", "MAUSAM journal"],
+              ["Chow / Maidment / Mays (1988), Applied Hydrology",
+               "Annual-maximum method", "McGraw-Hill textbook"],
+              ["Stewart & Oke (2012), Bull. Am. Meteorol. Soc.",
+               "Local Climate Zones language", "AMS journal"],
+              ["Karadumpa et al. (2024), Indian cement plants",
+               "Cement factors 0.89–0.94", "PubMed 38123770"],
+              ["CEEW steel + aluminium reports",
+               "Indian industry factors", "ceew.in publications"],
+              ["Akshatha et al. (2025), high-rise study",
+               "Mean 454 kgCO2e/m2", "ResearchGate 396344543"],
+              ["IGBC Net Zero Carbon rating page",
+               "700 kgCO2e/m2 anchor", "igbc.in net-zero-carbon-rating"],
+              ["WRI India Pune tree-cover technical note (DOI "
+               "10.46830/writn.21.00111)",
+               "620 ha loss; census caveats", "wri-india.org"],
+              ["Maharashtra Trees Act 1975 + 2021 amendment (PRS Bill "
+               "No. 8 of 2021)",
+               "Felling permission; age-equivalent compensation",
+               "prsindia.org; pmc.gov.in tree-protection page"]],
+             widths=[52 * mm, 58 * mm, 60 * mm]))
 
-    A(Paragraph("10. Run and reuse", sH1))
+    A(Paragraph("11. Engine reuse and chatbot", sH1))
+    A(Paragraph("Any-region engine. The scorer holds no city knowledge: "
+                "engine/region.py builds the grid and a validated config "
+                "scaffold, engine/census.py maps any CSV headers onto the "
+                "canonical tree index, engine/score.py scores through the "
+                "live core (imports only, nothing copied). Proven by 23 "
+                "self-tests on a synthetic region with foreign headers. "
+                "A new city supplies four things — config, satellite cube, "
+                "census index, ward polygons — and the same code scores it.",
+                sBody))
+    A(Paragraph("Chatbot narrator. Reads the computed assessment JSON and "
+                "writes officer-plain prose: verdict first (quoted "
+                "verbatim), then each factor with its number, conditions "
+                "with measured effects, the tree ledger, and unknowns "
+                "stated plainly. Model: Gemini Flash via REST (standard "
+                "library only); key lives in server-side .env, never in "
+                "chat, git, or prompts. Verified live: every score, delta, "
+                "canopy figure, and verdict exact across test wards; one "
+                "verdict-softening caught on a live run and locked by test. "
+                "Blocking issues (unknown materials) are mandatory in "
+                "prose, never buried.", sBody))
+
+    A(Paragraph("12. Run and reuse", sH1))
     A(Paragraph("Assess: python -m ml_pipeline.cli assess --ward 12 "
                 "--built-up 3000 --plot 8000 --materials '[...]' "
                 "--role municipal_authority --json-out /tmp/out.json. "
