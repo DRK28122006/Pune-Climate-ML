@@ -1,0 +1,1002 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "code": "heat_unavailable",
+        "field": "lst_mean_c",
+        "message": "No LST observation supplied, so the heat factor cannot be scored and the composite excludes it. Requires the satellite epoch cube."
+      }
+    ],
+    "geometry": {
+      "area_m2": 8007.1,
+      "area_km2": 0.008,
+      "perimeter_m": 357.9,
+      "centroid_lon": 73.885353,
+      "centroid_lat": 18.447152,
+      "bbox": [
+        73.884929,
+        18.446747,
+        73.885776,
+        18.447556
+      ],
+      "compactness": 0.7854,
+      "vertex_count": 5,
+      "crs_used": "EPSG:32643",
+      "area_method": "pyproj+shapely in EPSG:32643"
+    },
+    "site": {
+      "ward_no": 40,
+      "ward_name": "Ward 40",
+      "drainage_context": {
+        "dist_to_storm_drain_m": 2.4,
+        "nearest_natural_water_m": 237.0,
+        "flood_plain_note": "Nearest natural watercourse 237 m. Proximity to a nala or river is flood-plain EXPOSURE and raises risk. It must never be used as a drainage benefit."
+      },
+      "builtUpAreaSqm": 3000.0,
+      "plotAreaSqm": 8000.0,
+      "builtUpRatio": 0.375,
+      "materials": [
+        {
+          "name": "cement",
+          "quantityKg": 180000.0
+        },
+        {
+          "name": "steel_reinforcement",
+          "quantityKg": 95000.0
+        },
+        {
+          "name": "brick",
+          "quantityKg": 210000.0
+        },
+        {
+          "name": "river_sand",
+          "quantityKg": 140000.0
+        },
+        {
+          "name": "glass",
+          "quantityKg": 12000.0
+        },
+        {
+          "name": "aluminium",
+          "quantityKg": 4500.0
+        }
+      ],
+      "storeys": 8,
+      "epoch": 2024
+    },
+    "indicators_supplied": {
+      "dist_to_storm_drain_m": 2.4
+    }
+  },
+  "score": {
+    "climate_score": 58.6,
+    "impact_score": 41.4,
+    "risk_band": "Moderate",
+    "complete": true,
+    "missing_factors": [],
+    "sub_scores": {
+      "flood": 48.0,
+      "heat": 16.4,
+      "green": 97.4,
+      "carbon": 13.2
+    },
+    "weight_contributions": {
+      "flood": 14.4,
+      "heat": 4.9,
+      "green": 19.5,
+      "carbon": 2.6
+    },
+    "factors": {
+      "flood": {
+        "score": 48.0,
+        "curve_number": 94.3,
+        "baseline_curve_number": 60.0,
+        "runoff_mm": 132.9,
+        "baseline_runoff_mm": 47.2,
+        "excess_runoff_mm": 85.6,
+        "design_storm_mm": 150.0,
+        "slope_multiplier": 1.05,
+        "drainage_multiplier": 0.801,
+        "drainage_basis": "distance to engineered stormwater outfall"
+      },
+      "heat": {
+        "score": 16.4,
+        "status": "OK",
+        "reason": null,
+        "lst_celsius": 38.97,
+        "lst_reference_c": 38.64,
+        "uhi_delta_c": 0.33,
+        "uhi_max_delta_c": 2.0,
+        "confidence": "medium",
+        "confidence_note": "Surface temperature, not air temperature. Single-pass composite; a seasonal multi-pass mean is stronger."
+      },
+      "green": {
+        "score": 97.4,
+        "sat_veg_pct": 7.2,
+        "canopy_cover_pct": 1.0,
+        "ground_vegetation_pct": 6.2,
+        "effective_green_pct": 2.6,
+        "canopy_weight": 0.7,
+        "ground_vegetation_weight": 0.3,
+        "source_divergence_pts": 6.2,
+        "resolution_mismatch_pts": 0.0,
+        "confidence": "high",
+        "confidence_note": "Census and satellite agree within 6.2 pts."
+      },
+      "carbon": {
+        "score": 13.2,
+        "total_kgco2e": 473450.0,
+        "intensity_kgco2e_m2": 157.8,
+        "band": "Low",
+        "built_up_area_m2": 3000.0,
+        "line_items": [
+          {
+            "name": "cement_opc",
+            "quantity_kg": 180000.0,
+            "ef": 0.74,
+            "kgco2e": 133200.0,
+            "category": "binder",
+            "status": "OK"
+          },
+          {
+            "name": "steel_reinforcement",
+            "quantity_kg": 95000.0,
+            "ef": 2.3,
+            "kgco2e": 218500.0,
+            "category": "structural",
+            "status": "OK"
+          },
+          {
+            "name": "brick_clay",
+            "quantity_kg": 210000.0,
+            "ef": 0.24,
+            "kgco2e": 50400.0,
+            "category": "masonry",
+            "status": "OK"
+          },
+          {
+            "name": "river_sand",
+            "quantity_kg": 140000.0,
+            "ef": 0.005,
+            "kgco2e": 700.0,
+            "category": "aggregate",
+            "status": "OK"
+          },
+          {
+            "name": "glass_float",
+            "quantity_kg": 12000.0,
+            "ef": 1.2,
+            "kgco2e": 14400.0,
+            "category": "glazing",
+            "status": "OK"
+          },
+          {
+            "name": "aluminium_primary",
+            "quantity_kg": 4500.0,
+            "ef": 12.5,
+            "kgco2e": 56250.0,
+            "category": "fa\u00e7ade",
+            "status": "OK"
+          }
+        ],
+        "dominant_material": "steel_reinforcement",
+        "dominant_share_pct": 46.2,
+        "double_count_warning": null,
+        "unknown_materials": [],
+        "unknown_mass_pct": 0.0,
+        "ecological_advisories": [
+          {
+            "material": "river_sand",
+            "advisory": "CRITICAL_RIVERBED_EXTRACTION",
+            "severity": "blocking",
+            "text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+            "alternatives": [
+              "manufactured_sand_msand"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_note": "A1-A3 cradle-to-gate. Excludes transport and site waste."
+      }
+    },
+    "canopy": {
+      "total_trees": 7,
+      "tree_canopy_m2_before": 79.3,
+      "tree_canopy_m2_after": 6.3,
+      "tree_canopy_m2_lost": 73.0,
+      "canopy_cover_pct": 1.0,
+      "action_counts": {
+        "FELL_AND_COMPENSATE": 5,
+        "RELOCATE": 2
+      },
+      "rare_trees_in_site": 0,
+      "rare_trees_at_risk": 0,
+      "dead_trees_removed": 0,
+      "compensatory_required": {
+        "low": 82,
+        "high": 221
+      },
+      "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+      "always_preserve_count": 0,
+      "always_preserve_canopy_m2": 0,
+      "compensatory_species_mix": [
+        {
+          "felled_species": "Azadirachta indica",
+          "felled_share_pct": 40.0,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Azadirachta indica",
+          "recommended_replacement_native": true,
+          "mix_companion": "Mangifera indica",
+          "note": "Native species. Replanted in kind; pair with Mangifera indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Acacia nilotica",
+          "felled_share_pct": 40.0,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Azadirachta indica",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Azadirachta indica",
+          "note": "Non-native species occupying Africa / Middle East origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Moringa oleifera",
+          "felled_share_pct": 20.0,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Moringa oleifera",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        }
+      ],
+      "decisions": [
+        {
+          "tree_id": 3328739,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 68.0,
+          "canopy_m2": 28.3,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Azadirachta indica at 68 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 21-56 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 21,
+            "high": 56
+          },
+          "age_estimate_years": {
+            "low": 21.2,
+            "point": 34.0,
+            "high": 56.7
+          }
+        },
+        {
+          "tree_id": 3274468,
+          "botanical_name": "Moringa oleifera Lam.",
+          "species_key": "Moringa oleifera",
+          "girth_cm": 68.0,
+          "canopy_m2": 28.3,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Moringa oleifera at 68 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 21-56 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 21,
+            "high": 56
+          },
+          "age_estimate_years": {
+            "low": 21.2,
+            "point": 34.0,
+            "high": 56.7
+          }
+        },
+        {
+          "tree_id": 3274458,
+          "botanical_name": "Acacia nilotica (Linn.) Del.",
+          "species_key": "Acacia nilotica",
+          "girth_cm": 45.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia nilotica at 45 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 14-37 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 14,
+            "high": 37
+          },
+          "age_estimate_years": {
+            "low": 14.1,
+            "point": 22.5,
+            "high": 37.5
+          }
+        },
+        {
+          "tree_id": 3323042,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 47.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Azadirachta indica at 47 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 14-39 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 14,
+            "high": 39
+          },
+          "age_estimate_years": {
+            "low": 14.7,
+            "point": 23.5,
+            "high": 39.2
+          }
+        },
+        {
+          "tree_id": 3328757,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 32.0,
+          "canopy_m2": 3.1,
+          "action": "RELOCATE",
+          "reason": "Azadirachta indica at 32 cm is within the transplant ceiling (45 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+          "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+          "age_estimate_years": {
+            "low": 10.0,
+            "point": 16.0,
+            "high": 26.7
+          }
+        },
+        {
+          "tree_id": 3328758,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 42.0,
+          "canopy_m2": 3.1,
+          "action": "RELOCATE",
+          "reason": "Azadirachta indica at 42 cm is within the transplant ceiling (45 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+          "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+          "age_estimate_years": {
+            "low": 13.1,
+            "point": 21.0,
+            "high": 35.0
+          }
+        },
+        {
+          "tree_id": 3351560,
+          "botanical_name": "Acacia nilotica (Linn.) Del.",
+          "species_key": "Acacia nilotica",
+          "girth_cm": 40.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia nilotica at 40 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 12-33 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 12,
+            "high": 33
+          },
+          "age_estimate_years": {
+            "low": 12.5,
+            "point": 20.0,
+            "high": 33.3
+          }
+        }
+      ],
+      "census_coverage": {
+        "index_built": true,
+        "loaded_trees": 4009623,
+        "census_total_city_trees": 4009624,
+        "loaded_fraction_pct": 100.0,
+        "wards_covered": 41,
+        "wards_total": 41,
+        "wards_empty": 0,
+        "wards_empty_list": [],
+        "coverage_complete": true,
+        "warning": null
+      },
+      "census_reliable_for_this_site": true
+    },
+    "blocking_issues": [
+      {
+        "type": "material_sourcing",
+        "detail": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "material": "river_sand",
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "recommendation": "REVIEW",
+    "headline": "Blocking conditions must be resolved before approval."
+  },
+  "recommendations": {
+    "baseline_impact": 41.4,
+    "baseline_climate": 58.6,
+    "baseline_risk": "Moderate",
+    "recommendations": [
+      {
+        "id": "impervious_reduction",
+        "action": "Reduce impervious cover by 18 percentage points (permeable paving, green roof, or open landscape)",
+        "delta": {
+          "impact_before": 41.4,
+          "impact_after": 35.8,
+          "impact_delta": -5.6,
+          "climate_before": 58.6,
+          "climate_after": 64.2,
+          "factors": {
+            "flood": {
+              "before": 48.0,
+              "after": 32.9,
+              "delta": -15.1
+            },
+            "heat": {
+              "before": 16.4,
+              "after": 16.4,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 97.4,
+              "after": 92.0,
+              "delta": -5.4
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 13.2,
+              "delta": 0.0
+            }
+          }
+        },
+        "verified": true,
+        "affected": "flood",
+        "params": {
+          "shift_pct_points": 18.0
+        }
+      },
+      {
+        "id": "material_substitution",
+        "action": "Substitute 35% of each material with its lower-carbon alternative",
+        "delta": {
+          "impact_before": 41.4,
+          "impact_after": 41.1,
+          "impact_delta": -0.3,
+          "climate_before": 58.6,
+          "climate_after": 58.9,
+          "factors": {
+            "flood": {
+              "before": 48.0,
+              "after": 48.0,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 16.4,
+              "after": 16.4,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 97.4,
+              "after": 97.4,
+              "delta": 0.0
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 11.4,
+              "delta": -1.8
+            }
+          }
+        },
+        "verified": true,
+        "affected": "carbon",
+        "params": {
+          "fraction": 0.35
+        }
+      },
+      {
+        "id": "material_sourcing",
+        "action": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "delta": null,
+        "verified": true,
+        "affected": "carbon",
+        "blocking": true,
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "dropped_unverified": [],
+    "verification_note": "Each 'delta' is a genuine re-run of the deterministic scorer on the modified site. Recommendations that did not move the score are dropped, not reported.",
+    "combined_effect": {
+      "available": true,
+      "delta": {
+        "impact_before": 41.4,
+        "impact_after": 35.5,
+        "impact_delta": -5.9,
+        "climate_before": 58.6,
+        "climate_after": 64.5,
+        "factors": {
+          "flood": {
+            "before": 48.0,
+            "after": 32.9,
+            "delta": -15.1
+          },
+          "heat": {
+            "before": 16.4,
+            "after": 16.4,
+            "delta": 0.0
+          },
+          "green": {
+            "before": 97.4,
+            "after": 92.0,
+            "delta": -5.4
+          },
+          "carbon": {
+            "before": 13.2,
+            "after": 11.4,
+            "delta": -1.8
+          }
+        }
+      }
+    }
+  },
+  "canopy": {
+    "total_trees": 7,
+    "tree_canopy_m2_before": 79.3,
+    "tree_canopy_m2_after": 6.3,
+    "tree_canopy_m2_lost": 73.0,
+    "canopy_cover_pct": 1.0,
+    "action_counts": {
+      "FELL_AND_COMPENSATE": 5,
+      "RELOCATE": 2
+    },
+    "rare_trees_in_site": 0,
+    "rare_trees_at_risk": 0,
+    "dead_trees_removed": 0,
+    "compensatory_required": {
+      "low": 82,
+      "high": 221
+    },
+    "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+    "always_preserve_count": 0,
+    "always_preserve_canopy_m2": 0,
+    "compensatory_species_mix": [
+      {
+        "felled_species": "Azadirachta indica",
+        "felled_share_pct": 40.0,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Azadirachta indica",
+        "recommended_replacement_native": true,
+        "mix_companion": "Mangifera indica",
+        "note": "Native species. Replanted in kind; pair with Mangifera indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Acacia nilotica",
+        "felled_share_pct": 40.0,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Azadirachta indica",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Azadirachta indica",
+        "note": "Non-native species occupying Africa / Middle East origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Moringa oleifera",
+        "felled_share_pct": 20.0,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Moringa oleifera",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      }
+    ],
+    "decisions": [
+      {
+        "tree_id": 3328739,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 68.0,
+        "canopy_m2": 28.3,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Azadirachta indica at 68 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 21-56 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 21,
+          "high": 56
+        },
+        "age_estimate_years": {
+          "low": 21.2,
+          "point": 34.0,
+          "high": 56.7
+        }
+      },
+      {
+        "tree_id": 3274468,
+        "botanical_name": "Moringa oleifera Lam.",
+        "species_key": "Moringa oleifera",
+        "girth_cm": 68.0,
+        "canopy_m2": 28.3,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Moringa oleifera at 68 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 21-56 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 21,
+          "high": 56
+        },
+        "age_estimate_years": {
+          "low": 21.2,
+          "point": 34.0,
+          "high": 56.7
+        }
+      },
+      {
+        "tree_id": 3274458,
+        "botanical_name": "Acacia nilotica (Linn.) Del.",
+        "species_key": "Acacia nilotica",
+        "girth_cm": 45.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia nilotica at 45 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 14-37 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 14,
+          "high": 37
+        },
+        "age_estimate_years": {
+          "low": 14.1,
+          "point": 22.5,
+          "high": 37.5
+        }
+      },
+      {
+        "tree_id": 3323042,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 47.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Azadirachta indica at 47 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 14-39 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 14,
+          "high": 39
+        },
+        "age_estimate_years": {
+          "low": 14.7,
+          "point": 23.5,
+          "high": 39.2
+        }
+      },
+      {
+        "tree_id": 3328757,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 32.0,
+        "canopy_m2": 3.1,
+        "action": "RELOCATE",
+        "reason": "Azadirachta indica at 32 cm is within the transplant ceiling (45 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+        "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+        "age_estimate_years": {
+          "low": 10.0,
+          "point": 16.0,
+          "high": 26.7
+        }
+      },
+      {
+        "tree_id": 3328758,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 42.0,
+        "canopy_m2": 3.1,
+        "action": "RELOCATE",
+        "reason": "Azadirachta indica at 42 cm is within the transplant ceiling (45 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+        "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+        "age_estimate_years": {
+          "low": 13.1,
+          "point": 21.0,
+          "high": 35.0
+        }
+      },
+      {
+        "tree_id": 3351560,
+        "botanical_name": "Acacia nilotica (Linn.) Del.",
+        "species_key": "Acacia nilotica",
+        "girth_cm": 40.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia nilotica at 40 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 12-33 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 12,
+          "high": 33
+        },
+        "age_estimate_years": {
+          "low": 12.5,
+          "point": 20.0,
+          "high": 33.3
+        }
+      }
+    ],
+    "census_coverage": {
+      "index_built": true,
+      "loaded_trees": 4009623,
+      "census_total_city_trees": 4009624,
+      "loaded_fraction_pct": 100.0,
+      "wards_covered": 41,
+      "wards_total": 41,
+      "wards_empty": 0,
+      "wards_empty_list": [],
+      "coverage_complete": true,
+      "warning": null
+    },
+    "census_reliable_for_this_site": true
+  },
+  "relocation": {
+    "requested_trees": 2,
+    "canopy_needed_m2": 70.0,
+    "assumed_mature_canopy_m2_per_tree": 35.0,
+    "search_radius_m": 2000.0,
+    "weights": {
+      "spacing": 0.35,
+      "connectivity": 0.25,
+      "flood": 0.25,
+      "access": 0.15
+    },
+    "parks_examined": 6,
+    "viable_count": 6,
+    "candidates": [
+      {
+        "rank": 1,
+        "park_id": 131,
+        "name": "Tilekar Nagar Udyan",
+        "ward_no": 40,
+        "distance_m": 507.3,
+        "area_m2": 2627.4,
+        "area_hectares": 0.263,
+        "lon": 73.880722,
+        "lat": 18.448383,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 44,
+        "composite_score": 86.5,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 96.4,
+            "weight": 0.35,
+            "reason": "Park 2627 m2. The 70 m2 of canopy needed is 3% of park area, leaving 42 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 71.1,
+            "weight": 0.25,
+            "reason": "2627 m2 of green within 300 m of this park, and it is 507 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 66.2,
+            "weight": 0.15,
+            "reason": "507 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 2,
+        "park_id": 127,
+        "name": "Nana Nani Udyan",
+        "ward_no": 40,
+        "distance_m": 947.8,
+        "area_m2": 1204.9,
+        "area_hectares": 0.12,
+        "lon": 73.879403,
+        "lat": 18.453539,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 18,
+        "composite_score": 77.3,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 92.3,
+            "weight": 0.35,
+            "reason": "Park 1205 m2. The 70 m2 of canopy needed is 6% of park area, leaving 39 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 58.1,
+            "weight": 0.25,
+            "reason": "1205 m2 of green within 300 m of this park, and it is 948 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 36.8,
+            "weight": 0.15,
+            "reason": "948 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 3,
+        "park_id": 129,
+        "name": "Swami Vivekanand udyan",
+        "ward_no": 40,
+        "distance_m": 1510.4,
+        "area_m2": 7099.4,
+        "area_hectares": 0.71,
+        "lon": 73.880324,
+        "lat": 18.45987,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 124,
+        "composite_score": 72.6,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.7,
+            "weight": 0.35,
+            "reason": "Park 7099 m2. The 70 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 52.4,
+            "weight": 0.25,
+            "reason": "7099 m2 of green within 300 m of this park, and it is 1510 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 0.0,
+            "weight": 0.15,
+            "reason": "1510 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 4,
+        "park_id": 130,
+        "name": "Children\u2019s  Park",
+        "ward_no": 40,
+        "distance_m": 1483.3,
+        "area_m2": 1662.7,
+        "area_hectares": 0.166,
+        "lon": 73.888634,
+        "lat": 18.460123,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 27,
+        "composite_score": 70.0,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 94.4,
+            "weight": 0.35,
+            "reason": "Park 1663 m2. The 70 m2 of canopy needed is 4% of park area, leaving 41 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 47.3,
+            "weight": 0.25,
+            "reason": "1663 m2 of green within 300 m of this park, and it is 1483 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 1.1,
+            "weight": 0.15,
+            "reason": "1483 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 5,
+        "park_id": 128,
+        "name": "Sharad Pawar udyan",
+        "ward_no": 40,
+        "distance_m": 997.6,
+        "area_m2": 1231.1,
+        "area_hectares": 0.123,
+        "lon": 73.887507,
+        "lat": 18.455888,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 19,
+        "composite_score": 62.9,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 92.4,
+            "weight": 0.35,
+            "reason": "Park 1231 m2. The 70 m2 of canopy needed is 6% of park area, leaving 39 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 57.1,
+            "weight": 0.25,
+            "reason": "1231 m2 of green within 300 m of this park, and it is 998 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 45.0,
+            "weight": 0.25,
+            "reason": "129 m from a nalla or river \u2014 inside the flood-plain buffer. Usable only with species tolerant of periodic inundation and a raised planting bed."
+          },
+          {
+            "criterion": "access",
+            "score": 33.5,
+            "weight": 0.15,
+            "reason": "998 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 6,
+        "park_id": 126,
+        "name": "Morya Garden",
+        "ward_no": 39,
+        "distance_m": 1982.1,
+        "area_m2": 1518.6,
+        "area_hectares": 0.152,
+        "lon": 73.86769,
+        "lat": 18.453236,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 24,
+        "composite_score": 53.0,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 93.9,
+            "weight": 0.35,
+            "reason": "Park 1519 m2. The 70 m2 of canopy needed is 5% of park area, leaving 40 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 35.8,
+            "weight": 0.25,
+            "reason": "1519 m2 of green within 300 m of this park, and it is 1982 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 45.0,
+            "weight": 0.25,
+            "reason": "73 m from a nalla or river \u2014 inside the flood-plain buffer. Usable only with species tolerant of periodic inundation and a raised planting bed."
+          },
+          {
+            "criterion": "access",
+            "score": 0.0,
+            "weight": 0.15,
+            "reason": "1982 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      }
+    ],
+    "method_note": "Composite = 0.35*spacing + 0.25*connectivity + 0.25*flood + 0.15*access. Each criterion is reported separately so it can be challenged on its own. Flood uses distance to NATURAL watercourses (nallas, rivers) as exposure; engineered stormwater proximity is deliberately not a siting bonus.",
+    "data_limit": "Only PMC-mapped parks and gardens are considered. Private gardens, institutional grounds and undeveloped municipal plots are not in this dataset, so viable_count understates the true options."
+  },
+  "indicators": {
+    "impervious_pct": 59.709999999999994,
+    "vegetation_pct": 7.199999999999999,
+    "water_pct": 3.9899999999999998,
+    "lst_mean_c": 38.9654,
+    "lst_reference_c": 38.6381,
+    "lst_max_c": 42.6437,
+    "mean_slope_deg": 3.0,
+    "dist_to_storm_drain_m": 2.4
+  },
+  "satellite_cube_available": true
+}

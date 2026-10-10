@@ -1,0 +1,1146 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "code": "heat_unavailable",
+        "field": "lst_mean_c",
+        "message": "No LST observation supplied, so the heat factor cannot be scored and the composite excludes it. Requires the satellite epoch cube."
+      }
+    ],
+    "geometry": {
+      "area_m2": 8007.2,
+      "area_km2": 0.008,
+      "perimeter_m": 357.9,
+      "centroid_lon": 73.863996,
+      "centroid_lat": 18.506119,
+      "bbox": [
+        73.863572,
+        18.505715,
+        73.864419,
+        18.506524
+      ],
+      "compactness": 0.7854,
+      "vertex_count": 5,
+      "crs_used": "EPSG:32643",
+      "area_method": "pyproj+shapely in EPSG:32643"
+    },
+    "site": {
+      "ward_no": 26,
+      "ward_name": "Ward 26",
+      "drainage_context": {
+        "dist_to_storm_drain_m": 9.9,
+        "nearest_natural_water_m": null,
+        "flood_plain_note": "No nalla or river within the search radius."
+      },
+      "builtUpAreaSqm": 3000.0,
+      "plotAreaSqm": 8000.0,
+      "builtUpRatio": 0.375,
+      "materials": [
+        {
+          "name": "cement",
+          "quantityKg": 180000.0
+        },
+        {
+          "name": "steel_reinforcement",
+          "quantityKg": 95000.0
+        },
+        {
+          "name": "brick",
+          "quantityKg": 210000.0
+        },
+        {
+          "name": "river_sand",
+          "quantityKg": 140000.0
+        },
+        {
+          "name": "glass",
+          "quantityKg": 12000.0
+        },
+        {
+          "name": "aluminium",
+          "quantityKg": 4500.0
+        }
+      ],
+      "storeys": 8,
+      "epoch": 2024
+    },
+    "indicators_supplied": {
+      "dist_to_storm_drain_m": 9.9
+    }
+  },
+  "score": {
+    "climate_score": 54.1,
+    "impact_score": 45.9,
+    "risk_band": "Moderate",
+    "complete": true,
+    "missing_factors": [],
+    "sub_scores": {
+      "flood": 53.8,
+      "heat": 26.5,
+      "green": 95.7,
+      "carbon": 13.2
+    },
+    "weight_contributions": {
+      "flood": 16.1,
+      "heat": 7.9,
+      "green": 19.1,
+      "carbon": 2.6
+    },
+    "factors": {
+      "flood": {
+        "score": 53.8,
+        "curve_number": 97.6,
+        "baseline_curve_number": 60.0,
+        "runoff_mm": 142.8,
+        "baseline_runoff_mm": 47.2,
+        "excess_runoff_mm": 95.5,
+        "design_storm_mm": 150.0,
+        "slope_multiplier": 1.05,
+        "drainage_multiplier": 0.804,
+        "drainage_basis": "distance to engineered stormwater outfall"
+      },
+      "heat": {
+        "score": 26.5,
+        "status": "OK",
+        "reason": null,
+        "lst_celsius": 37.49,
+        "lst_reference_c": 36.96,
+        "uhi_delta_c": 0.53,
+        "uhi_max_delta_c": 2.0,
+        "confidence": "medium",
+        "confidence_note": "Surface temperature, not air temperature. Single-pass composite; a seasonal multi-pass mean is stronger."
+      },
+      "green": {
+        "score": 95.7,
+        "sat_veg_pct": 1.0,
+        "canopy_cover_pct": 6.1,
+        "ground_vegetation_pct": 0.0,
+        "effective_green_pct": 4.3,
+        "canopy_weight": 0.7,
+        "ground_vegetation_weight": 0.3,
+        "source_divergence_pts": 5.1,
+        "resolution_mismatch_pts": 5.1,
+        "confidence": "high",
+        "confidence_note": "Census and satellite agree within 5.1 pts."
+      },
+      "carbon": {
+        "score": 13.2,
+        "total_kgco2e": 473450.0,
+        "intensity_kgco2e_m2": 157.8,
+        "band": "Low",
+        "built_up_area_m2": 3000.0,
+        "line_items": [
+          {
+            "name": "cement_opc",
+            "quantity_kg": 180000.0,
+            "ef": 0.74,
+            "kgco2e": 133200.0,
+            "category": "binder",
+            "status": "OK"
+          },
+          {
+            "name": "steel_reinforcement",
+            "quantity_kg": 95000.0,
+            "ef": 2.3,
+            "kgco2e": 218500.0,
+            "category": "structural",
+            "status": "OK"
+          },
+          {
+            "name": "brick_clay",
+            "quantity_kg": 210000.0,
+            "ef": 0.24,
+            "kgco2e": 50400.0,
+            "category": "masonry",
+            "status": "OK"
+          },
+          {
+            "name": "river_sand",
+            "quantity_kg": 140000.0,
+            "ef": 0.005,
+            "kgco2e": 700.0,
+            "category": "aggregate",
+            "status": "OK"
+          },
+          {
+            "name": "glass_float",
+            "quantity_kg": 12000.0,
+            "ef": 1.2,
+            "kgco2e": 14400.0,
+            "category": "glazing",
+            "status": "OK"
+          },
+          {
+            "name": "aluminium_primary",
+            "quantity_kg": 4500.0,
+            "ef": 12.5,
+            "kgco2e": 56250.0,
+            "category": "fa\u00e7ade",
+            "status": "OK"
+          }
+        ],
+        "dominant_material": "steel_reinforcement",
+        "dominant_share_pct": 46.2,
+        "double_count_warning": null,
+        "unknown_materials": [],
+        "unknown_mass_pct": 0.0,
+        "ecological_advisories": [
+          {
+            "material": "river_sand",
+            "advisory": "CRITICAL_RIVERBED_EXTRACTION",
+            "severity": "blocking",
+            "text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+            "alternatives": [
+              "manufactured_sand_msand"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_note": "A1-A3 cradle-to-gate. Excludes transport and site waste."
+      }
+    },
+    "canopy": {
+      "total_trees": 11,
+      "tree_canopy_m2_before": 491.7,
+      "tree_canopy_m2_after": 491.7,
+      "tree_canopy_m2_lost": 0.0,
+      "canopy_cover_pct": 6.1,
+      "action_counts": {
+        "MUST_PRESERVE": 10,
+        "RELOCATE": 1
+      },
+      "rare_trees_in_site": 0,
+      "rare_trees_at_risk": 0,
+      "dead_trees_removed": 0,
+      "compensatory_required": {
+        "low": 0,
+        "high": 0
+      },
+      "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+      "always_preserve_count": 10,
+      "always_preserve_canopy_m2": 488.5,
+      "compensatory_species_mix": [],
+      "decisions": [
+        {
+          "tree_id": 255887,
+          "botanical_name": "Delonix regia (Hook.) Raf.",
+          "species_key": "Delonix regia",
+          "girth_cm": 113.0,
+          "canopy_m2": 28.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 113 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 35.3,
+            "point": 56.5,
+            "high": 94.2
+          }
+        },
+        {
+          "tree_id": 255891,
+          "botanical_name": "Holoptelia integrifolia (Roxb.) Planch",
+          "species_key": "Holoptelia integrifolia",
+          "girth_cm": 250.0,
+          "canopy_m2": 50.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 250 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 78.1,
+            "point": 125.0,
+            "high": 208.3
+          }
+        },
+        {
+          "tree_id": 255889,
+          "botanical_name": "Holoptelia integrifolia (Roxb.) Planch",
+          "species_key": "Holoptelia integrifolia",
+          "girth_cm": 229.0,
+          "canopy_m2": 28.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 229 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 71.6,
+            "point": 114.5,
+            "high": 190.8
+          }
+        },
+        {
+          "tree_id": 3813358,
+          "botanical_name": "Tamarindus indica Linn.",
+          "species_key": "Tamarindus indica",
+          "girth_cm": 219.0,
+          "canopy_m2": 50.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 219 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 68.4,
+            "point": 109.5,
+            "high": 182.5
+          }
+        },
+        {
+          "tree_id": 3987629,
+          "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+          "species_key": "Syzygium cumini",
+          "girth_cm": 101.0,
+          "canopy_m2": 38.5,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 101 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 31.6,
+            "point": 50.5,
+            "high": 84.2
+          }
+        },
+        {
+          "tree_id": 3987630,
+          "botanical_name": "Delonix regia (Hook.) Raf.",
+          "species_key": "Delonix regia",
+          "girth_cm": 106.0,
+          "canopy_m2": 50.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 106 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 33.1,
+            "point": 53.0,
+            "high": 88.3
+          }
+        },
+        {
+          "tree_id": 3781698,
+          "botanical_name": "Ficus religiosa Linn.",
+          "species_key": "Ficus religiosa",
+          "girth_cm": 370.0,
+          "canopy_m2": 113.1,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 370 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 115.6,
+            "point": 185.0,
+            "high": 308.3
+          }
+        },
+        {
+          "tree_id": 3987627,
+          "botanical_name": "",
+          "species_key": "",
+          "girth_cm": 105.0,
+          "canopy_m2": 50.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 105 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 32.8,
+            "point": 52.5,
+            "high": 87.5
+          }
+        },
+        {
+          "tree_id": 3957449,
+          "botanical_name": "Delonix regia (Hook.) Raf.",
+          "species_key": "Delonix regia",
+          "girth_cm": 133.0,
+          "canopy_m2": 0.8,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 133 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 41.6,
+            "point": 66.5,
+            "high": 110.8
+          }
+        },
+        {
+          "tree_id": 3980445,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 180.0,
+          "canopy_m2": 78.5,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 180 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 56.2,
+            "point": 90.0,
+            "high": 150.0
+          }
+        },
+        {
+          "tree_id": 3777578,
+          "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+          "species_key": "Syzygium cumini",
+          "girth_cm": 29.0,
+          "canopy_m2": 3.1,
+          "action": "RELOCATE",
+          "reason": "Syzygium cumini at 29 cm is within the transplant ceiling (30 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+          "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+          "age_estimate_years": {
+            "low": 9.1,
+            "point": 14.5,
+            "high": 24.2
+          }
+        }
+      ],
+      "census_coverage": {
+        "index_built": true,
+        "loaded_trees": 4009623,
+        "census_total_city_trees": 4009624,
+        "loaded_fraction_pct": 100.0,
+        "wards_covered": 41,
+        "wards_total": 41,
+        "wards_empty": 0,
+        "wards_empty_list": [],
+        "coverage_complete": true,
+        "warning": null
+      },
+      "census_reliable_for_this_site": true
+    },
+    "blocking_issues": [
+      {
+        "type": "material_sourcing",
+        "detail": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "material": "river_sand",
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "recommendation": "REVIEW",
+    "headline": "Blocking conditions must be resolved before approval."
+  },
+  "recommendations": {
+    "baseline_impact": 45.9,
+    "baseline_climate": 54.1,
+    "baseline_risk": "Moderate",
+    "recommendations": [
+      {
+        "id": "impervious_reduction",
+        "action": "Reduce impervious cover by 18 percentage points (permeable paving, green roof, or open landscape)",
+        "delta": {
+          "impact_before": 45.9,
+          "impact_after": 40.6,
+          "impact_delta": -5.3,
+          "climate_before": 54.1,
+          "climate_after": 59.4,
+          "factors": {
+            "flood": {
+              "before": 53.8,
+              "after": 38.9,
+              "delta": -14.9
+            },
+            "heat": {
+              "before": 26.5,
+              "after": 26.5,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 95.7,
+              "after": 91.8,
+              "delta": -3.9
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 13.2,
+              "delta": 0.0
+            }
+          }
+        },
+        "verified": true,
+        "affected": "flood",
+        "params": {
+          "shift_pct_points": 18.0
+        }
+      },
+      {
+        "id": "preserve_mature_trees",
+        "action": "Redesign the footprint to retain the 10 heritage-class trees on site, recovering 488 m2 of canopy",
+        "delta": {
+          "impact_before": 45.9,
+          "impact_after": 45.2,
+          "impact_delta": -0.7,
+          "climate_before": 54.1,
+          "climate_after": 54.8,
+          "factors": {
+            "flood": {
+              "before": 53.8,
+              "after": 53.8,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 26.5,
+              "after": 26.5,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 95.7,
+              "after": 91.5,
+              "delta": -4.2
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 14.3,
+              "delta": 1.1
+            }
+          }
+        },
+        "verified": true,
+        "affected": "green",
+        "params": {
+          "footprint_scale": 0.92
+        },
+        "composite_tradeoff": "Improves both the targeted factor and the composite.",
+        "note": "Canopy preserved rather than replaced. Saplings do not substitute for retained mature canopy on any useful timescale."
+      },
+      {
+        "id": "material_substitution",
+        "action": "Substitute 35% of each material with its lower-carbon alternative",
+        "delta": {
+          "impact_before": 45.9,
+          "impact_after": 45.5,
+          "impact_delta": -0.4,
+          "climate_before": 54.1,
+          "climate_after": 54.5,
+          "factors": {
+            "flood": {
+              "before": 53.8,
+              "after": 53.8,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 26.5,
+              "after": 26.5,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 95.7,
+              "after": 95.7,
+              "delta": 0.0
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 11.4,
+              "delta": -1.8
+            }
+          }
+        },
+        "verified": true,
+        "affected": "carbon",
+        "params": {
+          "fraction": 0.35
+        }
+      },
+      {
+        "id": "material_sourcing",
+        "action": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "delta": null,
+        "verified": true,
+        "affected": "carbon",
+        "blocking": true,
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "dropped_unverified": [],
+    "verification_note": "Each 'delta' is a genuine re-run of the deterministic scorer on the modified site. Recommendations that did not move the score are dropped, not reported.",
+    "combined_effect": {
+      "available": true,
+      "delta": {
+        "impact_before": 45.9,
+        "impact_after": 40.5,
+        "impact_delta": -5.4,
+        "climate_before": 54.1,
+        "climate_after": 59.5,
+        "factors": {
+          "flood": {
+            "before": 53.8,
+            "after": 38.9,
+            "delta": -14.9
+          },
+          "heat": {
+            "before": 26.5,
+            "after": 26.5,
+            "delta": 0.0
+          },
+          "green": {
+            "before": 95.7,
+            "after": 91.8,
+            "delta": -3.9
+          },
+          "carbon": {
+            "before": 13.2,
+            "after": 12.4,
+            "delta": -0.8
+          }
+        }
+      }
+    }
+  },
+  "canopy": {
+    "total_trees": 11,
+    "tree_canopy_m2_before": 491.7,
+    "tree_canopy_m2_after": 491.7,
+    "tree_canopy_m2_lost": 0.0,
+    "canopy_cover_pct": 6.1,
+    "action_counts": {
+      "MUST_PRESERVE": 10,
+      "RELOCATE": 1
+    },
+    "rare_trees_in_site": 0,
+    "rare_trees_at_risk": 0,
+    "dead_trees_removed": 0,
+    "compensatory_required": {
+      "low": 0,
+      "high": 0
+    },
+    "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+    "always_preserve_count": 10,
+    "always_preserve_canopy_m2": 488.5,
+    "compensatory_species_mix": [],
+    "decisions": [
+      {
+        "tree_id": 255887,
+        "botanical_name": "Delonix regia (Hook.) Raf.",
+        "species_key": "Delonix regia",
+        "girth_cm": 113.0,
+        "canopy_m2": 28.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 113 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 35.3,
+          "point": 56.5,
+          "high": 94.2
+        }
+      },
+      {
+        "tree_id": 255891,
+        "botanical_name": "Holoptelia integrifolia (Roxb.) Planch",
+        "species_key": "Holoptelia integrifolia",
+        "girth_cm": 250.0,
+        "canopy_m2": 50.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 250 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 78.1,
+          "point": 125.0,
+          "high": 208.3
+        }
+      },
+      {
+        "tree_id": 255889,
+        "botanical_name": "Holoptelia integrifolia (Roxb.) Planch",
+        "species_key": "Holoptelia integrifolia",
+        "girth_cm": 229.0,
+        "canopy_m2": 28.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 229 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 71.6,
+          "point": 114.5,
+          "high": 190.8
+        }
+      },
+      {
+        "tree_id": 3813358,
+        "botanical_name": "Tamarindus indica Linn.",
+        "species_key": "Tamarindus indica",
+        "girth_cm": 219.0,
+        "canopy_m2": 50.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 219 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 68.4,
+          "point": 109.5,
+          "high": 182.5
+        }
+      },
+      {
+        "tree_id": 3987629,
+        "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+        "species_key": "Syzygium cumini",
+        "girth_cm": 101.0,
+        "canopy_m2": 38.5,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 101 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 31.6,
+          "point": 50.5,
+          "high": 84.2
+        }
+      },
+      {
+        "tree_id": 3987630,
+        "botanical_name": "Delonix regia (Hook.) Raf.",
+        "species_key": "Delonix regia",
+        "girth_cm": 106.0,
+        "canopy_m2": 50.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 106 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 33.1,
+          "point": 53.0,
+          "high": 88.3
+        }
+      },
+      {
+        "tree_id": 3781698,
+        "botanical_name": "Ficus religiosa Linn.",
+        "species_key": "Ficus religiosa",
+        "girth_cm": 370.0,
+        "canopy_m2": 113.1,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 370 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 115.6,
+          "point": 185.0,
+          "high": 308.3
+        }
+      },
+      {
+        "tree_id": 3987627,
+        "botanical_name": "",
+        "species_key": "",
+        "girth_cm": 105.0,
+        "canopy_m2": 50.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 105 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 32.8,
+          "point": 52.5,
+          "high": 87.5
+        }
+      },
+      {
+        "tree_id": 3957449,
+        "botanical_name": "Delonix regia (Hook.) Raf.",
+        "species_key": "Delonix regia",
+        "girth_cm": 133.0,
+        "canopy_m2": 0.8,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 133 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 41.6,
+          "point": 66.5,
+          "high": 110.8
+        }
+      },
+      {
+        "tree_id": 3980445,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 180.0,
+        "canopy_m2": 78.5,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 180 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 56.2,
+          "point": 90.0,
+          "high": 150.0
+        }
+      },
+      {
+        "tree_id": 3777578,
+        "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+        "species_key": "Syzygium cumini",
+        "girth_cm": 29.0,
+        "canopy_m2": 3.1,
+        "action": "RELOCATE",
+        "reason": "Syzygium cumini at 29 cm is within the transplant ceiling (30 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+        "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+        "age_estimate_years": {
+          "low": 9.1,
+          "point": 14.5,
+          "high": 24.2
+        }
+      }
+    ],
+    "census_coverage": {
+      "index_built": true,
+      "loaded_trees": 4009623,
+      "census_total_city_trees": 4009624,
+      "loaded_fraction_pct": 100.0,
+      "wards_covered": 41,
+      "wards_total": 41,
+      "wards_empty": 0,
+      "wards_empty_list": [],
+      "coverage_complete": true,
+      "warning": null
+    },
+    "census_reliable_for_this_site": true
+  },
+  "relocation": {
+    "requested_trees": 1,
+    "canopy_needed_m2": 35.0,
+    "assumed_mature_canopy_m2_per_tree": 35.0,
+    "search_radius_m": 2000.0,
+    "weights": {
+      "spacing": 0.35,
+      "connectivity": 0.25,
+      "flood": 0.25,
+      "access": 0.15
+    },
+    "parks_examined": 29,
+    "viable_count": 28,
+    "candidates": [
+      {
+        "rank": 1,
+        "park_id": 31,
+        "name": "Late Bapusaheb Patole Udyan",
+        "ward_no": 26,
+        "distance_m": 228.5,
+        "area_m2": 2636.9,
+        "area_hectares": 0.264,
+        "lon": 73.864573,
+        "lat": 18.504139,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 46,
+        "composite_score": 91.4,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.2,
+            "weight": 0.35,
+            "reason": "Park 2637 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 77.4,
+            "weight": 0.25,
+            "reason": "2637 m2 of green within 300 m of this park, and it is 228 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 84.8,
+            "weight": 0.15,
+            "reason": "228 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 2,
+        "park_id": 32,
+        "name": "Shrimant Bhairavsingh Ghorpade Udyan",
+        "ward_no": 26,
+        "distance_m": 536.9,
+        "area_m2": 15193.2,
+        "area_hectares": 1.519,
+        "lon": 73.862326,
+        "lat": 18.501558,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 272,
+        "composite_score": 88.4,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 99.7,
+            "weight": 0.35,
+            "reason": "Park 15193 m2. The 35 m2 of canopy needed is 0% of park area, leaving 45 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 75.6,
+            "weight": 0.25,
+            "reason": "15193 m2 of green within 300 m of this park, and it is 537 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 64.2,
+            "weight": 0.15,
+            "reason": "537 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 3,
+        "park_id": 33,
+        "name": "Dr.Shyamrao Kalmadi  udyan",
+        "ward_no": 26,
+        "distance_m": 566.0,
+        "area_m2": 3470.0,
+        "area_hectares": 0.347,
+        "lon": 73.867478,
+        "lat": 18.502245,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 61,
+        "composite_score": 86.6,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.7,
+            "weight": 0.35,
+            "reason": "Park 3470 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 70.8,
+            "weight": 0.25,
+            "reason": "3470 m2 of green within 300 m of this park, and it is 566 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "247 m from the nearest watercourse. Not exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 62.3,
+            "weight": 0.15,
+            "reason": "566 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 4,
+        "park_id": 24,
+        "name": "Sathe Colony Udyan",
+        "ward_no": 25,
+        "distance_m": 710.7,
+        "area_m2": 2957.7,
+        "area_hectares": 0.296,
+        "lon": 73.858033,
+        "lat": 18.50314,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 51,
+        "composite_score": 84.1,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.4,
+            "weight": 0.35,
+            "reason": "Park 2958 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 67.0,
+            "weight": 0.25,
+            "reason": "2958 m2 of green within 300 m of this park, and it is 711 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 52.6,
+            "weight": 0.15,
+            "reason": "711 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 5,
+        "park_id": 35,
+        "name": "Late  Anandrao Rambhaji Bagve Paryavaran Jagruti Garden",
+        "ward_no": 22,
+        "distance_m": 957.9,
+        "area_m2": 2138.0,
+        "area_hectares": 0.214,
+        "lon": 73.872667,
+        "lat": 18.503551,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 37,
+        "composite_score": 80.4,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 97.8,
+            "weight": 0.35,
+            "reason": "Park 2138 m2. The 35 m2 of canopy needed is 2% of park area, leaving 43 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 63.1,
+            "weight": 0.25,
+            "reason": "4539 m2 of green within 300 m of this park, and it is 958 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "183 m from the nearest watercourse. Not exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 36.1,
+            "weight": 0.15,
+            "reason": "958 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 6,
+        "park_id": 114,
+        "name": "Mukundnagar yethil Nala",
+        "ward_no": 21,
+        "distance_m": 1017.1,
+        "area_m2": 3119.8,
+        "area_hectares": 0.312,
+        "lon": 73.864276,
+        "lat": 18.496976,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 54,
+        "composite_score": 79.4,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.5,
+            "weight": 0.35,
+            "reason": "Park 3120 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 60.3,
+            "weight": 0.25,
+            "reason": "3120 m2 of green within 300 m of this park, and it is 1017 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 32.2,
+            "weight": 0.15,
+            "reason": "1017 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 7,
+        "park_id": 34,
+        "name": "Sant Rohidas Udyan",
+        "ward_no": 22,
+        "distance_m": 1070.5,
+        "area_m2": 2401.2,
+        "area_hectares": 0.24,
+        "lon": 73.873723,
+        "lat": 18.503365,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 41,
+        "composite_score": 78.7,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.1,
+            "weight": 0.35,
+            "reason": "Park 2401 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 60.5,
+            "weight": 0.25,
+            "reason": "4539 m2 of green within 300 m of this park, and it is 1070 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "217 m from the nearest watercourse. Not exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 28.6,
+            "weight": 0.15,
+            "reason": "1070 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 8,
+        "park_id": 20,
+        "name": "Chatrapati Shivaji Maharaj Garden",
+        "ward_no": 27,
+        "distance_m": 1159.7,
+        "area_m2": 5193.7,
+        "area_hectares": 0.519,
+        "lon": 73.853123,
+        "lat": 18.504551,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 92,
+        "composite_score": 78.4,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 99.1,
+            "weight": 0.35,
+            "reason": "Park 5194 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 61.4,
+            "weight": 0.25,
+            "reason": "9433 m2 of green within 300 m of this park, and it is 1160 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 22.7,
+            "weight": 0.15,
+            "reason": "1160 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      }
+    ],
+    "method_note": "Composite = 0.35*spacing + 0.25*connectivity + 0.25*flood + 0.15*access. Each criterion is reported separately so it can be challenged on its own. Flood uses distance to NATURAL watercourses (nallas, rivers) as exposure; engineered stormwater proximity is deliberately not a siting bonus.",
+    "data_limit": "Only PMC-mapped parks and gardens are considered. Private gardens, institutional grounds and undeveloped municipal plots are not in this dataset, so viable_count understates the true options."
+  },
+  "indicators": {
+    "impervious_pct": 68.71000000000001,
+    "vegetation_pct": 1.04,
+    "water_pct": 4.88,
+    "lst_mean_c": 37.4943,
+    "lst_reference_c": 36.9637,
+    "lst_max_c": 41.4881,
+    "mean_slope_deg": 3.0,
+    "dist_to_storm_drain_m": 9.9
+  },
+  "satellite_cube_available": true
+}

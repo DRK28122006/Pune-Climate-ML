@@ -1,0 +1,41 @@
+{
+  "model": "random_forest",
+  "features": [
+    "built_pct",
+    "vegetation_pct",
+    "tree_canopy_pct",
+    "water_pct",
+    "bare_pct",
+    "bare_season_pct",
+    "elevation_m"
+  ],
+  "rural_ref": 20.23,
+  "holdout_wards": [
+    3,
+    5,
+    7,
+    9,
+    13,
+    17,
+    21,
+    25,
+    29,
+    33,
+    40
+  ],
+  "baseline_mae": 1.581008338576557,
+  "mae": 1.1744935772074838,
+  "r": 0.6103298935782515,
+  "intercept": 25.19042976510517,
+  "coefficients": [
+    1.920386065258608,
+    -1.1257335529785193,
+    3.724638975632702,
+    -0.044211615866211494,
+    -0.7332800091039333,
+    -1.5298392269012264,
+    -0.006173537733262708
+  ],
+  "n_estimators": 400,
+  "min_samples_leaf": 5
+}

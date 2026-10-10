@@ -1,0 +1,751 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "code": "heat_unavailable",
+        "field": "lst_mean_c",
+        "message": "No LST observation supplied, so the heat factor cannot be scored and the composite excludes it. Requires the satellite epoch cube."
+      }
+    ],
+    "geometry": {
+      "area_m2": 8007.3,
+      "area_km2": 0.008,
+      "perimeter_m": 357.9,
+      "centroid_lon": 73.851625,
+      "centroid_lat": 18.512269,
+      "bbox": [
+        73.851201,
+        18.511865,
+        73.852048,
+        18.512674
+      ],
+      "compactness": 0.7854,
+      "vertex_count": 5,
+      "crs_used": "EPSG:32643",
+      "area_method": "pyproj+shapely in EPSG:32643"
+    },
+    "site": {
+      "ward_no": 25,
+      "ward_name": "Ward 25",
+      "drainage_context": {
+        "dist_to_storm_drain_m": 14.9,
+        "nearest_natural_water_m": null,
+        "flood_plain_note": "No nalla or river within the search radius."
+      },
+      "builtUpAreaSqm": 3000.0,
+      "plotAreaSqm": 8000.0,
+      "builtUpRatio": 0.375,
+      "materials": [
+        {
+          "name": "cement",
+          "quantityKg": 180000.0
+        },
+        {
+          "name": "steel_reinforcement",
+          "quantityKg": 95000.0
+        },
+        {
+          "name": "brick",
+          "quantityKg": 210000.0
+        },
+        {
+          "name": "river_sand",
+          "quantityKg": 140000.0
+        },
+        {
+          "name": "glass",
+          "quantityKg": 12000.0
+        },
+        {
+          "name": "aluminium",
+          "quantityKg": 4500.0
+        }
+      ],
+      "storeys": 8,
+      "epoch": 2024
+    },
+    "indicators_supplied": {
+      "dist_to_storm_drain_m": 14.9
+    }
+  },
+  "score": {
+    "climate_score": 52.4,
+    "impact_score": 47.6,
+    "risk_band": "Moderate",
+    "complete": true,
+    "missing_factors": [],
+    "sub_scores": {
+      "flood": 53.9,
+      "heat": 29.7,
+      "green": 99.2,
+      "carbon": 13.2
+    },
+    "weight_contributions": {
+      "flood": 16.2,
+      "heat": 8.9,
+      "green": 19.8,
+      "carbon": 2.6
+    },
+    "factors": {
+      "flood": {
+        "score": 53.9,
+        "curve_number": 97.6,
+        "baseline_curve_number": 60.0,
+        "runoff_mm": 142.7,
+        "baseline_runoff_mm": 47.2,
+        "excess_runoff_mm": 95.5,
+        "design_storm_mm": 150.0,
+        "slope_multiplier": 1.05,
+        "drainage_multiplier": 0.806,
+        "drainage_basis": "distance to engineered stormwater outfall"
+      },
+      "heat": {
+        "score": 29.7,
+        "status": "OK",
+        "reason": null,
+        "lst_celsius": 37.01,
+        "lst_reference_c": 36.42,
+        "uhi_delta_c": 0.59,
+        "uhi_max_delta_c": 2.0,
+        "confidence": "medium",
+        "confidence_note": "Surface temperature, not air temperature. Single-pass composite; a seasonal multi-pass mean is stronger."
+      },
+      "green": {
+        "score": 99.2,
+        "sat_veg_pct": 1.1,
+        "canopy_cover_pct": 1.2,
+        "ground_vegetation_pct": 0.0,
+        "effective_green_pct": 0.8,
+        "canopy_weight": 0.7,
+        "ground_vegetation_weight": 0.3,
+        "source_divergence_pts": 0.1,
+        "resolution_mismatch_pts": 0.1,
+        "confidence": "high",
+        "confidence_note": "Census and satellite agree within 0.1 pts."
+      },
+      "carbon": {
+        "score": 13.2,
+        "total_kgco2e": 473450.0,
+        "intensity_kgco2e_m2": 157.8,
+        "band": "Low",
+        "built_up_area_m2": 3000.0,
+        "line_items": [
+          {
+            "name": "cement_opc",
+            "quantity_kg": 180000.0,
+            "ef": 0.74,
+            "kgco2e": 133200.0,
+            "category": "binder",
+            "status": "OK"
+          },
+          {
+            "name": "steel_reinforcement",
+            "quantity_kg": 95000.0,
+            "ef": 2.3,
+            "kgco2e": 218500.0,
+            "category": "structural",
+            "status": "OK"
+          },
+          {
+            "name": "brick_clay",
+            "quantity_kg": 210000.0,
+            "ef": 0.24,
+            "kgco2e": 50400.0,
+            "category": "masonry",
+            "status": "OK"
+          },
+          {
+            "name": "river_sand",
+            "quantity_kg": 140000.0,
+            "ef": 0.005,
+            "kgco2e": 700.0,
+            "category": "aggregate",
+            "status": "OK"
+          },
+          {
+            "name": "glass_float",
+            "quantity_kg": 12000.0,
+            "ef": 1.2,
+            "kgco2e": 14400.0,
+            "category": "glazing",
+            "status": "OK"
+          },
+          {
+            "name": "aluminium_primary",
+            "quantity_kg": 4500.0,
+            "ef": 12.5,
+            "kgco2e": 56250.0,
+            "category": "fa\u00e7ade",
+            "status": "OK"
+          }
+        ],
+        "dominant_material": "steel_reinforcement",
+        "dominant_share_pct": 46.2,
+        "double_count_warning": null,
+        "unknown_materials": [],
+        "unknown_mass_pct": 0.0,
+        "ecological_advisories": [
+          {
+            "material": "river_sand",
+            "advisory": "CRITICAL_RIVERBED_EXTRACTION",
+            "severity": "blocking",
+            "text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+            "alternatives": [
+              "manufactured_sand_msand"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_note": "A1-A3 cradle-to-gate. Excludes transport and site waste."
+      }
+    },
+    "canopy": {
+      "total_trees": 6,
+      "tree_canopy_m2_before": 92.7,
+      "tree_canopy_m2_after": 50.3,
+      "tree_canopy_m2_lost": 42.4,
+      "canopy_cover_pct": 1.2,
+      "action_counts": {
+        "REMOVE_DEAD": 1,
+        "FELL_AND_COMPENSATE": 4,
+        "MUST_PRESERVE": 1
+      },
+      "rare_trees_in_site": 0,
+      "rare_trees_at_risk": 0,
+      "dead_trees_removed": 1,
+      "compensatory_required": {
+        "low": 41,
+        "high": 110
+      },
+      "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+      "always_preserve_count": 1,
+      "always_preserve_canopy_m2": 50.3,
+      "compensatory_species_mix": [
+        {
+          "felled_species": "Ficus religiosa",
+          "felled_share_pct": 25.0,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Ficus religiosa",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Pongamia pinnata",
+          "felled_share_pct": 25.0,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Pongamia pinnata",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Polyalthia longifolia",
+          "felled_share_pct": 25.0,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Syzygium cumini",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Syzygium cumini",
+          "note": "Non-native species occupying SE Asia / Indian Ocean origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Ficus racemosa",
+          "felled_share_pct": 25.0,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Ficus racemosa",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        }
+      ],
+      "decisions": [
+        {
+          "tree_id": 821374,
+          "botanical_name": "Cocos nucifera Linn.",
+          "species_key": "Cocos nucifera",
+          "girth_cm": 58.0,
+          "canopy_m2": 0.0,
+          "action": "REMOVE_DEAD",
+          "reason": "Census condition is dead/fallen. No felling permit required to remove a dead tree, and no ecological loss.",
+          "statutory_basis": "Not applicable \u2014 removal of a dead tree."
+        },
+        {
+          "tree_id": 821373,
+          "botanical_name": "Ficus religiosa Linn.",
+          "species_key": "Ficus religiosa",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus religiosa at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 821376,
+          "botanical_name": "Pongamia pinnata (L.) Pierre",
+          "species_key": "Pongamia pinnata",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Pongamia pinnata at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 1611899,
+          "botanical_name": "Polyalthia longifolia var.pendula",
+          "species_key": "Polyalthia longifolia",
+          "girth_cm": 46.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Polyalthia longifolia at 46 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 14-38 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 14,
+            "high": 38
+          },
+          "age_estimate_years": {
+            "low": 14.4,
+            "point": 23.0,
+            "high": 38.3
+          }
+        },
+        {
+          "tree_id": 1552359,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 68.0,
+          "canopy_m2": 28.3,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 68 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 21-56 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 21,
+            "high": 56
+          },
+          "age_estimate_years": {
+            "low": 21.2,
+            "point": 34.0,
+            "high": 56.7
+          }
+        },
+        {
+          "tree_id": 1702385,
+          "botanical_name": "Leucaena leucocephala (Lamk.)De.wit.",
+          "species_key": "Leucaena leucocephala",
+          "girth_cm": 110.0,
+          "canopy_m2": 50.3,
+          "action": "MUST_PRESERVE",
+          "reason": "Girth 110 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+          "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+          "age_estimate_years": {
+            "low": 34.4,
+            "point": 55.0,
+            "high": 91.7
+          }
+        }
+      ],
+      "census_coverage": {
+        "index_built": true,
+        "loaded_trees": 4009623,
+        "census_total_city_trees": 4009624,
+        "loaded_fraction_pct": 100.0,
+        "wards_covered": 41,
+        "wards_total": 41,
+        "wards_empty": 0,
+        "wards_empty_list": [],
+        "coverage_complete": true,
+        "warning": null
+      },
+      "census_reliable_for_this_site": true
+    },
+    "blocking_issues": [
+      {
+        "type": "material_sourcing",
+        "detail": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "material": "river_sand",
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "recommendation": "REVIEW",
+    "headline": "Blocking conditions must be resolved before approval."
+  },
+  "recommendations": {
+    "baseline_impact": 47.6,
+    "baseline_climate": 52.4,
+    "baseline_risk": "Moderate",
+    "recommendations": [
+      {
+        "id": "impervious_reduction",
+        "action": "Reduce impervious cover by 18 percentage points (permeable paving, green roof, or open landscape)",
+        "delta": {
+          "impact_before": 47.6,
+          "impact_after": 42.0,
+          "impact_delta": -5.6,
+          "climate_before": 52.4,
+          "climate_after": 58.0,
+          "factors": {
+            "flood": {
+              "before": 53.9,
+              "after": 38.8,
+              "delta": -15.1
+            },
+            "heat": {
+              "before": 29.7,
+              "after": 29.7,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 99.2,
+              "after": 93.8,
+              "delta": -5.4
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 13.2,
+              "delta": 0.0
+            }
+          }
+        },
+        "verified": true,
+        "affected": "flood",
+        "params": {
+          "shift_pct_points": 18.0
+        }
+      },
+      {
+        "id": "material_substitution",
+        "action": "Substitute 35% of each material with its lower-carbon alternative",
+        "delta": {
+          "impact_before": 47.6,
+          "impact_after": 47.2,
+          "impact_delta": -0.4,
+          "climate_before": 52.4,
+          "climate_after": 52.8,
+          "factors": {
+            "flood": {
+              "before": 53.9,
+              "after": 53.9,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 29.7,
+              "after": 29.7,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 99.2,
+              "after": 99.2,
+              "delta": 0.0
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 11.4,
+              "delta": -1.8
+            }
+          }
+        },
+        "verified": true,
+        "affected": "carbon",
+        "params": {
+          "fraction": 0.35
+        }
+      },
+      {
+        "id": "preserve_mature_trees",
+        "action": "Redesign the footprint to retain the 1 heritage-class trees on site, recovering 50 m2 of canopy",
+        "delta": {
+          "impact_before": 47.6,
+          "impact_after": 47.7,
+          "impact_delta": 0.1,
+          "climate_before": 52.4,
+          "climate_after": 52.3,
+          "factors": {
+            "flood": {
+              "before": 53.9,
+              "after": 53.9,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 29.7,
+              "after": 29.7,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 99.2,
+              "after": 98.7,
+              "delta": -0.5
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 14.3,
+              "delta": 1.1
+            }
+          }
+        },
+        "verified": true,
+        "affected": "green",
+        "params": {
+          "footprint_scale": 0.92
+        },
+        "composite_tradeoff": "green 99.2 -> 98.7 (improves by 0.5), but carbon intensity rises 13.2 -> 14.3 because the same materials are spread over a smaller footprint. Composite impact moves +0.1.",
+        "note": "Canopy preserved rather than replaced. Saplings do not substitute for retained mature canopy on any useful timescale."
+      },
+      {
+        "id": "material_sourcing",
+        "action": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "delta": null,
+        "verified": true,
+        "affected": "carbon",
+        "blocking": true,
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "dropped_unverified": [],
+    "verification_note": "Each 'delta' is a genuine re-run of the deterministic scorer on the modified site. Recommendations that did not move the score are dropped, not reported.",
+    "combined_effect": {
+      "available": true,
+      "delta": {
+        "impact_before": 47.6,
+        "impact_after": 41.8,
+        "impact_delta": -5.8,
+        "climate_before": 52.4,
+        "climate_after": 58.2,
+        "factors": {
+          "flood": {
+            "before": 53.9,
+            "after": 38.8,
+            "delta": -15.1
+          },
+          "heat": {
+            "before": 29.7,
+            "after": 29.7,
+            "delta": 0.0
+          },
+          "green": {
+            "before": 99.2,
+            "after": 93.8,
+            "delta": -5.4
+          },
+          "carbon": {
+            "before": 13.2,
+            "after": 12.4,
+            "delta": -0.8
+          }
+        }
+      }
+    }
+  },
+  "canopy": {
+    "total_trees": 6,
+    "tree_canopy_m2_before": 92.7,
+    "tree_canopy_m2_after": 50.3,
+    "tree_canopy_m2_lost": 42.4,
+    "canopy_cover_pct": 1.2,
+    "action_counts": {
+      "REMOVE_DEAD": 1,
+      "FELL_AND_COMPENSATE": 4,
+      "MUST_PRESERVE": 1
+    },
+    "rare_trees_in_site": 0,
+    "rare_trees_at_risk": 0,
+    "dead_trees_removed": 1,
+    "compensatory_required": {
+      "low": 41,
+      "high": 110
+    },
+    "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+    "always_preserve_count": 1,
+    "always_preserve_canopy_m2": 50.3,
+    "compensatory_species_mix": [
+      {
+        "felled_species": "Ficus religiosa",
+        "felled_share_pct": 25.0,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Ficus religiosa",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Pongamia pinnata",
+        "felled_share_pct": 25.0,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Pongamia pinnata",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Polyalthia longifolia",
+        "felled_share_pct": 25.0,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Syzygium cumini",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Syzygium cumini",
+        "note": "Non-native species occupying SE Asia / Indian Ocean origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Ficus racemosa",
+        "felled_share_pct": 25.0,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Ficus racemosa",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      }
+    ],
+    "decisions": [
+      {
+        "tree_id": 821374,
+        "botanical_name": "Cocos nucifera Linn.",
+        "species_key": "Cocos nucifera",
+        "girth_cm": 58.0,
+        "canopy_m2": 0.0,
+        "action": "REMOVE_DEAD",
+        "reason": "Census condition is dead/fallen. No felling permit required to remove a dead tree, and no ecological loss.",
+        "statutory_basis": "Not applicable \u2014 removal of a dead tree."
+      },
+      {
+        "tree_id": 821373,
+        "botanical_name": "Ficus religiosa Linn.",
+        "species_key": "Ficus religiosa",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus religiosa at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 821376,
+        "botanical_name": "Pongamia pinnata (L.) Pierre",
+        "species_key": "Pongamia pinnata",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Pongamia pinnata at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 1611899,
+        "botanical_name": "Polyalthia longifolia var.pendula",
+        "species_key": "Polyalthia longifolia",
+        "girth_cm": 46.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Polyalthia longifolia at 46 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 14-38 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 14,
+          "high": 38
+        },
+        "age_estimate_years": {
+          "low": 14.4,
+          "point": 23.0,
+          "high": 38.3
+        }
+      },
+      {
+        "tree_id": 1552359,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 68.0,
+        "canopy_m2": 28.3,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 68 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 21-56 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 21,
+          "high": 56
+        },
+        "age_estimate_years": {
+          "low": 21.2,
+          "point": 34.0,
+          "high": 56.7
+        }
+      },
+      {
+        "tree_id": 1702385,
+        "botanical_name": "Leucaena leucocephala (Lamk.)De.wit.",
+        "species_key": "Leucaena leucocephala",
+        "girth_cm": 110.0,
+        "canopy_m2": 50.3,
+        "action": "MUST_PRESERVE",
+        "reason": "Girth 110 cm at or above the 90 cm house-policy heritage threshold. Relocation is not realistic at this size; design should be adjusted to retain the tree.",
+        "statutory_basis": "HOUSE POLICY (not the 1975 Act) \u2014 the Act requires Tree Officer permission, with no girth-based automatic prohibition.",
+        "age_estimate_years": {
+          "low": 34.4,
+          "point": 55.0,
+          "high": 91.7
+        }
+      }
+    ],
+    "census_coverage": {
+      "index_built": true,
+      "loaded_trees": 4009623,
+      "census_total_city_trees": 4009624,
+      "loaded_fraction_pct": 100.0,
+      "wards_covered": 41,
+      "wards_total": 41,
+      "wards_empty": 0,
+      "wards_empty_list": [],
+      "coverage_complete": true,
+      "warning": null
+    },
+    "census_reliable_for_this_site": true
+  },
+  "relocation": null,
+  "indicators": {
+    "impervious_pct": 67.42,
+    "vegetation_pct": 1.06,
+    "water_pct": 5.08,
+    "lst_mean_c": 37.0143,
+    "lst_reference_c": 36.4209,
+    "lst_max_c": 38.876,
+    "mean_slope_deg": 3.0,
+    "dist_to_storm_drain_m": 14.9
+  },
+  "satellite_cube_available": true
+}

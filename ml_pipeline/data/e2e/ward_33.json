@@ -1,0 +1,420 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "code": "heat_unavailable",
+        "field": "lst_mean_c",
+        "message": "No LST observation supplied, so the heat factor cannot be scored and the composite excludes it. Requires the satellite epoch cube."
+      }
+    ],
+    "geometry": {
+      "area_m2": 8007.6,
+      "area_km2": 0.008,
+      "perimeter_m": 357.9,
+      "centroid_lon": 73.773423,
+      "centroid_lat": 18.456284,
+      "bbox": [
+        73.772999,
+        18.455879,
+        73.773846,
+        18.456688
+      ],
+      "compactness": 0.7854,
+      "vertex_count": 5,
+      "crs_used": "EPSG:32643",
+      "area_method": "pyproj+shapely in EPSG:32643"
+    },
+    "site": {
+      "ward_no": 33,
+      "ward_name": "Ward 33",
+      "drainage_context": {
+        "dist_to_storm_drain_m": 582.9,
+        "nearest_natural_water_m": null,
+        "flood_plain_note": "No nalla or river within the search radius."
+      },
+      "builtUpAreaSqm": 3000.0,
+      "plotAreaSqm": 8000.0,
+      "builtUpRatio": 0.375,
+      "materials": [
+        {
+          "name": "cement",
+          "quantityKg": 180000.0
+        },
+        {
+          "name": "steel_reinforcement",
+          "quantityKg": 95000.0
+        },
+        {
+          "name": "brick",
+          "quantityKg": 210000.0
+        },
+        {
+          "name": "river_sand",
+          "quantityKg": 140000.0
+        },
+        {
+          "name": "glass",
+          "quantityKg": 12000.0
+        },
+        {
+          "name": "aluminium",
+          "quantityKg": 4500.0
+        }
+      ],
+      "storeys": 8,
+      "epoch": 2024
+    },
+    "indicators_supplied": {
+      "dist_to_storm_drain_m": 582.9
+    }
+  },
+  "score": {
+    "climate_score": 35.2,
+    "impact_score": 64.8,
+    "risk_band": "High",
+    "complete": true,
+    "missing_factors": [],
+    "sub_scores": {
+      "flood": 57.5,
+      "heat": 67.0,
+      "green": 97.8,
+      "carbon": 39.5
+    },
+    "weight_contributions": {
+      "flood": 17.2,
+      "heat": 20.1,
+      "green": 19.6,
+      "carbon": 7.9
+    },
+    "factors": {
+      "flood": {
+        "score": 57.5,
+        "curve_number": 93.1,
+        "baseline_curve_number": 60.0,
+        "runoff_mm": 129.4,
+        "baseline_runoff_mm": 47.2,
+        "excess_runoff_mm": 82.2,
+        "design_storm_mm": 150.0,
+        "slope_multiplier": 1.05,
+        "drainage_multiplier": 1.0,
+        "drainage_basis": "distance to engineered stormwater outfall"
+      },
+      "heat": {
+        "score": 67.0,
+        "status": "OK",
+        "reason": null,
+        "lst_celsius": 36.35,
+        "lst_reference_c": 35.01,
+        "uhi_delta_c": 1.34,
+        "uhi_max_delta_c": 2.0,
+        "confidence": "medium",
+        "confidence_note": "Surface temperature, not air temperature. Single-pass composite; a seasonal multi-pass mean is stronger."
+      },
+      "green": {
+        "score": 97.8,
+        "sat_veg_pct": 7.5,
+        "canopy_cover_pct": 0.0,
+        "ground_vegetation_pct": 7.5,
+        "effective_green_pct": 2.2,
+        "canopy_weight": 0.7,
+        "ground_vegetation_weight": 0.3,
+        "source_divergence_pts": 7.5,
+        "confidence": "high",
+        "confidence_note": "Census and satellite agree within 7.5 pts."
+      },
+      "carbon": {
+        "score": 39.5,
+        "total_kgco2e": 473450.0,
+        "intensity_kgco2e_m2": 157.8,
+        "band": "Low",
+        "built_up_area_m2": 3000.0,
+        "line_items": [
+          {
+            "name": "cement_opc",
+            "quantity_kg": 180000.0,
+            "ef": 0.74,
+            "kgco2e": 133200.0,
+            "category": "binder",
+            "status": "OK"
+          },
+          {
+            "name": "steel_reinforcement",
+            "quantity_kg": 95000.0,
+            "ef": 2.3,
+            "kgco2e": 218500.0,
+            "category": "structural",
+            "status": "OK"
+          },
+          {
+            "name": "brick_clay",
+            "quantity_kg": 210000.0,
+            "ef": 0.24,
+            "kgco2e": 50400.0,
+            "category": "masonry",
+            "status": "OK"
+          },
+          {
+            "name": "river_sand",
+            "quantity_kg": 140000.0,
+            "ef": 0.005,
+            "kgco2e": 700.0,
+            "category": "aggregate",
+            "status": "OK"
+          },
+          {
+            "name": "glass_float",
+            "quantity_kg": 12000.0,
+            "ef": 1.2,
+            "kgco2e": 14400.0,
+            "category": "glazing",
+            "status": "OK"
+          },
+          {
+            "name": "aluminium_primary",
+            "quantity_kg": 4500.0,
+            "ef": 12.5,
+            "kgco2e": 56250.0,
+            "category": "fa\u00e7ade",
+            "status": "OK"
+          }
+        ],
+        "dominant_material": "steel_reinforcement",
+        "dominant_share_pct": 46.2,
+        "unknown_materials": [],
+        "ecological_advisories": [
+          {
+            "material": "river_sand",
+            "advisory": "CRITICAL_RIVERBED_EXTRACTION",
+            "severity": "blocking",
+            "text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+            "alternatives": [
+              "manufactured_sand_msand"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_note": "A1-A3 cradle-to-gate. Excludes transport and site waste."
+      }
+    },
+    "canopy": {
+      "total_trees": 0,
+      "tree_canopy_m2_before": 0.0,
+      "tree_canopy_m2_after": 0.0,
+      "tree_canopy_m2_lost": 0.0,
+      "canopy_cover_pct": 0.0,
+      "action_counts": {},
+      "rare_trees_in_site": 0,
+      "rare_trees_at_risk": 0,
+      "dead_trees_removed": 0,
+      "compensatory_required": {
+        "low": 0,
+        "high": 0
+      },
+      "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+      "always_preserve_count": 0,
+      "always_preserve_canopy_m2": 0,
+      "compensatory_species_mix": [],
+      "decisions": [],
+      "census_coverage": {
+        "index_built": true,
+        "loaded_trees": 4009623,
+        "census_total_city_trees": 4009624,
+        "loaded_fraction_pct": 100.0,
+        "wards_covered": 41,
+        "wards_total": 41,
+        "wards_empty": 0,
+        "wards_empty_list": [],
+        "coverage_complete": true,
+        "warning": null
+      },
+      "census_reliable_for_this_site": true
+    },
+    "blocking_issues": [
+      {
+        "type": "material_sourcing",
+        "detail": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "material": "river_sand",
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "recommendation": "REVIEW",
+    "headline": "Blocking conditions must be resolved before approval."
+  },
+  "recommendations": {
+    "baseline_impact": 64.8,
+    "baseline_climate": 35.2,
+    "baseline_risk": "High",
+    "recommendations": [
+      {
+        "id": "impervious_reduction",
+        "action": "Reduce impervious cover by 18 percentage points (permeable paving, green roof, or open landscape)",
+        "delta": {
+          "impact_before": 64.8,
+          "impact_after": 56.6,
+          "impact_delta": -8.2,
+          "climate_before": 35.2,
+          "climate_after": 43.4,
+          "factors": {
+            "flood": {
+              "before": 57.5,
+              "after": 33.9,
+              "delta": -23.6
+            },
+            "heat": {
+              "before": 67.0,
+              "after": 67.0,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 97.8,
+              "after": 92.3,
+              "delta": -5.5
+            },
+            "carbon": {
+              "before": 39.5,
+              "after": 39.5,
+              "delta": 0.0
+            }
+          }
+        },
+        "verified": true,
+        "affected": "flood",
+        "params": {
+          "shift_pct_points": 18.0
+        }
+      },
+      {
+        "id": "material_substitution",
+        "action": "Substitute 35% of each material with its lower-carbon alternative",
+        "delta": {
+          "impact_before": 64.8,
+          "impact_after": 63.8,
+          "impact_delta": -1.0,
+          "climate_before": 35.2,
+          "climate_after": 36.2,
+          "factors": {
+            "flood": {
+              "before": 57.5,
+              "after": 57.5,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 67.0,
+              "after": 67.0,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 97.8,
+              "after": 97.8,
+              "delta": 0.0
+            },
+            "carbon": {
+              "before": 39.5,
+              "after": 34.3,
+              "delta": -5.2
+            }
+          }
+        },
+        "verified": true,
+        "affected": "carbon",
+        "params": {
+          "fraction": 0.35
+        }
+      },
+      {
+        "id": "material_sourcing",
+        "action": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "delta": null,
+        "verified": true,
+        "affected": "carbon",
+        "blocking": true,
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "dropped_unverified": [],
+    "verification_note": "Each 'delta' is a genuine re-run of the deterministic scorer on the modified site. Recommendations that did not move the score are dropped, not reported.",
+    "combined_effect": {
+      "available": true,
+      "delta": {
+        "impact_before": 64.8,
+        "impact_after": 55.6,
+        "impact_delta": -9.2,
+        "climate_before": 35.2,
+        "climate_after": 44.4,
+        "factors": {
+          "flood": {
+            "before": 57.5,
+            "after": 33.9,
+            "delta": -23.6
+          },
+          "heat": {
+            "before": 67.0,
+            "after": 67.0,
+            "delta": 0.0
+          },
+          "green": {
+            "before": 97.8,
+            "after": 92.3,
+            "delta": -5.5
+          },
+          "carbon": {
+            "before": 39.5,
+            "after": 34.3,
+            "delta": -5.2
+          }
+        }
+      }
+    }
+  },
+  "canopy": {
+    "total_trees": 0,
+    "tree_canopy_m2_before": 0.0,
+    "tree_canopy_m2_after": 0.0,
+    "tree_canopy_m2_lost": 0.0,
+    "canopy_cover_pct": 0.0,
+    "action_counts": {},
+    "rare_trees_in_site": 0,
+    "rare_trees_at_risk": 0,
+    "dead_trees_removed": 0,
+    "compensatory_required": {
+      "low": 0,
+      "high": 0
+    },
+    "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+    "always_preserve_count": 0,
+    "always_preserve_canopy_m2": 0,
+    "compensatory_species_mix": [],
+    "decisions": [],
+    "census_coverage": {
+      "index_built": true,
+      "loaded_trees": 4009623,
+      "census_total_city_trees": 4009624,
+      "loaded_fraction_pct": 100.0,
+      "wards_covered": 41,
+      "wards_total": 41,
+      "wards_empty": 0,
+      "wards_empty_list": [],
+      "coverage_complete": true,
+      "warning": null
+    },
+    "census_reliable_for_this_site": true
+  },
+  "relocation": null,
+  "indicators": {
+    "impervious_pct": 42.54,
+    "vegetation_pct": 7.5,
+    "water_pct": 5.37,
+    "lst_mean_c": 36.3518,
+    "lst_reference_c": 35.0112,
+    "lst_max_c": 40.4312,
+    "mean_slope_deg": 3.0,
+    "dist_to_storm_drain_m": 582.9
+  },
+  "satellite_cube_available": true
+}

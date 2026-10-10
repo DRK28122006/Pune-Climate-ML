@@ -1,0 +1,470 @@
+{
+  "provenance": "Emission factors are cradle-to-gate (A1-A3) kgCO2e per kg of material as installed, per EN 15804 via GaBi (IPCC AR5). PRIMARY SOURCE since 2026-10-10: IFC India Construction Materials Database v1.0 (thinkstep for IFC/EU Eco-cities, Nov 2017, Table 16 GWP) for cement_opc 0.91, brick_clay 0.39, concrete_ready_mix 0.11, concrete_low_clinker_30ggbs 0.089 (nearest: 25% GGBS listing), steel_reinforcement 2.6, steel_rebar_eaf 0.83, river_sand/aggregate_rock 0.009 -- each carries its own ef_source. Steel context: BOF 2.8, DRI 2.1 (same table); the widely-copied 1.85 remains the WORLD crude average and is still rejected for Indian rebar. REMAINING ICE-global figures (no India-specific listing found): glass_float 1.2 (= IFC float glass 1.2, convergent), cement_ppc/psc/ggbs/lc3, 50% GGBS concrete 0.08 (no 50% listing), recycled rebar 0.45, msand 0.008. aluminium_recycled kept as listed. IFC lists no material literally named 'primary aluminium' (nearest: Aluminum ingot 31, a different allocation -- NOT adopted); aluminium_primary 20.88 comes from CEEW instead.",
+  "unit": "kgCO2e per kg of material",
+  "boundary": "A1-A3 (cradle to gate). Excludes transport (A4) and construction waste (C2).",
+  "materials": {
+    "cement_opc": {
+      "ef": 0.91,
+      "ef_source": "IFC India Construction Materials Database v1.0 (2017), Table 16: 'Cement (ordinary Portland cement, OPC)', GWP A1-A3 per EN 15804 via GaBi. Replaces ICE-global 0.74 on 2026-10-10.",
+      "category": "binder",
+      "phase": "A1-A3",
+      "substitutions": [
+        "cement_ppc",
+        "cement_psc",
+        "cement_ggbs",
+        "calcined_clay_cement_lc3"
+      ],
+      "note": "Direct process emissions. Cement is the single largest emissions source in an Indian RC building (~40% of embodied carbon in residential studies). MUST be collected from the BOQ separately from concrete. EF 0.91 = IFC India DB 'Cement (OPC)' (2017); see ef_source."
+    },
+    "cement_ppc": {
+      "ef": 0.507,
+      "category": "binder",
+      "phase": "A1-A3",
+      "substitutions": [
+        "cement_psc",
+        "cement_ggbs"
+      ],
+      "note": "Pozzolanic Portland Cement. Same workability, lower clinker factor."
+    },
+    "cement_psc": {
+      "ef": 0.312,
+      "category": "binder",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Portland Supreme Cement. Slag-based, lowest-emission mainstream cement."
+    },
+    "cement_ggbs": {
+      "ef": 0.05,
+      "category": "binder",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Blast-furnace slag cement. Essentially an allocation of an existing byproduct. Strongest single-carbon lever in a concrete mix."
+    },
+    "calcined_clay_cement_lc3": {
+      "ef": 0.14,
+      "category": "binder",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "LC3. ~40% lower CO2 than OPC, no new raw material, pilot-scale in India."
+    },
+    "concrete_ready_mix": {
+      "ef": 0.11,
+      "ef_source": "IFC India Construction Materials Database v1.0 (2017), Table 16: 'Ready mix concrete with ordinary Portland cement (OPC)'. Replaces ICE-mid 0.15 on 2026-10-10.",
+      "category": "structural",
+      "phase": "A1-A3",
+      "substitutions": [
+        "concrete_low_clinker_30ggbs",
+        "concrete_low_clinker_50ggbs"
+      ],
+      "note": "Cited ~0.16 kgCO2/kg for standard-mix concrete. Note this figure assumes a typical cement content, so specifying it alongside a separate cement quantity can double-count binder emissions."
+    },
+    "concrete_low_clinker_30ggbs": {
+      "ef": 0.089,
+      "ef_source": "IFC India DB v1.0 (2017), Table 16 nearest listed: 'Ready mix concrete with Portland slag cement (25% GGBS)' = 0.089. No 30% GGBS variant is listed (verified absent 2026-10-10); key retained for BOQ compatibility, value is the 25% figure, still below OPC 0.11 so the substitution incentive holds.",
+      "category": "structural",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "30% GGBS replacement."
+    },
+    "concrete_low_clinker_50ggbs": {
+      "ef": 0.08,
+      "category": "structural",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "50% GGBS replacement. Standard for GGBS-concrete in Indian institutional practice."
+    },
+    "steel_reinforcement": {
+      "ef": 2.6,
+      "ef_source": "IFC India Construction Materials Database v1.0 (2017), Table 16: 'Steel reinforcement (steel rebar)'. Context entries: BOF Steel 2.8, DRI Steel 2.1. Replaces 2.3 (CEEW/IEEFA route-average reading) on 2026-10-10; the widely-copied 1.85 remains the WORLD crude average and is still rejected.",
+      "category": "structural",
+      "phase": "A1-A3",
+      "substitutions": [
+        "steel_rebar_eaf",
+        "steel_rebar_recycled"
+      ],
+      "note": "Indian integrated BF-BOF route: ~2.3 tCO2e/t (range 1.8-3.2). GreenPro cites Indian industry average 2.2-2.5. The commonly quoted 1.85 is the WORLD crude-steel average and is too low for Indian rebar."
+    },
+    "steel_rebar_eaf": {
+      "ef": 0.83,
+      "ef_source": "IFC India DB v1.0 (2017), Table 16: 'EAF Steel'. Replaces 0.7 secondary-EAF estimate on 2026-10-10.",
+      "category": "structural",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "DRI-EAF route, ~1.4 t/t; secondary EAF ~0.7. Limited Indian rebar supply today."
+    },
+    "steel_rebar_recycled": {
+      "ef": 0.45,
+      "category": "structural",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Recycled-content rebar. Scrap-based."
+    },
+    "brick_clay": {
+      "ef": 0.39,
+      "ef_source": "IFC India Construction Materials Database v1.0 (2017), Table 16: 'Brick (common/facing)', GWP A1-A3. Kiln variants listed 0.31-0.59; 0.39 is the common-facing figure. Replaces ICE-global 0.24 on 2026-10-10.",
+      "category": "masonry",
+      "phase": "A1-A3",
+      "substitutions": [
+        "fly_ash_brick",
+        "aac_block",
+        "hollow_concrete_block"
+      ],
+      "note": "Common fired clay brick. EF 0.39 = IFC India DB 'Brick (common/facing)' (2017); kiln variants 0.31-0.59. Standard red brick."
+    },
+    "fly_ash_brick": {
+      "ef": 0.09,
+      "category": "masonry",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "~60% below fired clay. Utilises thermal power plant ash."
+    },
+    "aac_block": {
+      "ef": 0.11,
+      "category": "masonry",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Autoclaved aerated concrete. Autoclaving adds energy but per kg it beats fired brick."
+    },
+    "hollow_concrete_block": {
+      "ef": 0.14,
+      "category": "masonry",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "HCC. Less material per m2 of wall."
+    },
+    "river_sand": {
+      "ef": 0.009,
+      "ef_source": "IFC India DB v1.0 (2017), Table 16: 'Sand'. Carbon-negligible either way; the river-sand block is ecological/legal, not carbon.",
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ecological_advisory": "CRITICAL_RIVERBED_EXTRACTION",
+      "advisory_severity": "blocking",
+      "advisory_text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+      "substitutions": [
+        "manufactured_sand_msand"
+      ]
+    },
+    "sand_unspecified": {
+      "ef": 0.0085,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ef_note": "Midpoint of river_sand (0.009, IFC India 'Sand') and manufactured_sand_msand (0.008). Emissions are near-identical either way; the difference between these two sources is ecological and legal, not carbon.",
+      "ecological_advisory": "SAND_SOURCE_UNSPECIFIED",
+      "advisory_severity": "clarify",
+      "advisory_text": "Sand is specified as 'sand' with no source given. Confirm whether this is riverbed sand (prohibited in the Mula-Mutha basin without MPCB sourcing evidence) or manufactured sand from a permitted quarry. The carbon difference is negligible; the legal and ecological difference is not.",
+      "substitutions": [
+        "manufactured_sand_msand"
+      ]
+    },
+    "manufactured_sand_msand": {
+      "ef": 0.008,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ecological_advisory": "SUSTAINABLE_QUARRY_SOURCE",
+      "advisory_severity": "info",
+      "advisory_text": "Certified manufactured sand from a permitted quarry or M-sand plant. Preferred substitute for riverbed sand.",
+      "substitutions": []
+    },
+    "aggregate_rock": {
+      "ef": 0.009,
+      "ef_source": "IFC India DB v1.0 (2017), Table 16: 'Aggregate (mixed gravel/crushed stone)'. Replaces 0.005 rock-quarrying estimate on 2026-10-10.",
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "substitutions": [
+        "aggregate_recycled"
+      ],
+      "note": "Crushed stone. Negligible emissions."
+    },
+    "aggregate_recycled": {
+      "ef": 0.01,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Recycled concrete aggregate. Requires contamination-free demolition input."
+    },
+    "glass_float": {
+      "ef": 1.2,
+      "category": "glazing",
+      "phase": "A1-A3",
+      "substitutions": [
+        "glass_low_e",
+        "glass_recycled_cullet"
+      ],
+      "note": "Float glass, cradle to gate."
+    },
+    "glass_low_e": {
+      "ef": 1.4,
+      "category": "glazing",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Slightly higher embodied carbon but cuts operational cooling. Net benefit depends on climate and cooling load; surface this trade-off rather than treating it as a free win."
+    },
+    "glass_recycled_cullet": {
+      "ef": 0.5,
+      "category": "glazing",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "High recycled content."
+    },
+    "aluminium_primary": {
+      "ef": 20.88,
+      "ef_source": "CEEW Indian aluminium industry average (captive-coal smelters). Adopted 2026-10-10 replacing ICE-global virgin 12.5, which understated Indian smelter carbon ~40%. IFC India DB lists no primary-aluminium entry (ingot 31 is a different allocation, NOT adopted). Facade-heavy BOQs were undercounting carbon before this fix.",
+      "category": "fa\u00e7ade",
+      "phase": "A1-A3",
+      "substitutions": [
+        "aluminium_recycled"
+      ],
+      "note": "Primary aluminium is electrolysis-intensive. Dominates fa\u00e7ade carbon."
+    },
+    "aluminium_recycled": {
+      "ef": 0.9,
+      "category": "fa\u00e7ade",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Recycled aluminium requires ~5% of the energy of primary. Largest single substitution win available in a fa\u00e7ade."
+    },
+    "timber_wood": {
+      "ef": 0.5,
+      "category": "structure",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Biogenic A1-A3 only. Note: stored-carbon benefits are NOT counted here; this factor is deliberately conservative and excludes biogenic credit."
+    },
+    "gypsum_plaster": {
+      "ef": 0.15,
+      "category": "finish",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": ""
+    },
+    "tiles_ceramic": {
+      "ef": 0.3,
+      "category": "finish",
+      "phase": "A1-A3",
+      "substitutions": [
+        "tiles_vitrified"
+      ],
+      "note": "Firing energy dominates."
+    },
+    "tiles_vitrified": {
+      "ef": 0.35,
+      "category": "finish",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Marginal per-kg difference; the win from vitrified tile is thinner-set/dry-lay material saving, not the tile itself."
+    },
+    "paint_emulsion": {
+      "ef": 0.3,
+      "category": "finish",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "VOC-free low-emission paint. Included for completeness."
+    },
+    "insulation_mineral": {
+      "ef": 0.9,
+      "category": "envelope",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Embodied vs operational trade-off, same class as low-e glass."
+    },
+    "insulation_xps": {
+      "ef": 5.1,
+      "category": "envelope",
+      "phase": "A1-A3",
+      "substitutions": [],
+      "note": "Very high due to blowing agents. Large penalised use of XPS raises a project's total despite good thermal performance."
+    },
+    "laterite": {
+      "ef": 0.005,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ef_status": "ESTIMATE_DERIVED",
+      "ef_basis": "Derived from aggregate_rock (0.009, IFC India), not independently measured in India. Quarrying, crushing and hauling only -- no calcination, so the emissions are transport-dominated and near-negligible against cement and steel. Marked ESTIMATE: a published Indian factor would supersede this.",
+      "substitutions": [
+        "aggregate_recycled"
+      ],
+      "note": "Laterite stone. PMC-area filler and sub-base."
+    },
+    "trap_rock": {
+      "ef": 0.005,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ef_status": "ESTIMATE_DERIVED",
+      "ef_basis": "Derived from aggregate_rock (0.009, IFC India), not independently measured in India. Quarrying, crushing and hauling only -- no calcination, so the emissions are transport-dominated and near-negligible against cement and steel. Marked ESTIMATE: a published Indian factor would supersede this.",
+      "substitutions": [
+        "aggregate_recycled"
+      ],
+      "note": "Deccan basalt. Standard PMC building stone."
+    },
+    "aggregate_ggi": {
+      "ef": 0.005,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ef_status": "ESTIMATE_DERIVED",
+      "ef_basis": "Derived from aggregate_rock (0.009, IFC India), not independently measured in India. Quarrying, crushing and hauling only -- no calcination, so the emissions are transport-dominated and near-negligible against cement and steel. Marked ESTIMATE: a published Indian factor would supersede this.",
+      "substitutions": [
+        "aggregate_recycled"
+      ],
+      "note": "Granite aggregate (GGI). MIDC-area coarse aggregate."
+    },
+    "murrum": {
+      "ef": 0.005,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ef_status": "ESTIMATE_DERIVED",
+      "ef_basis": "Derived from aggregate_rock (0.009, IFC India), not independently measured in India. Quarrying, crushing and hauling only -- no calcination, so the emissions are transport-dominated and near-negligible against cement and steel. Marked ESTIMATE: a published Indian factor would supersede this.",
+      "substitutions": [
+        "aggregate_recycled"
+      ],
+      "note": "Murrum. Standard PMC sub-grade filling."
+    },
+    "cupleted_soil": {
+      "ef": 0.005,
+      "category": "aggregate",
+      "phase": "A1-A3",
+      "ef_status": "ESTIMATE_DERIVED",
+      "ef_basis": "Derived from aggregate_rock (0.009, IFC India), not independently measured in India. Quarrying, crushing and hauling only -- no calcination, so the emissions are transport-dominated and near-negligible against cement and steel. Marked ESTIMATE: a published Indian factor would supersede this.",
+      "substitutions": [
+        "aggregate_recycled"
+      ],
+      "note": "Cupleted/soil mix. Excavated material reused on site."
+    },
+    "stabilized_earth_block_seb": {
+      "ef": 0.06,
+      "category": "masonry",
+      "phase": "A1-A3",
+      "ef_status": "ESTIMATE_DERIVED",
+      "ef_basis": "Cement-stabilised earth block: predominantly the cement binder. Scaled from brick_clay (0.24) by the cement fraction and a nominal stabiliser dose. Marked ESTIMATE.",
+      "substitutions": [
+        "fly_ash_brick",
+        "aac_block"
+      ],
+      "note": "Cement stabilised earth block. Low-carbon masonry alternative."
+    }
+  },
+  "aliases": {
+    "cement": "cement_opc",
+    "ordinary_portland_cement": "cement_opc",
+    "opc": "cement_opc",
+    "sand": "sand_unspecified",
+    "m_sand": "manufactured_sand_msand",
+    "msand": "manufactured_sand_msand",
+    "steel": "steel_reinforcement",
+    "tmt": "steel_reinforcement",
+    "rebar": "steel_reinforcement",
+    "brick": "brick_clay",
+    "concrete": "concrete_ready_mix",
+    "rcc": "concrete_ready_mix",
+    "glass": "glass_float",
+    "aluminium": "aluminium_primary",
+    "aluminum": "aluminium_primary",
+    "aggregate": "aggregate_rock",
+    "stone": "aggregate_rock",
+    "bricks": "brick_clay",
+    "portland cement": "cement_opc",
+    "portland_cement": "cement_opc",
+    "cem": "cement_opc",
+    "cement opc": "cement_opc",
+    "ordinary cement": "cement_opc",
+    "opc 53 grade": "cement_opc",
+    "tmt bars": "steel_reinforcement",
+    "tmt 500": "steel_reinforcement",
+    "tmt fe500": "steel_reinforcement",
+    "tmt fe 500": "steel_reinforcement",
+    "tmt fe500d": "steel_reinforcement",
+    "ms rebar": "steel_reinforcement",
+    "mild steel": "steel_reinforcement",
+    "reinforcement steel": "steel_reinforcement",
+    "steel bars": "steel_reinforcement",
+    "tmt bar": "steel_reinforcement",
+    "hy sd": "steel_reinforcement",
+    "m sand": "manufactured_sand_msand",
+    "manufactured sand": "manufactured_sand_msand",
+    "m-sand manufactured": "manufactured_sand_msand",
+    "m sand manufactured": "manufactured_sand_msand",
+    "clay brick": "brick_clay",
+    "burnt clay brick": "brick_clay",
+    "red brick": "brick_clay",
+    "brick clay": "brick_clay",
+    "fly ash bricks": "fly_ash_brick",
+    "flyash brick": "fly_ash_brick",
+    "fal brick": "fly_ash_brick",
+    "fly ash block": "fly_ash_brick",
+    "autoclaved aerated concrete block": "aac_block",
+    "aac": "aac_block",
+    "aerated concrete block": "aac_block",
+    "aac blocks": "aac_block",
+    "crushed stone": "aggregate_rock",
+    "20mm aggregate": "aggregate_rock",
+    "40mm aggregate": "aggregate_rock",
+    "aggregate stone": "aggregate_rock",
+    "ready mix concrete": "concrete_ready_mix",
+    "rmc": "concrete_ready_mix",
+    "ready-mix": "concrete_ready_mix",
+    "ready mix": "concrete_ready_mix",
+    "float glass": "glass_float",
+    "wood": "timber_wood",
+    "teak wood": "timber_wood",
+    "ordinary portland cement": "cement_opc",
+    "opc cement": "cement_opc",
+    "steel tmt": "steel_reinforcement",
+    "portland opc cement": "cement_opc",
+    "cement ordinary portland": "cement_opc",
+    "laterite stone": "laterite",
+    "laterite blocks": "laterite",
+    "trap rock": "trap_rock",
+    "trap": "trap_rock",
+    "basalt": "trap_rock",
+    "trap stone": "trap_rock",
+    "ggi": "aggregate_ggi",
+    "ground granite": "aggregate_ggi",
+    "granite": "aggregate_ggi",
+    "granite aggregate": "aggregate_ggi",
+    "aggregate ggi": "aggregate_ggi",
+    "murrum": "murrum",
+    "murum": "murrum",
+    "red earth": "murrum",
+    "cupleted soil": "cupleted_soil",
+    "cupleted": "cupleted_soil",
+    "c&d waste": "cupleted_soil",
+    "cd waste": "cupleted_soil",
+    "excavated soil": "cupleted_soil",
+    "disposal earth": "cupleted_soil",
+    "stabilised earth block": "stabilized_earth_block_seb",
+    "stabilized earth block": "stabilized_earth_block_seb",
+    "seb": "stabilized_earth_block_seb",
+    "ceb": "stabilized_earth_block_seb",
+    "cement stabilized earth block": "stabilized_earth_block_seb",
+    "cuplicated soil": "cupleted_soil",
+    "cuplicated": "cupleted_soil",
+    "c d waste": "cupleted_soil",
+    "c and d waste": "cupleted_soil",
+    "ground granite aggregate": "aggregate_ggi",
+    "granite aggregate ggi": "aggregate_ggi",
+    "earth filling": "cupleted_soil",
+    "filling earth": "cupleted_soil",
+    "backfilling": "cupleted_soil",
+    "backfill": "cupleted_soil"
+  },
+  "carbon_intensity_bands": {
+    "note": "Breakpoints are UNSOURCED house bands inherited from Deepesh's config. Do not attribute them to GRIHA. Sourced anchors are in config/regions/pune.json under carbon.source_anchors: IGBC Near Net Zero <= 700 kgCO2e/m2, observed Indian high-rise residential mean 454 (range 373-530).",
+    "bands": [
+      {
+        "label": "Low",
+        "max": 400.0
+      },
+      {
+        "label": "Moderate",
+        "max": 800.0
+      },
+      {
+        "label": "High",
+        "max": 1200.0
+      },
+      {
+        "label": "Very High",
+        "max": null
+      }
+    ]
+  }
+}

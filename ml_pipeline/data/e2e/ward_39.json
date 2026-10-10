@@ -1,0 +1,2781 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "code": "heat_unavailable",
+        "field": "lst_mean_c",
+        "message": "No LST observation supplied, so the heat factor cannot be scored and the composite excludes it. Requires the satellite epoch cube."
+      }
+    ],
+    "geometry": {
+      "area_m2": 8007.2,
+      "area_km2": 0.008,
+      "perimeter_m": 357.9,
+      "centroid_lon": 73.867884,
+      "centroid_lat": 18.460493,
+      "bbox": [
+        73.867461,
+        18.460088,
+        73.868308,
+        18.460897
+      ],
+      "compactness": 0.7854,
+      "vertex_count": 5,
+      "crs_used": "EPSG:32643",
+      "area_method": "pyproj+shapely in EPSG:32643"
+    },
+    "site": {
+      "ward_no": 39,
+      "ward_name": "Ward 39",
+      "drainage_context": {
+        "dist_to_storm_drain_m": 25.7,
+        "nearest_natural_water_m": 239.2,
+        "flood_plain_note": "Nearest natural watercourse 239 m. Proximity to a nala or river is flood-plain EXPOSURE and raises risk. It must never be used as a drainage benefit."
+      },
+      "builtUpAreaSqm": 3000.0,
+      "plotAreaSqm": 8000.0,
+      "builtUpRatio": 0.375,
+      "materials": [
+        {
+          "name": "cement",
+          "quantityKg": 180000.0
+        },
+        {
+          "name": "steel_reinforcement",
+          "quantityKg": 95000.0
+        },
+        {
+          "name": "brick",
+          "quantityKg": 210000.0
+        },
+        {
+          "name": "river_sand",
+          "quantityKg": 140000.0
+        },
+        {
+          "name": "glass",
+          "quantityKg": 12000.0
+        },
+        {
+          "name": "aluminium",
+          "quantityKg": 4500.0
+        }
+      ],
+      "storeys": 8,
+      "epoch": 2024
+    },
+    "indicators_supplied": {
+      "dist_to_storm_drain_m": 25.7
+    }
+  },
+  "score": {
+    "climate_score": 51.0,
+    "impact_score": 49.0,
+    "risk_band": "Moderate",
+    "complete": true,
+    "missing_factors": [],
+    "sub_scores": {
+      "flood": 51.9,
+      "heat": 21.0,
+      "green": 95.9,
+      "carbon": 39.5
+    },
+    "weight_contributions": {
+      "flood": 15.6,
+      "heat": 6.3,
+      "green": 19.2,
+      "carbon": 7.9
+    },
+    "factors": {
+      "flood": {
+        "score": 51.9,
+        "curve_number": 96.3,
+        "baseline_curve_number": 60.0,
+        "runoff_mm": 138.8,
+        "baseline_runoff_mm": 47.2,
+        "excess_runoff_mm": 91.6,
+        "design_storm_mm": 150.0,
+        "slope_multiplier": 1.05,
+        "drainage_multiplier": 0.81,
+        "drainage_basis": "distance to engineered stormwater outfall"
+      },
+      "heat": {
+        "score": 21.0,
+        "status": "OK",
+        "reason": null,
+        "lst_celsius": 38.12,
+        "lst_reference_c": 37.7,
+        "uhi_delta_c": 0.42,
+        "uhi_max_delta_c": 2.0,
+        "confidence": "medium",
+        "confidence_note": "Surface temperature, not air temperature. Single-pass composite; a seasonal multi-pass mean is stronger."
+      },
+      "green": {
+        "score": 95.9,
+        "sat_veg_pct": 3.5,
+        "canopy_cover_pct": 5.9,
+        "ground_vegetation_pct": 0.0,
+        "effective_green_pct": 4.1,
+        "canopy_weight": 0.7,
+        "ground_vegetation_weight": 0.3,
+        "source_divergence_pts": 2.4,
+        "confidence": "high",
+        "confidence_note": "Census and satellite agree within 2.4 pts."
+      },
+      "carbon": {
+        "score": 39.5,
+        "total_kgco2e": 473450.0,
+        "intensity_kgco2e_m2": 157.8,
+        "band": "Low",
+        "built_up_area_m2": 3000.0,
+        "line_items": [
+          {
+            "name": "cement_opc",
+            "quantity_kg": 180000.0,
+            "ef": 0.74,
+            "kgco2e": 133200.0,
+            "category": "binder",
+            "status": "OK"
+          },
+          {
+            "name": "steel_reinforcement",
+            "quantity_kg": 95000.0,
+            "ef": 2.3,
+            "kgco2e": 218500.0,
+            "category": "structural",
+            "status": "OK"
+          },
+          {
+            "name": "brick_clay",
+            "quantity_kg": 210000.0,
+            "ef": 0.24,
+            "kgco2e": 50400.0,
+            "category": "masonry",
+            "status": "OK"
+          },
+          {
+            "name": "river_sand",
+            "quantity_kg": 140000.0,
+            "ef": 0.005,
+            "kgco2e": 700.0,
+            "category": "aggregate",
+            "status": "OK"
+          },
+          {
+            "name": "glass_float",
+            "quantity_kg": 12000.0,
+            "ef": 1.2,
+            "kgco2e": 14400.0,
+            "category": "glazing",
+            "status": "OK"
+          },
+          {
+            "name": "aluminium_primary",
+            "quantity_kg": 4500.0,
+            "ef": 12.5,
+            "kgco2e": 56250.0,
+            "category": "fa\u00e7ade",
+            "status": "OK"
+          }
+        ],
+        "dominant_material": "steel_reinforcement",
+        "dominant_share_pct": 46.2,
+        "unknown_materials": [],
+        "ecological_advisories": [
+          {
+            "material": "river_sand",
+            "advisory": "CRITICAL_RIVERBED_EXTRACTION",
+            "severity": "blocking",
+            "text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+            "alternatives": [
+              "manufactured_sand_msand"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_note": "A1-A3 cradle-to-gate. Excludes transport and site waste."
+      }
+    },
+    "canopy": {
+      "total_trees": 43,
+      "tree_canopy_m2_before": 469.7,
+      "tree_canopy_m2_after": 7.1,
+      "tree_canopy_m2_lost": 462.6,
+      "canopy_cover_pct": 5.9,
+      "action_counts": {
+        "FELL_AND_COMPENSATE": 41,
+        "REMOVE_DEAD": 1,
+        "RELOCATE": 1
+      },
+      "rare_trees_in_site": 0,
+      "rare_trees_at_risk": 0,
+      "dead_trees_removed": 1,
+      "compensatory_required": {
+        "low": 428,
+        "high": 1166
+      },
+      "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+      "always_preserve_count": 0,
+      "always_preserve_canopy_m2": 0,
+      "compensatory_species_mix": [
+        {
+          "felled_species": "Ficus racemosa",
+          "felled_share_pct": 14.6,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Ficus racemosa",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Vitex nigundo",
+          "felled_share_pct": 12.2,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Vitex nigundo",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Mangifera indica",
+          "felled_share_pct": 9.8,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Mangifera indica",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Ficus religiosa",
+          "felled_share_pct": 7.3,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Ficus religiosa",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Annona squamosa",
+          "felled_share_pct": 7.3,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Azadirachta indica",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Azadirachta indica",
+          "note": "Non-native species occupying Central/South America origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Terminalia catappa",
+          "felled_share_pct": 7.3,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Syzygium cumini",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Syzygium cumini",
+          "note": "Non-native species occupying SE Asia / Malesia, naturalised origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Artocarpus heterophyllus",
+          "felled_share_pct": 4.9,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Artocarpus heterophyllus",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Azadirachta indica",
+          "felled_share_pct": 4.9,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Azadirachta indica",
+          "recommended_replacement_native": true,
+          "mix_companion": "Mangifera indica",
+          "note": "Native species. Replanted in kind; pair with Mangifera indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Grevillea robusta",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Dalbergia melanoxylon",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Dalbergia melanoxylon",
+          "note": "Non-native species occupying Australia origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Citrus aurantiifolia",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Citrus aurantiifolia",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Ficus benjamina",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Ficus benghalensis",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Ficus benghalensis",
+          "note": "Non-native species occupying Horticultural origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Polyalthia longifolia",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Syzygium cumini",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Syzygium cumini",
+          "note": "Non-native species occupying SE Asia / Indian Ocean origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Ficus benghalensis",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Ficus benghalensis",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Psidium gaujava",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Mangifera indica",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Mangifera indica",
+          "note": "Non-native species occupying Central/South America origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Syzygium cumini",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Syzygium cumini",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Cocos nucifera",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Caryota urens",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Caryota urens",
+          "note": "Non-native species occupying Naturalised coastal origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Jacaranda mimosifolia",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Azadirachta indica",
+          "recommended_replacement_native": true,
+          "recommended_replacement_origin": "native",
+          "mix_companion": "Azadirachta indica",
+          "note": "Non-native species occupying South America origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Ziziphus mauritiana",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Ziziphus mauritiana",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Delonix regia",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLACE_WITH_NATIVE",
+          "recommended_replacement": "Bauhinia purpurea",
+          "recommended_replacement_native": false,
+          "recommended_replacement_origin": "S/SE Asia",
+          "mix_companion": "Bauhinia purpurea",
+          "note": "Non-native species occupying Madagascar origin. Statutory count is met, but not with this species."
+        },
+        {
+          "felled_species": "Murraya koenigii",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Murraya koenigii",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        },
+        {
+          "felled_species": "Moringa oleifera",
+          "felled_share_pct": 2.4,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Moringa oleifera",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        }
+      ],
+      "decisions": [
+        {
+          "tree_id": 2577618,
+          "botanical_name": "Ficus religiosa Linn.",
+          "species_key": "Ficus religiosa",
+          "girth_cm": 52.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus religiosa at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 43
+          },
+          "age_estimate_years": {
+            "low": 16.2,
+            "point": 26.0,
+            "high": 43.3
+          }
+        },
+        {
+          "tree_id": 2621008,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 54.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 54 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-45 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 45
+          },
+          "age_estimate_years": {
+            "low": 16.9,
+            "point": 27.0,
+            "high": 45.0
+          }
+        },
+        {
+          "tree_id": 2577783,
+          "botanical_name": "Mangifera indica Linn.",
+          "species_key": "Mangifera indica",
+          "girth_cm": 42.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Mangifera indica at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 13,
+            "high": 35
+          },
+          "age_estimate_years": {
+            "low": 13.1,
+            "point": 21.0,
+            "high": 35.0
+          }
+        },
+        {
+          "tree_id": 2577834,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 48.0,
+          "canopy_m2": 0.0,
+          "action": "REMOVE_DEAD",
+          "reason": "Census condition is dead/fallen. No felling permit required to remove a dead tree, and no ecological loss.",
+          "statutory_basis": "Not applicable \u2014 removal of a dead tree."
+        },
+        {
+          "tree_id": 2577814,
+          "botanical_name": "Mangifera indica Linn.",
+          "species_key": "Mangifera indica",
+          "girth_cm": 28.0,
+          "canopy_m2": 7.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Mangifera indica at 28 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 8-23 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 8,
+            "high": 23
+          },
+          "age_estimate_years": {
+            "low": 8.8,
+            "point": 14.0,
+            "high": 23.3
+          }
+        },
+        {
+          "tree_id": 2577799,
+          "botanical_name": "Grevillea robusta A.Cunn. ex R.Br.",
+          "species_key": "Grevillea robusta",
+          "girth_cm": 54.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Grevillea robusta at 54 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 16-45 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 45
+          },
+          "age_estimate_years": {
+            "low": 16.9,
+            "point": 27.0,
+            "high": 45.0
+          }
+        },
+        {
+          "tree_id": 2577826,
+          "botanical_name": "Citrus aurantiifolia (christ.)Swingle",
+          "species_key": "Citrus aurantiifolia",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Citrus aurantiifolia at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2577851,
+          "botanical_name": "Artocarpus heterophyllus Lamk.",
+          "species_key": "Artocarpus heterophyllus",
+          "girth_cm": 10.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Artocarpus heterophyllus at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2577888,
+          "botanical_name": "Annona squamosa Linn.",
+          "species_key": "Annona squamosa",
+          "girth_cm": 11.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Annona squamosa at 11 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 3-9 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2577873,
+          "botanical_name": "Artocarpus heterophyllus Lamk.",
+          "species_key": "Artocarpus heterophyllus",
+          "girth_cm": 52.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Artocarpus heterophyllus at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 43
+          },
+          "age_estimate_years": {
+            "low": 16.2,
+            "point": 26.0,
+            "high": 43.3
+          }
+        },
+        {
+          "tree_id": 2577879,
+          "botanical_name": "Mangifera indica Linn.",
+          "species_key": "Mangifera indica",
+          "girth_cm": 42.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Mangifera indica at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 13,
+            "high": 35
+          },
+          "age_estimate_years": {
+            "low": 13.1,
+            "point": 21.0,
+            "high": 35.0
+          }
+        },
+        {
+          "tree_id": 2577768,
+          "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+          "species_key": "Syzygium cumini",
+          "girth_cm": 22.0,
+          "canopy_m2": 7.1,
+          "action": "RELOCATE",
+          "reason": "Syzygium cumini at 22 cm is within the transplant ceiling (30 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+          "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+          "age_estimate_years": {
+            "low": 6.9,
+            "point": 11.0,
+            "high": 18.3
+          }
+        },
+        {
+          "tree_id": 2577763,
+          "botanical_name": "Terminalia catappa Linn.",
+          "species_key": "Terminalia catappa",
+          "girth_cm": 42.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Terminalia catappa at 42 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 13-35 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 13,
+            "high": 35
+          },
+          "age_estimate_years": {
+            "low": 13.1,
+            "point": 21.0,
+            "high": 35.0
+          }
+        },
+        {
+          "tree_id": 2577747,
+          "botanical_name": "Ficus benjamina L.",
+          "species_key": "Ficus benjamina",
+          "girth_cm": 11.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus benjamina at 11 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 3-9 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2577735,
+          "botanical_name": "Terminalia catappa Linn.",
+          "species_key": "Terminalia catappa",
+          "girth_cm": 36.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Terminalia catappa at 36 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 11-30 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 11,
+            "high": 30
+          },
+          "age_estimate_years": {
+            "low": 11.2,
+            "point": 18.0,
+            "high": 30.0
+          }
+        },
+        {
+          "tree_id": 2577720,
+          "botanical_name": "Polyalthia longifolia (sonnerat) Thwaites",
+          "species_key": "Polyalthia longifolia",
+          "girth_cm": 18.0,
+          "canopy_m2": 7.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Polyalthia longifolia at 18 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 5-15 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 5,
+            "high": 15
+          },
+          "age_estimate_years": {
+            "low": 5.6,
+            "point": 9.0,
+            "high": 15.0
+          }
+        },
+        {
+          "tree_id": 2577707,
+          "botanical_name": "Ficus benghalensis Linn.",
+          "species_key": "Ficus benghalensis",
+          "girth_cm": 52.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus benghalensis at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 43
+          },
+          "age_estimate_years": {
+            "low": 16.2,
+            "point": 26.0,
+            "high": 43.3
+          }
+        },
+        {
+          "tree_id": 2577695,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 35.0,
+          "canopy_m2": 7.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 35 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 10-29 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 10,
+            "high": 29
+          },
+          "age_estimate_years": {
+            "low": 10.9,
+            "point": 17.5,
+            "high": 29.2
+          }
+        },
+        {
+          "tree_id": 2583265,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 65.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 65 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 20-54 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 20,
+            "high": 54
+          },
+          "age_estimate_years": {
+            "low": 20.3,
+            "point": 32.5,
+            "high": 54.2
+          }
+        },
+        {
+          "tree_id": 2577682,
+          "botanical_name": "Ficus religiosa Linn.",
+          "species_key": "Ficus religiosa",
+          "girth_cm": 24.0,
+          "canopy_m2": 7.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus religiosa at 24 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 7-20 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 7,
+            "high": 20
+          },
+          "age_estimate_years": {
+            "low": 7.5,
+            "point": 12.0,
+            "high": 20.0
+          }
+        },
+        {
+          "tree_id": 2577670,
+          "botanical_name": "Ficus religiosa Linn.",
+          "species_key": "Ficus religiosa",
+          "girth_cm": 42.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus religiosa at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 13,
+            "high": 35
+          },
+          "age_estimate_years": {
+            "low": 13.1,
+            "point": 21.0,
+            "high": 35.0
+          }
+        },
+        {
+          "tree_id": 2583315,
+          "botanical_name": "Annona squamosa Linn.",
+          "species_key": "Annona squamosa",
+          "girth_cm": 24.0,
+          "canopy_m2": 7.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Annona squamosa at 24 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 7-20 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 7,
+            "high": 20
+          },
+          "age_estimate_years": {
+            "low": 7.5,
+            "point": 12.0,
+            "high": 20.0
+          }
+        },
+        {
+          "tree_id": 2583330,
+          "botanical_name": "Annona squamosa Linn.",
+          "species_key": "Annona squamosa",
+          "girth_cm": 14.0,
+          "canopy_m2": 7.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Annona squamosa at 14 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 4-11 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2583356,
+          "botanical_name": "Vitex nigundo L.",
+          "species_key": "Vitex nigundo",
+          "girth_cm": 10.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2583294,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 52.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Azadirachta indica at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 43
+          },
+          "age_estimate_years": {
+            "low": 16.2,
+            "point": 26.0,
+            "high": 43.3
+          }
+        },
+        {
+          "tree_id": 2583385,
+          "botanical_name": "Vitex nigundo L.",
+          "species_key": "Vitex nigundo",
+          "girth_cm": 10.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2583280,
+          "botanical_name": "Psidium gaujava L.",
+          "species_key": "Psidium gaujava",
+          "girth_cm": 24.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Psidium gaujava at 24 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 7-20 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 7,
+            "high": 20
+          },
+          "age_estimate_years": {
+            "low": 7.5,
+            "point": 12.0,
+            "high": 20.0
+          }
+        },
+        {
+          "tree_id": 2583306,
+          "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+          "species_key": "Syzygium cumini",
+          "girth_cm": 32.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Syzygium cumini at 32 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 10-26 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 10,
+            "high": 26
+          },
+          "age_estimate_years": {
+            "low": 10.0,
+            "point": 16.0,
+            "high": 26.7
+          }
+        },
+        {
+          "tree_id": 2583400,
+          "botanical_name": "Vitex nigundo L.",
+          "species_key": "Vitex nigundo",
+          "girth_cm": 10.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2583369,
+          "botanical_name": "Vitex nigundo L.",
+          "species_key": "Vitex nigundo",
+          "girth_cm": 10.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2583338,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 65.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 65 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 20-54 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 20,
+            "high": 54
+          },
+          "age_estimate_years": {
+            "low": 20.3,
+            "point": 32.5,
+            "high": 54.2
+          }
+        },
+        {
+          "tree_id": 2577664,
+          "botanical_name": "Terminalia catappa Linn.",
+          "species_key": "Terminalia catappa",
+          "girth_cm": 32.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Terminalia catappa at 32 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 10-26 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 10,
+            "high": 26
+          },
+          "age_estimate_years": {
+            "low": 10.0,
+            "point": 16.0,
+            "high": 26.7
+          }
+        },
+        {
+          "tree_id": 2583346,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 45.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 45 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 14-37 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 14,
+            "high": 37
+          },
+          "age_estimate_years": {
+            "low": 14.1,
+            "point": 22.5,
+            "high": 37.5
+          }
+        },
+        {
+          "tree_id": 2583409,
+          "botanical_name": "Vitex nigundo L.",
+          "species_key": "Vitex nigundo",
+          "girth_cm": 10.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2577652,
+          "botanical_name": "Ficus racemosa L.",
+          "species_key": "Ficus racemosa",
+          "girth_cm": 26.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ficus racemosa at 26 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 8-21 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 8,
+            "high": 21
+          },
+          "age_estimate_years": {
+            "low": 8.1,
+            "point": 13.0,
+            "high": 21.7
+          }
+        },
+        {
+          "tree_id": 2577932,
+          "botanical_name": "Cocos nucifera Linn.",
+          "species_key": "Cocos nucifera",
+          "girth_cm": 52.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Cocos nucifera at 52 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 16-43 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 43
+          },
+          "age_estimate_years": {
+            "low": 16.2,
+            "point": 26.0,
+            "high": 43.3
+          }
+        },
+        {
+          "tree_id": 2577897,
+          "botanical_name": "Jacaranda mimosifolia D.Don",
+          "species_key": "Jacaranda mimosifolia",
+          "girth_cm": 56.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Jacaranda mimosifolia at 56 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 17-46 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 17,
+            "high": 46
+          },
+          "age_estimate_years": {
+            "low": 17.5,
+            "point": 28.0,
+            "high": 46.7
+          }
+        },
+        {
+          "tree_id": 2577906,
+          "botanical_name": "Azadirachta indica Juss.",
+          "species_key": "Azadirachta indica",
+          "girth_cm": 48.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Azadirachta indica at 48 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 15-40 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 15,
+            "high": 40
+          },
+          "age_estimate_years": {
+            "low": 15.0,
+            "point": 24.0,
+            "high": 40.0
+          }
+        },
+        {
+          "tree_id": 2577962,
+          "botanical_name": "Ziziphus mauritiana Lamk.",
+          "species_key": "Ziziphus mauritiana",
+          "girth_cm": 11.0,
+          "canopy_m2": 3.1,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Ziziphus mauritiana at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2577917,
+          "botanical_name": "Delonix regia (Hook.) Raf.",
+          "species_key": "Delonix regia",
+          "girth_cm": 78.0,
+          "canopy_m2": 28.3,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Delonix regia at 78 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 24-65 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+          "compensatory_saplings": {
+            "low": 24,
+            "high": 65
+          },
+          "age_estimate_years": {
+            "low": 24.4,
+            "point": 39.0,
+            "high": 65.0
+          }
+        },
+        {
+          "tree_id": 2577936,
+          "botanical_name": "Murraya koenigii (L.) Spreng.",
+          "species_key": "Murraya koenigii",
+          "girth_cm": 28.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Murraya koenigii at 28 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 8-23 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 8,
+            "high": 23
+          },
+          "age_estimate_years": {
+            "low": 8.8,
+            "point": 14.0,
+            "high": 23.3
+          }
+        },
+        {
+          "tree_id": 2577969,
+          "botanical_name": "Mangifera indica Linn.",
+          "species_key": "Mangifera indica",
+          "girth_cm": 52.0,
+          "canopy_m2": 19.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Mangifera indica at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 16,
+            "high": 43
+          },
+          "age_estimate_years": {
+            "low": 16.2,
+            "point": 26.0,
+            "high": 43.3
+          }
+        },
+        {
+          "tree_id": 2577948,
+          "botanical_name": "Moringa oleifera Lam.",
+          "species_key": "Moringa oleifera",
+          "girth_cm": 42.0,
+          "canopy_m2": 12.6,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Moringa oleifera at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 13,
+            "high": 35
+          },
+          "age_estimate_years": {
+            "low": 13.1,
+            "point": 21.0,
+            "high": 35.0
+          }
+        }
+      ],
+      "census_coverage": {
+        "index_built": true,
+        "loaded_trees": 4009623,
+        "census_total_city_trees": 4009624,
+        "loaded_fraction_pct": 100.0,
+        "wards_covered": 41,
+        "wards_total": 41,
+        "wards_empty": 0,
+        "wards_empty_list": [],
+        "coverage_complete": true,
+        "warning": null
+      },
+      "census_reliable_for_this_site": true
+    },
+    "blocking_issues": [
+      {
+        "type": "material_sourcing",
+        "detail": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "material": "river_sand",
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "recommendation": "REVIEW",
+    "headline": "Blocking conditions must be resolved before approval."
+  },
+  "recommendations": {
+    "baseline_impact": 49.0,
+    "baseline_climate": 51.0,
+    "baseline_risk": "Moderate",
+    "recommendations": [
+      {
+        "id": "impervious_reduction",
+        "action": "Reduce impervious cover by 18 percentage points (permeable paving, green roof, or open landscape)",
+        "delta": {
+          "impact_before": 49.0,
+          "impact_after": 43.5,
+          "impact_delta": -5.5,
+          "climate_before": 51.0,
+          "climate_after": 56.5,
+          "factors": {
+            "flood": {
+              "before": 51.9,
+              "after": 36.8,
+              "delta": -15.1
+            },
+            "heat": {
+              "before": 21.0,
+              "after": 21.0,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 95.9,
+              "after": 91.2,
+              "delta": -4.7
+            },
+            "carbon": {
+              "before": 39.5,
+              "after": 39.5,
+              "delta": 0.0
+            }
+          }
+        },
+        "verified": true,
+        "affected": "flood",
+        "params": {
+          "shift_pct_points": 18.0
+        }
+      },
+      {
+        "id": "material_substitution",
+        "action": "Substitute 35% of each material with its lower-carbon alternative",
+        "delta": {
+          "impact_before": 49.0,
+          "impact_after": 47.9,
+          "impact_delta": -1.1,
+          "climate_before": 51.0,
+          "climate_after": 52.1,
+          "factors": {
+            "flood": {
+              "before": 51.9,
+              "after": 51.9,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 21.0,
+              "after": 21.0,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 95.9,
+              "after": 95.9,
+              "delta": 0.0
+            },
+            "carbon": {
+              "before": 39.5,
+              "after": 34.3,
+              "delta": -5.2
+            }
+          }
+        },
+        "verified": true,
+        "affected": "carbon",
+        "params": {
+          "fraction": 0.35
+        }
+      },
+      {
+        "id": "material_sourcing",
+        "action": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "delta": null,
+        "verified": true,
+        "affected": "carbon",
+        "blocking": true,
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "dropped_unverified": [],
+    "verification_note": "Each 'delta' is a genuine re-run of the deterministic scorer on the modified site. Recommendations that did not move the score are dropped, not reported.",
+    "combined_effect": {
+      "available": true,
+      "delta": {
+        "impact_before": 49.0,
+        "impact_after": 42.4,
+        "impact_delta": -6.6,
+        "climate_before": 51.0,
+        "climate_after": 57.6,
+        "factors": {
+          "flood": {
+            "before": 51.9,
+            "after": 36.8,
+            "delta": -15.1
+          },
+          "heat": {
+            "before": 21.0,
+            "after": 21.0,
+            "delta": 0.0
+          },
+          "green": {
+            "before": 95.9,
+            "after": 91.2,
+            "delta": -4.7
+          },
+          "carbon": {
+            "before": 39.5,
+            "after": 34.3,
+            "delta": -5.2
+          }
+        }
+      }
+    }
+  },
+  "canopy": {
+    "total_trees": 43,
+    "tree_canopy_m2_before": 469.7,
+    "tree_canopy_m2_after": 7.1,
+    "tree_canopy_m2_lost": 462.6,
+    "canopy_cover_pct": 5.9,
+    "action_counts": {
+      "FELL_AND_COMPENSATE": 41,
+      "REMOVE_DEAD": 1,
+      "RELOCATE": 1
+    },
+    "rare_trees_in_site": 0,
+    "rare_trees_at_risk": 0,
+    "dead_trees_removed": 1,
+    "compensatory_required": {
+      "low": 428,
+      "high": 1166
+    },
+    "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+    "always_preserve_count": 0,
+    "always_preserve_canopy_m2": 0,
+    "compensatory_species_mix": [
+      {
+        "felled_species": "Ficus racemosa",
+        "felled_share_pct": 14.6,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Ficus racemosa",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Vitex nigundo",
+        "felled_share_pct": 12.2,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Vitex nigundo",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Mangifera indica",
+        "felled_share_pct": 9.8,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Mangifera indica",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Ficus religiosa",
+        "felled_share_pct": 7.3,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Ficus religiosa",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Annona squamosa",
+        "felled_share_pct": 7.3,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Azadirachta indica",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Azadirachta indica",
+        "note": "Non-native species occupying Central/South America origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Terminalia catappa",
+        "felled_share_pct": 7.3,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Syzygium cumini",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Syzygium cumini",
+        "note": "Non-native species occupying SE Asia / Malesia, naturalised origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Artocarpus heterophyllus",
+        "felled_share_pct": 4.9,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Artocarpus heterophyllus",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Azadirachta indica",
+        "felled_share_pct": 4.9,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Azadirachta indica",
+        "recommended_replacement_native": true,
+        "mix_companion": "Mangifera indica",
+        "note": "Native species. Replanted in kind; pair with Mangifera indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Grevillea robusta",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Dalbergia melanoxylon",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Dalbergia melanoxylon",
+        "note": "Non-native species occupying Australia origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Citrus aurantiifolia",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Citrus aurantiifolia",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Ficus benjamina",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Ficus benghalensis",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Ficus benghalensis",
+        "note": "Non-native species occupying Horticultural origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Polyalthia longifolia",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Syzygium cumini",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Syzygium cumini",
+        "note": "Non-native species occupying SE Asia / Indian Ocean origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Ficus benghalensis",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Ficus benghalensis",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Psidium gaujava",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Mangifera indica",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Mangifera indica",
+        "note": "Non-native species occupying Central/South America origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Syzygium cumini",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Syzygium cumini",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Cocos nucifera",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Caryota urens",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Caryota urens",
+        "note": "Non-native species occupying Naturalised coastal origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Jacaranda mimosifolia",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Azadirachta indica",
+        "recommended_replacement_native": true,
+        "recommended_replacement_origin": "native",
+        "mix_companion": "Azadirachta indica",
+        "note": "Non-native species occupying South America origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Ziziphus mauritiana",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Ziziphus mauritiana",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Delonix regia",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLACE_WITH_NATIVE",
+        "recommended_replacement": "Bauhinia purpurea",
+        "recommended_replacement_native": false,
+        "recommended_replacement_origin": "S/SE Asia",
+        "mix_companion": "Bauhinia purpurea",
+        "note": "Non-native species occupying Madagascar origin. Statutory count is met, but not with this species."
+      },
+      {
+        "felled_species": "Murraya koenigii",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Murraya koenigii",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      },
+      {
+        "felled_species": "Moringa oleifera",
+        "felled_share_pct": 2.4,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Moringa oleifera",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      }
+    ],
+    "decisions": [
+      {
+        "tree_id": 2577618,
+        "botanical_name": "Ficus religiosa Linn.",
+        "species_key": "Ficus religiosa",
+        "girth_cm": 52.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus religiosa at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 43
+        },
+        "age_estimate_years": {
+          "low": 16.2,
+          "point": 26.0,
+          "high": 43.3
+        }
+      },
+      {
+        "tree_id": 2621008,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 54.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 54 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-45 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 45
+        },
+        "age_estimate_years": {
+          "low": 16.9,
+          "point": 27.0,
+          "high": 45.0
+        }
+      },
+      {
+        "tree_id": 2577783,
+        "botanical_name": "Mangifera indica Linn.",
+        "species_key": "Mangifera indica",
+        "girth_cm": 42.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Mangifera indica at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 13,
+          "high": 35
+        },
+        "age_estimate_years": {
+          "low": 13.1,
+          "point": 21.0,
+          "high": 35.0
+        }
+      },
+      {
+        "tree_id": 2577834,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 48.0,
+        "canopy_m2": 0.0,
+        "action": "REMOVE_DEAD",
+        "reason": "Census condition is dead/fallen. No felling permit required to remove a dead tree, and no ecological loss.",
+        "statutory_basis": "Not applicable \u2014 removal of a dead tree."
+      },
+      {
+        "tree_id": 2577814,
+        "botanical_name": "Mangifera indica Linn.",
+        "species_key": "Mangifera indica",
+        "girth_cm": 28.0,
+        "canopy_m2": 7.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Mangifera indica at 28 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 8-23 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 8,
+          "high": 23
+        },
+        "age_estimate_years": {
+          "low": 8.8,
+          "point": 14.0,
+          "high": 23.3
+        }
+      },
+      {
+        "tree_id": 2577799,
+        "botanical_name": "Grevillea robusta A.Cunn. ex R.Br.",
+        "species_key": "Grevillea robusta",
+        "girth_cm": 54.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Grevillea robusta at 54 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 16-45 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 45
+        },
+        "age_estimate_years": {
+          "low": 16.9,
+          "point": 27.0,
+          "high": 45.0
+        }
+      },
+      {
+        "tree_id": 2577826,
+        "botanical_name": "Citrus aurantiifolia (christ.)Swingle",
+        "species_key": "Citrus aurantiifolia",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Citrus aurantiifolia at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2577851,
+        "botanical_name": "Artocarpus heterophyllus Lamk.",
+        "species_key": "Artocarpus heterophyllus",
+        "girth_cm": 10.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Artocarpus heterophyllus at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2577888,
+        "botanical_name": "Annona squamosa Linn.",
+        "species_key": "Annona squamosa",
+        "girth_cm": 11.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Annona squamosa at 11 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 3-9 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2577873,
+        "botanical_name": "Artocarpus heterophyllus Lamk.",
+        "species_key": "Artocarpus heterophyllus",
+        "girth_cm": 52.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Artocarpus heterophyllus at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 43
+        },
+        "age_estimate_years": {
+          "low": 16.2,
+          "point": 26.0,
+          "high": 43.3
+        }
+      },
+      {
+        "tree_id": 2577879,
+        "botanical_name": "Mangifera indica Linn.",
+        "species_key": "Mangifera indica",
+        "girth_cm": 42.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Mangifera indica at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 13,
+          "high": 35
+        },
+        "age_estimate_years": {
+          "low": 13.1,
+          "point": 21.0,
+          "high": 35.0
+        }
+      },
+      {
+        "tree_id": 2577768,
+        "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+        "species_key": "Syzygium cumini",
+        "girth_cm": 22.0,
+        "canopy_m2": 7.1,
+        "action": "RELOCATE",
+        "reason": "Syzygium cumini at 22 cm is within the transplant ceiling (30 cm) and condition is 'Healthy'. Root-ball transplantation is technically viable.",
+        "statutory_basis": "HOUSE POLICY \u2014 relocatable under an arborist assessment; a permit may still be required to transplant rather than fell.",
+        "age_estimate_years": {
+          "low": 6.9,
+          "point": 11.0,
+          "high": 18.3
+        }
+      },
+      {
+        "tree_id": 2577763,
+        "botanical_name": "Terminalia catappa Linn.",
+        "species_key": "Terminalia catappa",
+        "girth_cm": 42.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Terminalia catappa at 42 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 13-35 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 13,
+          "high": 35
+        },
+        "age_estimate_years": {
+          "low": 13.1,
+          "point": 21.0,
+          "high": 35.0
+        }
+      },
+      {
+        "tree_id": 2577747,
+        "botanical_name": "Ficus benjamina L.",
+        "species_key": "Ficus benjamina",
+        "girth_cm": 11.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus benjamina at 11 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 3-9 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2577735,
+        "botanical_name": "Terminalia catappa Linn.",
+        "species_key": "Terminalia catappa",
+        "girth_cm": 36.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Terminalia catappa at 36 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 11-30 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 11,
+          "high": 30
+        },
+        "age_estimate_years": {
+          "low": 11.2,
+          "point": 18.0,
+          "high": 30.0
+        }
+      },
+      {
+        "tree_id": 2577720,
+        "botanical_name": "Polyalthia longifolia (sonnerat) Thwaites",
+        "species_key": "Polyalthia longifolia",
+        "girth_cm": 18.0,
+        "canopy_m2": 7.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Polyalthia longifolia at 18 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 5-15 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 5,
+          "high": 15
+        },
+        "age_estimate_years": {
+          "low": 5.6,
+          "point": 9.0,
+          "high": 15.0
+        }
+      },
+      {
+        "tree_id": 2577707,
+        "botanical_name": "Ficus benghalensis Linn.",
+        "species_key": "Ficus benghalensis",
+        "girth_cm": 52.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus benghalensis at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 43
+        },
+        "age_estimate_years": {
+          "low": 16.2,
+          "point": 26.0,
+          "high": 43.3
+        }
+      },
+      {
+        "tree_id": 2577695,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 35.0,
+        "canopy_m2": 7.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 35 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 10-29 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 10,
+          "high": 29
+        },
+        "age_estimate_years": {
+          "low": 10.9,
+          "point": 17.5,
+          "high": 29.2
+        }
+      },
+      {
+        "tree_id": 2583265,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 65.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 65 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 20-54 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 20,
+          "high": 54
+        },
+        "age_estimate_years": {
+          "low": 20.3,
+          "point": 32.5,
+          "high": 54.2
+        }
+      },
+      {
+        "tree_id": 2577682,
+        "botanical_name": "Ficus religiosa Linn.",
+        "species_key": "Ficus religiosa",
+        "girth_cm": 24.0,
+        "canopy_m2": 7.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus religiosa at 24 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 7-20 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 7,
+          "high": 20
+        },
+        "age_estimate_years": {
+          "low": 7.5,
+          "point": 12.0,
+          "high": 20.0
+        }
+      },
+      {
+        "tree_id": 2577670,
+        "botanical_name": "Ficus religiosa Linn.",
+        "species_key": "Ficus religiosa",
+        "girth_cm": 42.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus religiosa at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 13,
+          "high": 35
+        },
+        "age_estimate_years": {
+          "low": 13.1,
+          "point": 21.0,
+          "high": 35.0
+        }
+      },
+      {
+        "tree_id": 2583315,
+        "botanical_name": "Annona squamosa Linn.",
+        "species_key": "Annona squamosa",
+        "girth_cm": 24.0,
+        "canopy_m2": 7.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Annona squamosa at 24 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 7-20 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 7,
+          "high": 20
+        },
+        "age_estimate_years": {
+          "low": 7.5,
+          "point": 12.0,
+          "high": 20.0
+        }
+      },
+      {
+        "tree_id": 2583330,
+        "botanical_name": "Annona squamosa Linn.",
+        "species_key": "Annona squamosa",
+        "girth_cm": 14.0,
+        "canopy_m2": 7.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Annona squamosa at 14 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 4-11 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2583356,
+        "botanical_name": "Vitex nigundo L.",
+        "species_key": "Vitex nigundo",
+        "girth_cm": 10.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2583294,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 52.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Azadirachta indica at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 43
+        },
+        "age_estimate_years": {
+          "low": 16.2,
+          "point": 26.0,
+          "high": 43.3
+        }
+      },
+      {
+        "tree_id": 2583385,
+        "botanical_name": "Vitex nigundo L.",
+        "species_key": "Vitex nigundo",
+        "girth_cm": 10.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2583280,
+        "botanical_name": "Psidium gaujava L.",
+        "species_key": "Psidium gaujava",
+        "girth_cm": 24.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Psidium gaujava at 24 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 7-20 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 7,
+          "high": 20
+        },
+        "age_estimate_years": {
+          "low": 7.5,
+          "point": 12.0,
+          "high": 20.0
+        }
+      },
+      {
+        "tree_id": 2583306,
+        "botanical_name": "Syzygium cumini (Linn.)Skeels.",
+        "species_key": "Syzygium cumini",
+        "girth_cm": 32.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Syzygium cumini at 32 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 10-26 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 10,
+          "high": 26
+        },
+        "age_estimate_years": {
+          "low": 10.0,
+          "point": 16.0,
+          "high": 26.7
+        }
+      },
+      {
+        "tree_id": 2583400,
+        "botanical_name": "Vitex nigundo L.",
+        "species_key": "Vitex nigundo",
+        "girth_cm": 10.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2583369,
+        "botanical_name": "Vitex nigundo L.",
+        "species_key": "Vitex nigundo",
+        "girth_cm": 10.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2583338,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 65.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 65 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 20-54 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 20,
+          "high": 54
+        },
+        "age_estimate_years": {
+          "low": 20.3,
+          "point": 32.5,
+          "high": 54.2
+        }
+      },
+      {
+        "tree_id": 2577664,
+        "botanical_name": "Terminalia catappa Linn.",
+        "species_key": "Terminalia catappa",
+        "girth_cm": 32.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Terminalia catappa at 32 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 10-26 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 10,
+          "high": 26
+        },
+        "age_estimate_years": {
+          "low": 10.0,
+          "point": 16.0,
+          "high": 26.7
+        }
+      },
+      {
+        "tree_id": 2583346,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 45.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 45 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 14-37 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 14,
+          "high": 37
+        },
+        "age_estimate_years": {
+          "low": 14.1,
+          "point": 22.5,
+          "high": 37.5
+        }
+      },
+      {
+        "tree_id": 2583409,
+        "botanical_name": "Vitex nigundo L.",
+        "species_key": "Vitex nigundo",
+        "girth_cm": 10.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Vitex nigundo at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2577652,
+        "botanical_name": "Ficus racemosa L.",
+        "species_key": "Ficus racemosa",
+        "girth_cm": 26.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ficus racemosa at 26 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 8-21 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 8,
+          "high": 21
+        },
+        "age_estimate_years": {
+          "low": 8.1,
+          "point": 13.0,
+          "high": 21.7
+        }
+      },
+      {
+        "tree_id": 2577932,
+        "botanical_name": "Cocos nucifera Linn.",
+        "species_key": "Cocos nucifera",
+        "girth_cm": 52.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Cocos nucifera at 52 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 16-43 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 43
+        },
+        "age_estimate_years": {
+          "low": 16.2,
+          "point": 26.0,
+          "high": 43.3
+        }
+      },
+      {
+        "tree_id": 2577897,
+        "botanical_name": "Jacaranda mimosifolia D.Don",
+        "species_key": "Jacaranda mimosifolia",
+        "girth_cm": 56.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Jacaranda mimosifolia at 56 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 17-46 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 17,
+          "high": 46
+        },
+        "age_estimate_years": {
+          "low": 17.5,
+          "point": 28.0,
+          "high": 46.7
+        }
+      },
+      {
+        "tree_id": 2577906,
+        "botanical_name": "Azadirachta indica Juss.",
+        "species_key": "Azadirachta indica",
+        "girth_cm": 48.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Azadirachta indica at 48 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 15-40 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 15,
+          "high": 40
+        },
+        "age_estimate_years": {
+          "low": 15.0,
+          "point": 24.0,
+          "high": 40.0
+        }
+      },
+      {
+        "tree_id": 2577962,
+        "botanical_name": "Ziziphus mauritiana Lamk.",
+        "species_key": "Ziziphus mauritiana",
+        "girth_cm": 11.0,
+        "canopy_m2": 3.1,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Ziziphus mauritiana at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2577917,
+        "botanical_name": "Delonix regia (Hook.) Raf.",
+        "species_key": "Delonix regia",
+        "girth_cm": 78.0,
+        "canopy_m2": 28.3,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Delonix regia at 78 cm is a confirmed non-native species obstructing the footprint. Statutory compensation is 24-65 saplings, identical to what a native of the same girth would require \u2014 but the recommended mix is native-weighted, so the replanting is not simply more Subabul.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is age-equivalent and SPECIES-BLIND. The statutory count is identical for a native and a non-native tree. This tool applies the same count to both and expresses the native/non-native distinction in the recommended species mix instead, which is the ecologically meaningful lever and stays inside the Act.",
+        "compensatory_saplings": {
+          "low": 24,
+          "high": 65
+        },
+        "age_estimate_years": {
+          "low": 24.4,
+          "point": 39.0,
+          "high": 65.0
+        }
+      },
+      {
+        "tree_id": 2577936,
+        "botanical_name": "Murraya koenigii (L.) Spreng.",
+        "species_key": "Murraya koenigii",
+        "girth_cm": 28.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Murraya koenigii at 28 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 8-23 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 8,
+          "high": 23
+        },
+        "age_estimate_years": {
+          "low": 8.8,
+          "point": 14.0,
+          "high": 23.3
+        }
+      },
+      {
+        "tree_id": 2577969,
+        "botanical_name": "Mangifera indica Linn.",
+        "species_key": "Mangifera indica",
+        "girth_cm": 52.0,
+        "canopy_m2": 19.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Mangifera indica at 52 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 16-43 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 16,
+          "high": 43
+        },
+        "age_estimate_years": {
+          "low": 16.2,
+          "point": 26.0,
+          "high": 43.3
+        }
+      },
+      {
+        "tree_id": 2577948,
+        "botanical_name": "Moringa oleifera Lam.",
+        "species_key": "Moringa oleifera",
+        "girth_cm": 42.0,
+        "canopy_m2": 12.6,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Moringa oleifera at 42 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 13-35 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 13,
+          "high": 35
+        },
+        "age_estimate_years": {
+          "low": 13.1,
+          "point": 21.0,
+          "high": 35.0
+        }
+      }
+    ],
+    "census_coverage": {
+      "index_built": true,
+      "loaded_trees": 4009623,
+      "census_total_city_trees": 4009624,
+      "loaded_fraction_pct": 100.0,
+      "wards_covered": 41,
+      "wards_total": 41,
+      "wards_empty": 0,
+      "wards_empty_list": [],
+      "coverage_complete": true,
+      "warning": null
+    },
+    "census_reliable_for_this_site": true
+  },
+  "relocation": {
+    "requested_trees": 1,
+    "canopy_needed_m2": 35.0,
+    "assumed_mature_canopy_m2_per_tree": 35.0,
+    "search_radius_m": 2000.0,
+    "weights": {
+      "spacing": 0.35,
+      "connectivity": 0.25,
+      "flood": 0.25,
+      "access": 0.15
+    },
+    "parks_examined": 16,
+    "viable_count": 15,
+    "candidates": [
+      {
+        "rank": 1,
+        "park_id": 123,
+        "name": "Durgamata Udyan Pune",
+        "ward_no": 39,
+        "distance_m": 267.0,
+        "area_m2": 1662.7,
+        "area_hectares": 0.166,
+        "lon": 73.869836,
+        "lat": 18.462022,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 28,
+        "composite_score": 91.0,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 97.2,
+            "weight": 0.35,
+            "reason": "Park 1663 m2. The 35 m2 of canopy needed is 2% of park area, leaving 43 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 78.6,
+            "weight": 0.25,
+            "reason": "4521 m2 of green within 300 m of this park, and it is 267 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 82.2,
+            "weight": 0.15,
+            "reason": "267 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 2,
+        "park_id": 122,
+        "name": "Akhil Durga Mata Udyan",
+        "ward_no": 39,
+        "distance_m": 333.0,
+        "area_m2": 640.7,
+        "area_hectares": 0.064,
+        "lon": 73.867451,
+        "lat": 18.46346,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 10,
+        "composite_score": 89.0,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 92.7,
+            "weight": 0.35,
+            "reason": "Park 641 m2. The 35 m2 of canopy needed is 5% of park area, leaving 40 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 79.3,
+            "weight": 0.25,
+            "reason": "7999 m2 of green within 300 m of this park, and it is 333 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 77.8,
+            "weight": 0.15,
+            "reason": "333 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 3,
+        "park_id": 124,
+        "name": "Chatrapati Sambhaji Maharaj Udyan",
+        "ward_no": 39,
+        "distance_m": 491.4,
+        "area_m2": 2217.5,
+        "area_hectares": 0.222,
+        "lon": 73.869935,
+        "lat": 18.46446,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 38,
+        "composite_score": 88.3,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 97.9,
+            "weight": 0.35,
+            "reason": "Park 2217 m2. The 35 m2 of canopy needed is 2% of park area, leaving 43 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 75.8,
+            "weight": 0.25,
+            "reason": "7999 m2 of green within 300 m of this park, and it is 491 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 67.2,
+            "weight": 0.15,
+            "reason": "491 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 4,
+        "park_id": 121,
+        "name": "Bharatratn Dr.Babasaheb Ambedkar Udyan",
+        "ward_no": 20,
+        "distance_m": 578.7,
+        "area_m2": 3477.7,
+        "area_hectares": 0.348,
+        "lon": 73.869184,
+        "lat": 18.465549,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 61,
+        "composite_score": 87.0,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 98.7,
+            "weight": 0.35,
+            "reason": "Park 3478 m2. The 35 m2 of canopy needed is 1% of park area, leaving 44 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 72.9,
+            "weight": 0.25,
+            "reason": "6336 m2 of green within 300 m of this park, and it is 579 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 61.4,
+            "weight": 0.15,
+            "reason": "579 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 5,
+        "park_id": 120,
+        "name": "Niyojit  udyan",
+        "ward_no": 20,
+        "distance_m": 866.8,
+        "area_m2": 2101.0,
+        "area_hectares": 0.21,
+        "lon": 73.863338,
+        "lat": 18.466987,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 36,
+        "composite_score": 81.1,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 97.8,
+            "weight": 0.35,
+            "reason": "Park 2101 m2. The 35 m2 of canopy needed is 2% of park area, leaving 43 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 62.1,
+            "weight": 0.25,
+            "reason": "2101 m2 of green within 300 m of this park, and it is 867 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "210 m from the nearest watercourse. Not exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 42.2,
+            "weight": 0.15,
+            "reason": "867 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 6,
+        "park_id": 125,
+        "name": "Bhagvan Mahavir Udyan",
+        "ward_no": 39,
+        "distance_m": 215.1,
+        "area_m2": 12333.4,
+        "area_hectares": 1.233,
+        "lon": 73.865883,
+        "lat": 18.46012,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 220,
+        "composite_score": 79.7,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 99.6,
+            "weight": 0.35,
+            "reason": "Park 12333 m2. The 35 m2 of canopy needed is 0% of park area, leaving 45 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 82.8,
+            "weight": 0.25,
+            "reason": "12333 m2 of green within 300 m of this park, and it is 215 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 45.0,
+            "weight": 0.25,
+            "reason": "132 m from a nalla or river \u2014 inside the flood-plain buffer. Usable only with species tolerant of periodic inundation and a raised planting bed."
+          },
+          {
+            "criterion": "access",
+            "score": 85.7,
+            "weight": 0.15,
+            "reason": "215 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 7,
+        "park_id": 129,
+        "name": "Swami Vivekanand udyan",
+        "ward_no": 40,
+        "distance_m": 1313.9,
+        "area_m2": 7099.4,
+        "area_hectares": 0.71,
+        "lon": 73.880324,
+        "lat": 18.45987,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 126,
+        "composite_score": 75.8,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 99.3,
+            "weight": 0.35,
+            "reason": "Park 7099 m2. The 35 m2 of canopy needed is 0% of park area, leaving 45 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 56.8,
+            "weight": 0.25,
+            "reason": "7099 m2 of green within 300 m of this park, and it is 1314 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 12.4,
+            "weight": 0.15,
+            "reason": "1314 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      },
+      {
+        "rank": 8,
+        "park_id": 53,
+        "name": "Ahilyabai Holkar Udyan",
+        "ward_no": 37,
+        "distance_m": 1673.0,
+        "area_m2": 10987.6,
+        "area_hectares": 1.099,
+        "lon": 73.856025,
+        "lat": 18.450501,
+        "viable": true,
+        "disqualifiers": [],
+        "capacity_trees": 196,
+        "composite_score": 72.4,
+        "criteria": [
+          {
+            "criterion": "spacing",
+            "score": 99.6,
+            "weight": 0.35,
+            "reason": "Park 10988 m2. The 35 m2 of canopy needed is 0% of park area, leaving 45 pts of headroom."
+          },
+          {
+            "criterion": "connectivity",
+            "score": 50.0,
+            "weight": 0.25,
+            "reason": "10988 m2 of green within 300 m of this park, and it is 1673 m from the development site."
+          },
+          {
+            "criterion": "flood",
+            "score": 100.0,
+            "weight": 0.25,
+            "reason": "No nalla or river within 300 m. Not flood-exposed."
+          },
+          {
+            "criterion": "access",
+            "score": 0.0,
+            "weight": 0.15,
+            "reason": "1673 m from the development site; affects watering and maintenance cost for the first two to three years."
+          }
+        ]
+      }
+    ],
+    "method_note": "Composite = 0.35*spacing + 0.25*connectivity + 0.25*flood + 0.15*access. Each criterion is reported separately so it can be challenged on its own. Flood uses distance to NATURAL watercourses (nallas, rivers) as exposure; engineered stormwater proximity is deliberately not a siting bonus.",
+    "data_limit": "Only PMC-mapped parks and gardens are considered. Private gardens, institutional grounds and undeveloped municipal plots are not in this dataset, so viable_count understates the true options."
+  },
+  "indicators": {
+    "impervious_pct": 64.45,
+    "vegetation_pct": 3.54,
+    "water_pct": 4.62,
+    "lst_mean_c": 38.1174,
+    "lst_reference_c": 37.6965,
+    "lst_max_c": 42.3184,
+    "mean_slope_deg": 3.0,
+    "dist_to_storm_drain_m": 25.7
+  },
+  "satellite_cube_available": true
+}

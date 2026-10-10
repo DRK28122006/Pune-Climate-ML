@@ -1,0 +1,149 @@
+{
+  "region_id": "pune",
+  "display_name": "Pune Municipal Corporation",
+  "authority": "PMC / Maharashtra Tree Authority",
+  "crs": {
+    "source_epsg": 4326,
+    "working_epsg": 32643,
+    "working_crs_name": "WGS 84 / UTM zone 43N",
+    "note": "All areas are computed in EPSG:32643. Never compute areas in degrees."
+  },
+  "bounds": {
+    "min_lon": 73.7318,
+    "min_lat": 18.3856,
+    "max_lon": 74.0183,
+    "max_lat": 18.6216
+  },
+  "hydrology": {
+    "design_storm_mm": 214.0,
+    "design_storm_status": "MEASURED_IMD_1901_2024",
+    "design_storm_note": "MEASURED, not a buffer. Gumbel (EV1) 100-yr 1-day quantile = 213.9 mm at IMD 0.25-degree cell 18.50N 73.75E (Pune), fitted to 124 annual maxima 1901-2024 (median 84.0, max 349.1 in 2005; 26 years >120, 10 years >150). Gumbel KS p=0.95; GEV cross-check 252.2; bootstrap 95% interval 191-234. EV1 is the distribution Vivekanandan 2022 selects for Pune. Series saved as ml_pipeline/data/imd_pune_annual_max.csv; fitter is ml_pipeline/data/derive_design_storm.py. Cell validation: 2010 cell max 165.4 vs Shivajinagar station 181.1 (gridded smoothing, expected direction); 2005 peak lands exactly 26 July (day 207), spatially coherent 3x3. ERA BREAK: scores computed at 150 mm are NOT comparable to scores at 214 -- bigger storms shrink excess-fractions, so flood scores fall on adoption (median raw 64.5 -> 53.8, wards >60 fall 25 -> 0). Re-baseline all recorded outputs on adoption day.",
+    "design_storm_rejected_note": "150 mm retired 2026-10-10: it sat between the Gumbel 10-yr (142.3) and 25-yr (171.2), never a 100-yr value. Do not revert without a new fit. Do not swap in 132.8 mm from secondary citations alone. Context retained: PMC core-city lines are designed for 65 mm, merged-village areas planned for 120 mm (May 2025 HT) -- the measured 100-yr exceeds both, which is why flood scores compress downward on adoption.",
+    "return_period_years": 100,
+    "cn_table": {
+      "vegetation": 60.0,
+      "impervious": 98.0,
+      "water": 100.0,
+      "bare": 86.0
+    },
+    "cn_table_source": "SCS-CN standard land-cover classes. Pune soils are largely Black Cotton (Vertisol) / alluvial, hydrologic soil group B. Vegetation 60 = 'Woods, fair condition', HSG B (TR-55 Table 2-2a; row reads A36 B60 C73 D79). NOTE 2026-10-10: an earlier revision of this string labelled 60 as 'Open space, fair condition, grass 50-75%' -- that label belongs to CN 69 (Table 2-2a open-space fair: A49 B69 C79 D84). The VALUE 60 was always Woods-fair; only the citation is corrected, the number is unchanged. Impervious 98 = 'Paved parking lots, roofs, driveways' -- 98 across ALL soil groups (TR-55 Table 2-2a). Water 100 = open water bodies. Bare 86 = 'Fallow, bare soil', HSG B, AMC II (TR-55 Table 2-2a; values A=77 B=86 C=91 D=94). SOURCE STATUS: HSG B is an ASSUMPTION for PMC -- no SSURGO soil-group extraction has been done.",
+    "slope_full_effect_deg": 15.0,
+    "slope_max_multiplier": 1.25,
+    "storm_drain_full_benefit_m": 500.0,
+    "storm_drain_min_multiplier": 0.8,
+    "cn_soil_group_assumption": "HSG B assumed for all of PMC. Not derived from SSURGO. Black Cotton soil is commonly B/D; if the true dominant group is C or D every curve number below should rise (C +5, D +8 on bare soil). Re-derive from SSURGO before issuing."
+  },
+  "thermal": {
+    "reference_method": "city_wide_empirical_percentile",
+    "reference_description": "Median LST of high-vegetation / low-impervious reference pixels across the PMC extent for the same satellite pass and season as the site. Computed once per pass offline and written into the epoch cube.",
+    "reference_c": null,
+    "reference_c_status": "PENDING_SATELLITE",
+    "uhi_max_delta_c": 2.0,
+    "uhi_max_delta_status": "DERIVED_FROM_EPOCH_CUBE",
+    "uhi_max_delta_note": "DERIVED, not guessed. Computed by ml_pipeline/data/derive_uhi_span.py from the 2024 epoch cube as p95 - p05 of (lst_mean_c - lst_reference_c) across all 864 cells: p05 = -0.238 C, median = 0.443 C, p95 = 1.625 C, giving a span of 1.86 C, rounded UP to 2.0 C. CORRECTION 2026-10-10, recomputed from the live epoch_cube.json (864 cells): day-delta p05 = -2.594 C, median = -0.050 C, p95 = 1.803 C, span 4.40 C -- the note's p05/p95/med triple does NOT reproduce and predates the partition rewrite that changed the LST reference mask. The configured 2.0 is RETAINED (not silently rescaled: day is fallback-only, night exists in all 864 cells, and rescaling needs the human's heat decision first); status of this span derivation is STALE. WHY IT IS SMALL: the reference is the median LST of each cell's OWN vegetated pixels, so the delta measures WITHIN-CELL heat contrast (hot built surface against nearby green in the same ~1 km cell), not city-core-versus-rural. That is deliberately the conservative, local definition. CONSEQUENCE: this is NOT comparable to published Pune UHI figures of 2-8 C (Northeast Journal of Climate Science, Binghamton 2012-2023), which measure urban-vs-RURAL contrast over a much wider baseline. Do not cite those numbers as if they validated this one. If a wider, more legible baseline is wanted later, switch reference_method to a city-wide green median -- that yields 1-8 C deltas at the cost of the local baseline.",
+    "uhi_max_delta_superseded": "Earlier value 8.0 C came from the top of a published 2-8 C urban-vs-rural range. With a per-cell reference that denominator was 4x too large: every site's heat score collapsed toward 20/100 and the 30%-weight factor became a near-constant, which is the same class of bug as the original 28 C air-temperature saturation.",
+    "rejected_reference_note": "An earlier version used base_temp_celsius = 28.0 (an AIR temperature) as the reference for a SURFACE temperature, which saturated the heat factor at 100/100 for any built-up Pune site.",
+    "night_reference_c": 17.96,
+    "night_reference_method": "rural-ring-vegetated-median",
+    "night_reference_note": "MEASURED, not guessed. Median 2024 MODIS night LST (MYD11A1 Aqua 1:30am + MOD11A1 Terra 10:30pm, QC_Night bits 0-1 <= 1, annual mean of clear nights) over vegetated Dynamic World pixels in a ~10 km rural halo OUTSIDE the PMC bbox. Day-Landsat within-cell contrast was +0.11 C (no signal); night city mean 19.58 vs this rural 17.96 gives +1.62 city-scale delta, independently anchored by Yale YCEO Pune night +1.14. CONFIRMED 2026-10-10: YCEO v4 yearly-averaged Nighttime sampled live at PMC centroid = +1.139 C (Daytime -0.845), matching the +1.14 anchor to two decimals. Within-city ranking is MODERATE (r=+0.55 built, -0.54 veg on the live cube): the factor ships at medium confidence, below flood/green's standard. ECOSTRESS EVIDENCE 2026-10-10 (read-only GEE count): 57 L2T_LSTE scenes intersect PMC in 2024, ~30 nominally at night hours -- but cloud/QC screening was NOT applied, so clear-scene count is unproven and option 1 (night product) still needs a QC-filtered recount before it can be claimed. RESOLVED 2026-10-10 by ml_pipeline/data/eco_night_count.py (verified recipe: cloud==0 AND QC bits 1&0 in {00,01}, night from system:time_start->IST): A=57 intersecting, B=27 nominal night, C=21 QC-clear at >=50% (16 at >=80%), median clear fraction 0.993. OPTION 1 VIABLE (>=10 clear nights). Caveats from the recipe review carry: fixed IST windows mix pre-dawn minima with evening cooling, clear-sky filtering biases to dry season (median != annual climatology), geolocation can degrade on cloudy orbits, use Best/Good orbits for site comparison.",
+    "night_reference_status": "MEASURED_2024",
+    "night_uhi_max_delta_c": 5.0,
+    "night_uhi_max_delta_status": "DERIVED_FROM_EPOCH_CUBE",
+    "night_uhi_max_delta_note": "DERIVED, not guessed. p95 - p05 of (lst_night_mean_c - 17.96) across all 864 cells: p05 = -0.44 C, median = 1.07 C, p95 = 4.36 C, span 4.80 C, rounded UP to 5.0 C. Same convention as the day span (1.86 -> 2.0). Re-verified exactly against the live cube 2026-10-10 (p05 -0.439, med 1.072, p95 4.360; r built->night +0.553, veg->night -0.545).",
+    "day_reference_status": "RETIRED_NO_SIGNAL_2026-10-10",
+    "day_reference_note": "The day (Landsat ~11am) branch scores ONLY as a fallback when night data is absent. Mid-morning built-vs-canopy contrast is +0.11 C with seasonal sign flip -- no usable signal -- and the afternoon revival was tested and failed: ECOSTRESS IST 12.5-15.5 over PMC 2024 gives 6 nominal scenes, 3 QC-clear, below the 10-scene bar (eco_night_count.py 12.5 15.5). The heat score therefore describes NIGHT-TIME stored heat (annual), never afternoon conditions. An afternoon exposure line is reported separately as unscored context.",
+    "day_aqua_test": "2026-10-10, MODIS Aqua DAY ~1:30pm (MYD11A1 LST_Day_1km x0.02-273.15, QC_Day bits<=1, 366 scenes, day_signal_test.py): city 37.49 C vs rural vegetated ring 37.63 C, delta -0.14 C; r(built->day)=+0.07, r(veg->day)=-0.02 (n=604). Even peak-hour surface contrast is null -- consistent with the dryland daytime cool-island effect (dry rural bare soil out-heats shaded urban mass) and with YCEO Pune daytime -0.84. Afternoon DANGER is real but lives in air-temperature/humidity/exposure, not in surface contrast; that belongs in narrative guidance, never in this factor. Day stays retired with two measured failures on record.",
+    "lcz_reporting_note": "REPORTING LANGUAGE, not a scoring input (added 2026-10-10). Describe heat results in Stewart & Oke (2012) Local Climate Zone terms: 17 classes, 1-10 built (1 compact high-rise ... 6 open low-rise, 9 sparsely built) and A-G land cover (A dense trees, B scattered trees, C bush/scrub, D low plants, F bare soil, G water). PMC's ~1 km cells map approximately to LCZ 3/6/9 + B/C/D mosaics -- state the APPROXIMATE mapping per ward, never a fabricated per-cell LCZ. Reference overlay for future work, verified to exist: RUB global LCZ map v1 at 100 m in Google Earth Engine (ee.ImageCollection RUB/RUBCLIM/LCZ/global_lcz_map/latest). Sampling it per cell is a read-only GEE job; not yet run."
+  },
+  "trees": {
+    "census_year": 2019,
+    "census_source": "PMC Tree Census 2019 (data.opencity.in, CKAN package f00d83b8-c70f-4fff-9ac7-9a6ab4255edf)",
+    "census_total_city_trees": 4009624,
+    "census_total_note": "MEASURED, not quoted: 4,009,624 unique trees, verified by deduplicating the `id` column across all 17 CSV parts (16 x 250,000 + 9,623, zero duplicate ids). PMC's published figure of 4,090,000 is within 2%. Note that `wc -l` on these files OVERSTATES the row count by ~68% because quoted fields contain embedded newlines -- do not count census rows with wc.",
+    "census_data_age_years_at_2026": 7,
+    "ward_id_join": "POLYGON_ONLY",
+    "ward_id_join_note": "CRITICAL: census 'ward'/'ward_name' values are ids in the range 3..63 (36 distinct in the 250k sample), which do NOT correspond to the 2025 ward boundary numbering 1..41 used by pmc_wards_2025.kml. A join on ward id is invalid. Ward assignment must be computed by point-in-polygon against the KML boundary file.",
+    "has_age_column": false,
+    "age_estimate_method": "girth_linear_proxy",
+    "age_girth_cm_per_year": 2.0,
+    "age_estimate_uncertainty": "Wide. Linear girth increment is a crude proxy that ignores species growth rate, site and health. Report compensatory counts as a RANGE, never a single number."
+  },
+  "carbon": {
+    "intensity_unit": "kgCO2e per m2 of built-up area",
+    "bands": [
+      {
+        "label": "Low",
+        "max": 400.0
+      },
+      {
+        "label": "Moderate",
+        "max": 800.0
+      },
+      {
+        "label": "High",
+        "max": 1200.0
+      },
+      {
+        "label": "Very High",
+        "max": null
+      }
+    ],
+    "bands_status": "UNSOURCED_BANDS",
+    "bands_note": "The 400/800/1200 breakpoints are inherited from Deepesh's config and are NOT traceable to a named standard. They must not be attributed to GRIHA. See references below for the sourced anchors actually used in the report.",
+    "source_anchors": [
+      {
+        "id": "igbc-near-net-zero",
+        "value_kgco2e_m2": 700.0,
+        "meaning": "IGBC Net Zero Carbon rating: embodied carbon <= 700 kgCO2e/m2 for Near Net Zero, offset >=75% of operational carbon.",
+        "use": "Report this as the named Indian benchmark reference point."
+      },
+      {
+        "id": "indian-highrise-observed",
+        "value_kgco2e_m2": 454.0,
+        "range_kgco2e_m2": [
+          373.0,
+          530.0
+        ],
+        "sd_kgco2e_m2": 65.3,
+        "meaning": "Observed whole-life embodied carbon of Indian high-rise residential buildings (IFC + EPiC databases), mean 454, range 373-530, SD 65.3.",
+        "use": "Use as the realistic 'typical Indian building' anchor when contextualising a score."
+      }
+    ]
+  },
+  "weights": {
+    "flood": 0.3,
+    "heat": 0.3,
+    "green": 0.2,
+    "carbon": 0.2
+  },
+  "green": {
+    "canopy_weight": 0.7,
+    "ground_vegetation_weight": 0.3,
+    "stratification_note": "Sentinel-2 vegetation pixels already include tree canopy. Averaging sat_veg_pct with census canopy_cover_pct counts the same trees twice. Stratify instead: canopy (0.70) + ground vegetation (0.30), where ground vegetation = max(0, sat_veg_pct - canopy_cover_pct). The 0.70/0.30 SPLIT is reasoned house judgment, not a literature coefficient: reviews (ISA 2025, WRI meta-analysis) rank canopy cooling above grass but publish no such weights -- do not cite i-Tree or any paper as their source. DEFINITIONAL FOOTNOTE 2026-10-10: sat vegetation_pct = trees+grass+crops+shrub_and_scrub and EXCLUDES flooded_vegetation (build_cube.py). Negligible for Pune (no measured flooded-veg signal) but state it in any methods footnote.",
+    "sat_census_tolerance_pct": 15.0,
+    "sat_census_tolerance_note": "Census is 2019, satellite pass is later. If |canopy_cover_pct - sat_veg_pct| exceeds this, the two sources disagree about tree cover; widen the confidence interval rather than silently trusting one."
+  },
+  "epochs": {
+    "available": [
+      2024,
+      2010,
+      2000,
+      1990,
+      1980
+    ],
+    "projected": [
+      2080
+    ],
+    "scoring_supported": [
+      2024
+    ],
+    "scoring_note": "Scoring is supported for the current observed epoch only. Historical epochs are pre-rendered context layers. Cross-sensor radiometric calibration (Landsat MSS 60m/4-band vs Sentinel-2 10m) is deliberately NOT built. 2080 is a labelled scenario delta, never an observation.",
+    "resolution_m": {
+      "2024": 10,
+      "2010": 30,
+      "2000": 30,
+      "1990": 30,
+      "1980": 60
+    }
+  }
+}

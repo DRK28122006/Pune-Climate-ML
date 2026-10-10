@@ -1,0 +1,3489 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      {
+        "code": "heat_unavailable",
+        "field": "lst_mean_c",
+        "message": "No LST observation supplied, so the heat factor cannot be scored and the composite excludes it. Requires the satellite epoch cube."
+      }
+    ],
+    "geometry": {
+      "area_m2": 8006.9,
+      "area_km2": 0.008,
+      "perimeter_m": 357.9,
+      "centroid_lon": 73.944267,
+      "centroid_lat": 18.587179,
+      "bbox": [
+        73.943843,
+        18.586774,
+        73.944691,
+        18.587583
+      ],
+      "compactness": 0.7854,
+      "vertex_count": 5,
+      "crs_used": "EPSG:32643",
+      "area_method": "pyproj+shapely in EPSG:32643"
+    },
+    "site": {
+      "ward_no": 3,
+      "ward_name": "Ward 3",
+      "drainage_context": {
+        "dist_to_storm_drain_m": 366.5,
+        "nearest_natural_water_m": 136.0,
+        "flood_plain_note": "Nearest natural watercourse 136 m. Proximity to a nala or river is flood-plain EXPOSURE and raises risk. It must never be used as a drainage benefit."
+      },
+      "builtUpAreaSqm": 3000.0,
+      "plotAreaSqm": 8000.0,
+      "builtUpRatio": 0.375,
+      "materials": [
+        {
+          "name": "cement",
+          "quantityKg": 180000.0
+        },
+        {
+          "name": "steel_reinforcement",
+          "quantityKg": 95000.0
+        },
+        {
+          "name": "brick",
+          "quantityKg": 210000.0
+        },
+        {
+          "name": "river_sand",
+          "quantityKg": 140000.0
+        },
+        {
+          "name": "glass",
+          "quantityKg": 12000.0
+        },
+        {
+          "name": "aluminium",
+          "quantityKg": 4500.0
+        }
+      ],
+      "storeys": 8,
+      "epoch": 2024
+    },
+    "indicators_supplied": {
+      "dist_to_storm_drain_m": 366.5
+    }
+  },
+  "score": {
+    "climate_score": 37.9,
+    "impact_score": 62.1,
+    "risk_band": "High",
+    "complete": true,
+    "missing_factors": [],
+    "sub_scores": {
+      "flood": 51.3,
+      "heat": 81.4,
+      "green": 98.0,
+      "carbon": 13.2
+    },
+    "weight_contributions": {
+      "flood": 15.4,
+      "heat": 24.4,
+      "green": 19.6,
+      "carbon": 2.6
+    },
+    "factors": {
+      "flood": {
+        "score": 51.3,
+        "curve_number": 91.4,
+        "baseline_curve_number": 60.0,
+        "runoff_mm": 124.7,
+        "baseline_runoff_mm": 47.2,
+        "excess_runoff_mm": 77.4,
+        "design_storm_mm": 150.0,
+        "slope_multiplier": 1.05,
+        "drainage_multiplier": 0.947,
+        "drainage_basis": "distance to engineered stormwater outfall"
+      },
+      "heat": {
+        "score": 81.4,
+        "status": "OK",
+        "reason": null,
+        "lst_celsius": 41.36,
+        "lst_reference_c": 39.73,
+        "uhi_delta_c": 1.63,
+        "uhi_max_delta_c": 2.0,
+        "confidence": "medium",
+        "confidence_note": "Surface temperature, not air temperature. Single-pass composite; a seasonal multi-pass mean is stronger."
+      },
+      "green": {
+        "score": 98.0,
+        "sat_veg_pct": 5.7,
+        "canopy_cover_pct": 0.8,
+        "ground_vegetation_pct": 4.9,
+        "effective_green_pct": 2.0,
+        "canopy_weight": 0.7,
+        "ground_vegetation_weight": 0.3,
+        "source_divergence_pts": 4.9,
+        "resolution_mismatch_pts": 0.0,
+        "confidence": "high",
+        "confidence_note": "Census and satellite agree within 4.9 pts."
+      },
+      "carbon": {
+        "score": 13.2,
+        "total_kgco2e": 473450.0,
+        "intensity_kgco2e_m2": 157.8,
+        "band": "Low",
+        "built_up_area_m2": 3000.0,
+        "line_items": [
+          {
+            "name": "cement_opc",
+            "quantity_kg": 180000.0,
+            "ef": 0.74,
+            "kgco2e": 133200.0,
+            "category": "binder",
+            "status": "OK"
+          },
+          {
+            "name": "steel_reinforcement",
+            "quantity_kg": 95000.0,
+            "ef": 2.3,
+            "kgco2e": 218500.0,
+            "category": "structural",
+            "status": "OK"
+          },
+          {
+            "name": "brick_clay",
+            "quantity_kg": 210000.0,
+            "ef": 0.24,
+            "kgco2e": 50400.0,
+            "category": "masonry",
+            "status": "OK"
+          },
+          {
+            "name": "river_sand",
+            "quantity_kg": 140000.0,
+            "ef": 0.005,
+            "kgco2e": 700.0,
+            "category": "aggregate",
+            "status": "OK"
+          },
+          {
+            "name": "glass_float",
+            "quantity_kg": 12000.0,
+            "ef": 1.2,
+            "kgco2e": 14400.0,
+            "category": "glazing",
+            "status": "OK"
+          },
+          {
+            "name": "aluminium_primary",
+            "quantity_kg": 4500.0,
+            "ef": 12.5,
+            "kgco2e": 56250.0,
+            "category": "fa\u00e7ade",
+            "status": "OK"
+          }
+        ],
+        "dominant_material": "steel_reinforcement",
+        "dominant_share_pct": 46.2,
+        "double_count_warning": null,
+        "unknown_materials": [],
+        "unknown_mass_pct": 0.0,
+        "ecological_advisories": [
+          {
+            "material": "river_sand",
+            "advisory": "CRITICAL_RIVERBED_EXTRACTION",
+            "severity": "blocking",
+            "text": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+            "alternatives": [
+              "manufactured_sand_msand"
+            ]
+          }
+        ],
+        "confidence": "medium",
+        "confidence_note": "A1-A3 cradle-to-gate. Excludes transport and site waste."
+      }
+    },
+    "canopy": {
+      "total_trees": 80,
+      "tree_canopy_m2_before": 62.8,
+      "tree_canopy_m2_after": 0.0,
+      "tree_canopy_m2_lost": 62.8,
+      "canopy_cover_pct": 0.8,
+      "action_counts": {
+        "FELL_AND_COMPENSATE": 80
+      },
+      "rare_trees_in_site": 0,
+      "rare_trees_at_risk": 0,
+      "dead_trees_removed": 0,
+      "compensatory_required": {
+        "low": 278,
+        "high": 820
+      },
+      "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+      "always_preserve_count": 0,
+      "always_preserve_canopy_m2": 0,
+      "compensatory_species_mix": [
+        {
+          "felled_species": "Acacia catechu",
+          "felled_share_pct": 100.0,
+          "strategy": "REPLANT_IN_KIND",
+          "recommended_replacement": "Acacia catechu",
+          "recommended_replacement_native": true,
+          "mix_companion": "Azadirachta indica",
+          "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+        }
+      ],
+      "decisions": [
+        {
+          "tree_id": 2685648,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2686849,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 17.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 17 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-14 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 5,
+            "high": 14
+          },
+          "age_estimate_years": {
+            "low": 5.3,
+            "point": 8.5,
+            "high": 14.2
+          }
+        },
+        {
+          "tree_id": 2686424,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2686825,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2686149,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749496,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2686219,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2687293,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687656,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 15.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 12
+          },
+          "age_estimate_years": {
+            "low": 4.7,
+            "point": 7.5,
+            "high": 12.5
+          }
+        },
+        {
+          "tree_id": 2686653,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 11.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2749574,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2686167,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 15.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 12
+          },
+          "age_estimate_years": {
+            "low": 4.7,
+            "point": 7.5,
+            "high": 12.5
+          }
+        },
+        {
+          "tree_id": 2686523,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2686723,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749719,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749986,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 11.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2686507,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 16.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 16 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-13 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 5,
+            "high": 13
+          },
+          "age_estimate_years": {
+            "low": 5.0,
+            "point": 8.0,
+            "high": 13.3
+          }
+        },
+        {
+          "tree_id": 2749891,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749610,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2750127,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2686058,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 19.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 19 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-15 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 5,
+            "high": 15
+          },
+          "age_estimate_years": {
+            "low": 5.9,
+            "point": 9.5,
+            "high": 15.8
+          }
+        },
+        {
+          "tree_id": 2748035,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687612,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 11.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2748143,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2748050,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 11.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2687758,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2686249,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 15.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 12
+          },
+          "age_estimate_years": {
+            "low": 4.7,
+            "point": 7.5,
+            "high": 12.5
+          }
+        },
+        {
+          "tree_id": 2687807,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2688286,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687525,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2748090,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 16.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 16 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-13 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 5,
+            "high": 13
+          },
+          "age_estimate_years": {
+            "low": 5.0,
+            "point": 8.0,
+            "high": 13.3
+          }
+        },
+        {
+          "tree_id": 2685938,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2685860,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2686038,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 15.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 12
+          },
+          "age_estimate_years": {
+            "low": 4.7,
+            "point": 7.5,
+            "high": 12.5
+          }
+        },
+        {
+          "tree_id": 2686190,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687552,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 11.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2685889,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2686988,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2687000,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2686774,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2686020,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2685990,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687167,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 15.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 12
+          },
+          "age_estimate_years": {
+            "low": 4.7,
+            "point": 7.5,
+            "high": 12.5
+          }
+        },
+        {
+          "tree_id": 2685968,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2686070,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2686748,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 15.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 12
+          },
+          "age_estimate_years": {
+            "low": 4.7,
+            "point": 7.5,
+            "high": 12.5
+          }
+        },
+        {
+          "tree_id": 2685916,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2686871,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2686448,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2686297,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687490,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2686080,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2686803,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 11.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 9
+          },
+          "age_estimate_years": {
+            "low": 3.4,
+            "point": 5.5,
+            "high": 9.2
+          }
+        },
+        {
+          "tree_id": 2687573,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748273,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748323,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2748439,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2748469,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748730,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749381,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749408,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2749431,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2750102,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2750114,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2750285,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748343,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748515,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2748977,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748483,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2748168,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2688114,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2749055,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748619,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2687833,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 10.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 8
+          },
+          "age_estimate_years": {
+            "low": 3.1,
+            "point": 5.0,
+            "high": 8.3
+          }
+        },
+        {
+          "tree_id": 2749314,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2748998,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 13.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 4.1,
+            "point": 6.5,
+            "high": 10.8
+          }
+        },
+        {
+          "tree_id": 2748254,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 14.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 4,
+            "high": 11
+          },
+          "age_estimate_years": {
+            "low": 4.4,
+            "point": 7.0,
+            "high": 11.7
+          }
+        },
+        {
+          "tree_id": 2748552,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2748775,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        },
+        {
+          "tree_id": 2750069,
+          "botanical_name": "Acacia catechu (L.f.) Willd.",
+          "species_key": "Acacia catechu",
+          "girth_cm": 12.0,
+          "canopy_m2": 0.8,
+          "action": "FELL_AND_COMPENSATE",
+          "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+          "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+          "compensatory_saplings": {
+            "low": 3,
+            "high": 10
+          },
+          "age_estimate_years": {
+            "low": 3.8,
+            "point": 6.0,
+            "high": 10.0
+          }
+        }
+      ],
+      "census_coverage": {
+        "index_built": true,
+        "loaded_trees": 4009623,
+        "census_total_city_trees": 4009624,
+        "loaded_fraction_pct": 100.0,
+        "wards_covered": 41,
+        "wards_total": 41,
+        "wards_empty": 0,
+        "wards_empty_list": [],
+        "coverage_complete": true,
+        "warning": null
+      },
+      "census_reliable_for_this_site": true
+    },
+    "blocking_issues": [
+      {
+        "type": "material_sourcing",
+        "detail": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "material": "river_sand",
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "recommendation": "REVIEW",
+    "headline": "Blocking conditions must be resolved before approval."
+  },
+  "recommendations": {
+    "baseline_impact": 62.1,
+    "baseline_climate": 37.9,
+    "baseline_risk": "High",
+    "recommendations": [
+      {
+        "id": "impervious_reduction",
+        "action": "Reduce impervious cover by 18 percentage points (permeable paving, green roof, or open landscape)",
+        "delta": {
+          "impact_before": 62.1,
+          "impact_after": 49.8,
+          "impact_delta": -12.3,
+          "climate_before": 37.9,
+          "climate_after": 50.2,
+          "factors": {
+            "flood": {
+              "before": 51.3,
+              "after": 13.9,
+              "delta": -37.4
+            },
+            "heat": {
+              "before": 81.4,
+              "after": 81.4,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 98.0,
+              "after": 92.6,
+              "delta": -5.4
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 13.2,
+              "delta": 0.0
+            }
+          }
+        },
+        "verified": true,
+        "affected": "flood",
+        "params": {
+          "shift_pct_points": 18.0
+        }
+      },
+      {
+        "id": "material_substitution",
+        "action": "Substitute 35% of each material with its lower-carbon alternative",
+        "delta": {
+          "impact_before": 62.1,
+          "impact_after": 61.7,
+          "impact_delta": -0.4,
+          "climate_before": 37.9,
+          "climate_after": 38.3,
+          "factors": {
+            "flood": {
+              "before": 51.3,
+              "after": 51.3,
+              "delta": 0.0
+            },
+            "heat": {
+              "before": 81.4,
+              "after": 81.4,
+              "delta": 0.0
+            },
+            "green": {
+              "before": 98.0,
+              "after": 98.0,
+              "delta": 0.0
+            },
+            "carbon": {
+              "before": 13.2,
+              "after": 11.4,
+              "delta": -1.8
+            }
+          }
+        },
+        "verified": true,
+        "affected": "carbon",
+        "params": {
+          "fraction": 0.35
+        }
+      },
+      {
+        "id": "material_sourcing",
+        "action": "Riverbed sand in the Mula-Mutha basin. Low emission but high ecological cost: removes riverbed habitat and disrupts groundwater recharge. Not permissible here without MPCB sourcing evidence.",
+        "delta": null,
+        "verified": true,
+        "affected": "carbon",
+        "blocking": true,
+        "alternatives": [
+          "manufactured_sand_msand"
+        ]
+      }
+    ],
+    "dropped_unverified": [],
+    "verification_note": "Each 'delta' is a genuine re-run of the deterministic scorer on the modified site. Recommendations that did not move the score are dropped, not reported.",
+    "combined_effect": {
+      "available": true,
+      "delta": {
+        "impact_before": 62.1,
+        "impact_after": 49.4,
+        "impact_delta": -12.7,
+        "climate_before": 37.9,
+        "climate_after": 50.6,
+        "factors": {
+          "flood": {
+            "before": 51.3,
+            "after": 13.9,
+            "delta": -37.4
+          },
+          "heat": {
+            "before": 81.4,
+            "after": 81.4,
+            "delta": 0.0
+          },
+          "green": {
+            "before": 98.0,
+            "after": 92.6,
+            "delta": -5.4
+          },
+          "carbon": {
+            "before": 13.2,
+            "after": 11.4,
+            "delta": -1.8
+          }
+        }
+      }
+    }
+  },
+  "canopy": {
+    "total_trees": 80,
+    "tree_canopy_m2_before": 62.8,
+    "tree_canopy_m2_after": 0.0,
+    "tree_canopy_m2_lost": 62.8,
+    "canopy_cover_pct": 0.8,
+    "action_counts": {
+      "FELL_AND_COMPENSATE": 80
+    },
+    "rare_trees_in_site": 0,
+    "rare_trees_at_risk": 0,
+    "dead_trees_removed": 0,
+    "compensatory_required": {
+      "low": 278,
+      "high": 820
+    },
+    "compensatory_basis": "AGE_EQUIVALENT_ESTIMATE_FROM_GIRTH",
+    "always_preserve_count": 0,
+    "always_preserve_canopy_m2": 0,
+    "compensatory_species_mix": [
+      {
+        "felled_species": "Acacia catechu",
+        "felled_share_pct": 100.0,
+        "strategy": "REPLANT_IN_KIND",
+        "recommended_replacement": "Acacia catechu",
+        "recommended_replacement_native": true,
+        "mix_companion": "Azadirachta indica",
+        "note": "Native species. Replanted in kind; pair with Azadirachta indica for canopy and species diversity."
+      }
+    ],
+    "decisions": [
+      {
+        "tree_id": 2685648,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2686849,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 17.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 17 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-14 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 5,
+          "high": 14
+        },
+        "age_estimate_years": {
+          "low": 5.3,
+          "point": 8.5,
+          "high": 14.2
+        }
+      },
+      {
+        "tree_id": 2686424,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2686825,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2686149,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749496,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2686219,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2687293,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687656,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 15.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 12
+        },
+        "age_estimate_years": {
+          "low": 4.7,
+          "point": 7.5,
+          "high": 12.5
+        }
+      },
+      {
+        "tree_id": 2686653,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 11.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2749574,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2686167,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 15.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 12
+        },
+        "age_estimate_years": {
+          "low": 4.7,
+          "point": 7.5,
+          "high": 12.5
+        }
+      },
+      {
+        "tree_id": 2686523,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2686723,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749719,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749986,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 11.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2686507,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 16.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 16 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-13 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 5,
+          "high": 13
+        },
+        "age_estimate_years": {
+          "low": 5.0,
+          "point": 8.0,
+          "high": 13.3
+        }
+      },
+      {
+        "tree_id": 2749891,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749610,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2750127,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2686058,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 19.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 19 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-15 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 5,
+          "high": 15
+        },
+        "age_estimate_years": {
+          "low": 5.9,
+          "point": 9.5,
+          "high": 15.8
+        }
+      },
+      {
+        "tree_id": 2748035,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687612,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 11.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2748143,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2748050,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 11.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2687758,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2686249,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 15.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 12
+        },
+        "age_estimate_years": {
+          "low": 4.7,
+          "point": 7.5,
+          "high": 12.5
+        }
+      },
+      {
+        "tree_id": 2687807,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2688286,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687525,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2748090,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 16.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 16 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 5-13 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 5,
+          "high": 13
+        },
+        "age_estimate_years": {
+          "low": 5.0,
+          "point": 8.0,
+          "high": 13.3
+        }
+      },
+      {
+        "tree_id": 2685938,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2685860,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2686038,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 15.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 12
+        },
+        "age_estimate_years": {
+          "low": 4.7,
+          "point": 7.5,
+          "high": 12.5
+        }
+      },
+      {
+        "tree_id": 2686190,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687552,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 11.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2685889,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2686988,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2687000,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2686774,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2686020,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2685990,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687167,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 15.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 12
+        },
+        "age_estimate_years": {
+          "low": 4.7,
+          "point": 7.5,
+          "high": 12.5
+        }
+      },
+      {
+        "tree_id": 2685968,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2686070,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2686748,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 15.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 15 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-12 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 12
+        },
+        "age_estimate_years": {
+          "low": 4.7,
+          "point": 7.5,
+          "high": 12.5
+        }
+      },
+      {
+        "tree_id": 2685916,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2686871,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2686448,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2686297,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687490,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2686080,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2686803,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 11.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 11 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-9 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 9
+        },
+        "age_estimate_years": {
+          "low": 3.4,
+          "point": 5.5,
+          "high": 9.2
+        }
+      },
+      {
+        "tree_id": 2687573,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748273,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748323,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2748439,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2748469,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748730,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749381,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749408,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2749431,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2750102,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2750114,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2750285,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748343,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748515,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2748977,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748483,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2748168,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2688114,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2749055,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748619,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2687833,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 10.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 10 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-8 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 8
+        },
+        "age_estimate_years": {
+          "low": 3.1,
+          "point": 5.0,
+          "high": 8.3
+        }
+      },
+      {
+        "tree_id": 2749314,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2748998,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 13.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 13 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 4.1,
+          "point": 6.5,
+          "high": 10.8
+        }
+      },
+      {
+        "tree_id": 2748254,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 14.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 14 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 4-11 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 4,
+          "high": 11
+        },
+        "age_estimate_years": {
+          "low": 4.4,
+          "point": 7.0,
+          "high": 11.7
+        }
+      },
+      {
+        "tree_id": 2748552,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2748775,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      },
+      {
+        "tree_id": 2750069,
+        "botanical_name": "Acacia catechu (L.f.) Willd.",
+        "species_key": "Acacia catechu",
+        "girth_cm": 12.0,
+        "canopy_m2": 0.8,
+        "action": "FELL_AND_COMPENSATE",
+        "reason": "Acacia catechu at 12 cm obstructs the footprint and exceeds the transplant ceiling (45 cm), so relocation is not reliable. Compensation is age-equivalent, estimated 3-10 saplings. Species is treated as native so the native-conservative branch applies.",
+        "statutory_basis": "Maharashtra (Urban Areas) Protection of Trees Act 1975, s.7 \u2014 compensation is trees planted in number equal to the AGE of the tree felled. Age is estimated from girth here; the census has no age column.",
+        "compensatory_saplings": {
+          "low": 3,
+          "high": 10
+        },
+        "age_estimate_years": {
+          "low": 3.8,
+          "point": 6.0,
+          "high": 10.0
+        }
+      }
+    ],
+    "census_coverage": {
+      "index_built": true,
+      "loaded_trees": 4009623,
+      "census_total_city_trees": 4009624,
+      "loaded_fraction_pct": 100.0,
+      "wards_covered": 41,
+      "wards_total": 41,
+      "wards_empty": 0,
+      "wards_empty_list": [],
+      "coverage_complete": true,
+      "warning": null
+    },
+    "census_reliable_for_this_site": true
+  },
+  "relocation": null,
+  "indicators": {
+    "impervious_pct": 20.630000000000003,
+    "vegetation_pct": 5.7,
+    "water_pct": 4.92,
+    "lst_mean_c": 41.3623,
+    "lst_reference_c": 39.7339,
+    "lst_max_c": 46.796,
+    "mean_slope_deg": 3.0,
+    "dist_to_storm_drain_m": 366.5
+  },
+  "satellite_cube_available": true
+}
