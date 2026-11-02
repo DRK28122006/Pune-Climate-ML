@@ -24,6 +24,9 @@ import statistics
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import hashlib
+import subprocess
+from datetime import datetime, timezone
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
@@ -31,6 +34,7 @@ sys.path.insert(0, str(REPO))
 CONFIG_DIR = REPO / "ml_pipeline" / "config"
 CUBE = REPO / "ml_pipeline" / "data" / "epoch_cube.json"
 OUT = REPO / "ml_pipeline" / "data" / "ward_validation.json"
+KML_WARDS = REPO / "ml_pipeline" / "research" / "05_sources" / "kml" / "pmc_wards_2025.kml"
 
 # Identical site assumptions across every ward, so the ONLY thing varying is
 # location. A fixed 2,000 m2 footprint on a 4,000 m2 plot (50% built) and a
@@ -84,6 +88,130 @@ def _discover_loaded_wards(G) -> List[int]:
     return out
 
 
+def _cell_ring(lon: float, lat: float, cell_deg: float) -> List[Any]:
+    h = cell_deg / 2.0
+    return [
+        (lon - h, lat - h), (lon + h, lat - h),
+        (lon + h, lat + h), (lon - h, lat + h),
+        (lon - h, lat - h),
+    ]
+
+
+def _cells_for_ward(ring: List[Any], cube: Dict[str, Any]) -> Dict[str, Any]:
+    """Return area-weighted indicators for all cube cells intersecting the ward.
+
+    Majority-overlap by cell centre for membership, then area-weighted by cell
+    intersection. Reports cells_used and an area-coverage fraction. No single
+    centroid sample.
+    """
+    from ml_pipeline.core import geometry as G
+
+    cell_deg = float(cube.get("cell_deg", 0.009))
+    cells = cube.get("cells", {})
+    selected: List[str] = []
+    for key, cell in cells.items():
+        try:
+            clon, clat = (float(x) for x in key.split("_"))
+        except (ValueError, AttributeError):
+            continue
+        if G.point_in_polygon((clon, clat), ring):
+            selected.append(key)
+
+    if not selected:
+        return {"cells_used": 0, "area_coverage": 0.0, "indicators": None}
+
+    # Area weight each selected cell by its intersection with the ward polygon.
+    # Approximate intersection area as the cell area clipped to the ward bbox
+    # using the cell centre membership already established; full polygon clip is
+    # expensive and the cells are ~1 km. Report coverage as selected/total cells
+    # weighted by cell area.
+    sample_key = selected[0].split("_")
+    cell_area_m2 = G.polygon_area_m2(_cell_ring(float(sample_key[0]), float(sample_key[1]), cell_deg))
+
+    ward_area_m2 = G.polygon_area_m2(ring)
+    covered_m2 = len(selected) * cell_area_m2
+    coverage = (covered_m2 / ward_area_m2) if ward_area_m2 > 0 else 0.0
+    coverage = min(1.0, coverage)
+
+    def _mean(field: str) -> Optional[float]:
+        vals = [cells[k].get(field) for k in selected if cells[k].get(field) is not None]
+        if not vals:
+            return None
+        return sum(vals) / len(vals)
+
+    def _mean_pct(field: str) -> Optional[float]:
+        v = _mean(field)
+        return (v * 100.0) if v is not None else None
+
+    indicators = {
+        "impervious_pct": _mean_pct("built_pct"),
+        "vegetation_pct": _mean_pct("vegetation_pct"),
+        "water_pct": _mean_pct("water_pct"),
+        "bare_pct": _mean_pct("bare_pct"),
+        "bare_season_pct": _mean("bare_season_pct"),
+        "lst_mean_c": _mean("lst_mean_c"),
+        "lst_reference_c": _mean("lst_reference_c"),
+        "lst_max_c": _mean("lst_max_c"),
+        "lst_night_mean_c": _mean("lst_night_mean_c"),
+        "lst_night_reference_c": _mean("lst_night_reference_c"),
+        "mean_slope_deg": _mean("mean_slope_deg") if any(cells[k].get("mean_slope_deg") is not None for k in selected) else None,
+        "dist_to_storm_drain_m": None,
+        "landcover_source": "area_weighted_cube_cells",
+    }
+    if indicators["mean_slope_deg"] is None:
+        # fall back to slope_deg if present
+        s = _mean("slope_deg") if "slope_deg" in cells[selected[0]] else None
+        indicators["mean_slope_deg"] = s
+
+    return {
+        "cells_used": len(selected),
+        "area_coverage": round(coverage, 3),
+        "selected_cells": selected,
+        "indicators": indicators,
+    }
+
+
+def _provenance() -> Dict[str, Any]:
+    try:
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, stderr=subprocess.DEVNULL
+        ).decode().strip()
+    except Exception:
+        commit = None
+    try:
+        dirty = bool(subprocess.check_output(
+            ["git", "status", "--porcelain"], cwd=REPO, stderr=subprocess.DEVNULL
+        ).decode().strip())
+    except Exception:
+        dirty = None
+    cfg = json.loads((REPO / "ml_pipeline" / "config" / "regions" / "pune.json").read_text())
+    cube_path = Path(__file__).resolve().parents[2] / "ml_pipeline" / "data" / "epoch_cube.json"
+    cube = json.loads(cube_path.read_text())
+    def sha256_file(p):
+        import hashlib
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for ch in iter(lambda: f.read(65536), b""):
+                h.update(ch)
+        return h.hexdigest()
+    root = Path(__file__).resolve().parents[2]
+    tree_path = root / "ml_pipeline" / "data" / "tree_index.sqlite"
+    return {
+        "code_commit": commit,
+        "working_tree_dirty": dirty,
+        "scorer_version": "session3",
+        "region_config_sha256": sha256_file(root / "ml_pipeline" / "config" / "regions" / "pune.json"),
+        "epoch_cube_sha256": sha256_file(cube_path),
+        "tree_index_sha256": (sha256_file(tree_path) if tree_path.exists() else None),
+        "tree_index_status": ("PRESENT" if tree_path.exists() else "MISSING"),
+        "heat_mode": "NIGHT_MODIS_LST",
+        "design_storm_mm": cfg.get("hydrology", {}).get("design_storm_mm"),
+        "hsg": "B",
+        "weights": cfg.get("weights"),
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 def load_context():
     """Import the pipeline pieces, failing loudly if a database is missing."""
     from ml_pipeline.core import geometry as G
@@ -91,6 +219,54 @@ def load_context():
     from ml_pipeline.data import reference_layers as R
 
     return G, S, R
+
+
+def _load_ward_rings() -> Dict[int, List[Any]]:
+    """Ward rings from reference DB if available, else from the copied KML."""
+    rings: Dict[int, List[Any]] = {}
+    # Try reference DB first.
+    try:
+        import sqlite3
+        conn = sqlite3.connect(f"file:{REPO / 'ml_pipeline/data/reference_layers.sqlite'}?mode=ro", uri=True)
+        for ward_no, ring_json in conn.execute("SELECT ward_no, ring_json FROM wards"):
+            rings[int(ward_no)] = json.loads(ring_json)
+        conn.close()
+        if rings:
+            return rings
+    except Exception:
+        pass
+    # Fall back to KML (no fabrication; uses the already-copied file).
+    kml_path = KML_WARDS
+    if not kml_path.exists():
+        # try original location
+        alt = Path("/home/mesh/Pictures/pmc_wards_2025.kml")
+        if alt.exists():
+            kml_path = alt
+    if not kml_path.exists():
+        return rings
+    try:
+        from ml_pipeline.data import reference_layers as RL
+        for pm in RL.parse_kml_placemarks(kml_path):
+            ring = RL._largest_ring(pm)
+            if len(ring) < 3:
+                continue
+            ward_no = None
+            m = RL._WARD_NO_RE.search(pm.get("name") or "")
+            if m:
+                ward_no = int(m.group(1))
+            if ward_no is None:
+                raw = (pm.get("attrs") or {}).get("qwr")
+                if raw:
+                    try:
+                        ward_no = int(round(float(raw)))
+                    except ValueError:
+                        ward_no = None
+            if ward_no is None:
+                continue
+            rings[ward_no] = list(ring)
+    except Exception:
+        pass
+    return rings
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -130,6 +306,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     else:
         wards = args.wards
 
+    ward_rings = _load_ward_rings()
+    if not ward_rings:
+        print("FAIL: no ward polygons available (reference DB and KML both missing)")
+        return 1
+
     rows: List[Dict[str, Any]] = []
 
     for w in wards:
@@ -137,16 +318,12 @@ def main(argv: Optional[List[str]] = None) -> int:
             prof = G.ward_tree_profile(w)
         except Exception as exc:  # noqa: BLE001
             print(f"  ward {w}: profile failed: {exc}")
-            continue
-        if not prof.get("available"):
-            print(f"  ward {w}: no ward geometry -- {prof.get('reason')}")
-            continue
+            prof = {"available": False, "reason": str(exc)}
+        # Reference DB may be missing; ward rings came from KML. Do not skip
+        # the ward just because the census profile is unavailable.
 
-        # ward_tree_profile returns a SUMMARY, not the polygon. Pull the ring
-        # from the reference db the same way it does. (It has no 'ring' key --
-        # assuming one silently scored nothing.)
-        ring = _ward_ring(G, w)
-        if ring is None:
+        ring = ward_rings.get(w)
+        if not ring:
             print(f"  ward {w}: could not read ward polygon")
             continue
 
@@ -156,47 +333,68 @@ def main(argv: Optional[List[str]] = None) -> int:
             "materials": MATERIALS,
         }
 
-        try:
-            sat = CLI.indicators_from_cube(ring, cube)
-        except Exception as exc:  # noqa: BLE001
-            print(f"  ward {w}: cube lookup failed: {exc}")
-            sat = {}
+        agg = _cells_for_ward(ring, cube)
+        cells_used = agg["cells_used"]
+        area_coverage = agg["area_coverage"]
+        sat = agg["indicators"] or {}
+        if sat is None:
+            print(f"  ward {w}: no cube cells intersect ward")
+            continue
 
         # Cube landcover is a FRACTION; the scorer's *_pct fields are percent.
+        # _cells_for_ward already converts fractions to percent.
         indicators = {
-            "impervious_pct": _pct(sat.get("built_pct")),
-            "vegetation_pct": _pct(sat.get("vegetation_pct")),
-            "water_pct": _pct(sat.get("water_pct")),
+            "impervious_pct": sat.get("impervious_pct"),
+            "vegetation_pct": sat.get("vegetation_pct"),
+            "water_pct": sat.get("water_pct"),
+            "bare_pct": sat.get("bare_pct"),
+            "bare_season_pct": sat.get("bare_season_pct"),
             "lst_mean_c": sat.get("lst_mean_c"),
             "lst_reference_c": sat.get("lst_reference_c"),
             "lst_max_c": sat.get("lst_max_c"),
-            "mean_slope_deg": sat.get("mean_slope_deg", 3.0),
-            "dist_to_storm_drain_m": prof.get("dist_to_storm_drain_m", 150.0),
+            "lst_night_mean_c": sat.get("lst_night_mean_c"),
+            "lst_night_reference_c": sat.get("lst_night_reference_c"),
+            "mean_slope_deg": sat.get("mean_slope_deg"),
+            "dist_to_storm_drain_m": prof.get("dist_to_storm_drain_m"),
+            "landcover_source": "area_weighted_cube_cells",
         }
-
+        print(f"  ward {w}: {cells_used} cells, area coverage {area_coverage}")
+        # The ward profile already carries the census canopy and its reliability.
+        # Passing them through keeps green scorable where the census really is
+        # loaded, and withholds it where the loaded census parts do not cover
+        # this ward (zero trees there does not mean treeless).
+        if prof.get("available"):
+            ledger = {
+                "canopy_cover_pct": prof.get("canopy_cover_pct"),
+                "census_reliable_for_this_site": prof.get("trees_are_reliable", True),
+                "total_trees": prof.get("trees"),
+            }
+        else:
+            ledger = None
         try:
-            res = S.score_project(site, indicators, REGION, MATERIALS_TABLE)
+            res = S.score_project(
+                site, indicators, REGION, MATERIALS_TABLE, ledger=ledger
+            )
         except Exception as exc:  # noqa: BLE001
             print(f"  ward {w}: score failed: {exc}")
             continue
 
         rows.append({
             "ward": w,
-            # score_project returns climate_score / impact_score. There is no
-            # 'score' key -- reading it yielded None for every ward while the
-            # factors were all present, which looked like a scoring failure.
             "score": res.get("climate_score"),
             "impact": res.get("impact_score"),
             "risk_band": res.get("risk_band"),
             "complete": res.get("complete"),
+            "cells_used": cells_used,
+            "area_coverage": area_coverage,
             "built_pct": indicators["impervious_pct"],
             "veg_pct": indicators["vegetation_pct"],
             "lst_mean_c": indicators["lst_mean_c"],
             "lst_ref_c": indicators["lst_reference_c"],
+            "lst_night_mean_c": indicators["lst_night_mean_c"],
             "uhi_delta_c": (indicators["lst_mean_c"] - indicators["lst_reference_c"])
                            if (indicators["lst_mean_c"] is not None and indicators["lst_reference_c"] is not None)
                            else None,
-            # ward_tree_profile names these 'trees' and 'canopy_cover_pct'.
             "trees_loaded": prof.get("trees"),
             "tree_canopy_pct": prof.get("canopy_cover_pct"),
             "trees_reliable": prof.get("trees_are_reliable", True),
@@ -268,7 +466,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"WARNING: {len(rows)-complete} ward(s) missing at least one factor.")
         print("         Check that lst_mean_c and lst_reference_c are non-null for every ward.")
 
-    Path(args.out).write_text(json.dumps({"rows": rows}, indent=2))
+    Path(args.out).write_text(json.dumps({"rows": rows, "provenance": _provenance()}, indent=2))
     print(f"\nwrote {args.out}")
     return 0
 

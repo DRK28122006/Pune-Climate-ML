@@ -34,6 +34,9 @@ import json
 import math
 import statistics
 import sys
+import hashlib
+import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -147,6 +150,41 @@ def _pct(x: Any, d: float = 0.0) -> float:
         return d
 
 
+def _provenance() -> dict:
+    REPO = Path(__file__).resolve().parents[2]
+    try:
+        commit = subprocess.check_output(["git","rev-parse","HEAD"], cwd=REPO, stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        commit = None
+    try:
+        dirty = bool(subprocess.check_output(["git","status","--porcelain"], cwd=REPO, stderr=subprocess.DEVNULL).decode().strip())
+    except Exception:
+        dirty = None
+    cfg = json.loads((REPO / "ml_pipeline" / "config" / "regions" / "pune.json").read_text())
+    cube_path = REPO / "ml_pipeline" / "data" / "epoch_cube.json"
+    tree_path = REPO / "ml_pipeline" / "data" / "tree_index.sqlite"
+    def sha256_file(p):
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for ch in iter(lambda: f.read(65536), b""):
+                h.update(ch)
+        return h.hexdigest()
+    return {
+        "code_commit": commit,
+        "working_tree_dirty": dirty,
+        "scorer_version": "session3",
+        "region_config_sha256": sha256_file(REPO / "ml_pipeline" / "config" / "regions" / "pune.json"),
+        "epoch_cube_sha256": sha256_file(cube_path),
+        "tree_index_sha256": (sha256_file(tree_path) if tree_path.exists() else None),
+        "tree_index_status": ("PRESENT" if tree_path.exists() else "MISSING"),
+        "heat_mode": "NIGHT_MODIS_LST",
+        "design_storm_mm": cfg.get("hydrology", {}).get("design_storm_mm"),
+        "hsg": "B",
+        "weights": cfg.get("weights"),
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 def main() -> int:
     if not CUBE.exists():
         print(f"FAIL: no epoch cube at {CUBE}")
@@ -207,11 +245,16 @@ def main() -> int:
             "impervious_pct": _pct(sat.get("built_pct")),
             "vegetation_pct": _pct(sat.get("vegetation_pct")),
             "water_pct": _pct(sat.get("water_pct")),
+            "bare_pct": _pct(sat.get("bare_pct")) if sat.get("bare_pct") is not None else None,
+            "bare_season_pct": sat.get("bare_season_pct"),
             "lst_mean_c": sat.get("lst_mean_c"),
             "lst_reference_c": sat.get("lst_reference_c"),
             "lst_max_c": sat.get("lst_max_c"),
-            "mean_slope_deg": sat.get("mean_slope_deg", 3.0),
-            "dist_to_storm_drain_m": drain.get("dist_to_storm_drain_m", 200.0) or 200.0,
+            "lst_night_mean_c": sat.get("lst_night_mean_c"),
+            "lst_night_reference_c": sat.get("lst_night_reference_c"),
+            "mean_slope_deg": sat.get("mean_slope_deg", sat.get("slope_deg")),
+            "dist_to_storm_drain_m": drain.get("dist_to_storm_drain_m"),
+            "landcover_source": "single_cube_cell",
         }
 
         # Real trees inside the site polygon, from the complete census.
@@ -220,6 +263,12 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             print(f"  {name}: tree query failed: {exc}")
             inside = []
+
+        # A zero tree count is only meaningful when the census index is complete.
+        # With partial coverage, zero means "not loaded", so the green factor
+        # must be withheld rather than scored as a treeless site.
+        coverage = G.census_coverage()
+        census_reliable = coverage.get("coverage_complete", False) or bool(inside)
 
         ledger = None
         if inside:
@@ -255,6 +304,24 @@ def main() -> int:
                 ledger = out
             except Exception as exc:  # noqa: BLE001
                 print(f"  {name}: canopy ledger failed: {exc}")
+
+        if ledger is None and not inside:
+            # A measured zero, only valid when the census coverage check below
+            # marks this site reliable. If coverage is incomplete the false
+            # reliability flag makes score_project withhold green instead.
+            ledger = {
+                "total_trees": 0,
+                "tree_canopy_m2_before": 0.0,
+                "tree_canopy_m2_after": 0.0,
+                "tree_canopy_m2_lost": 0.0,
+                "canopy_cover_pct": 0.0,
+                "canopy_cover_pct_proposed": 0.0,
+                "action_counts": {},
+            }
+
+        if ledger is not None:
+            ledger["census_coverage"] = coverage
+            ledger["census_reliable_for_this_site"] = census_reliable
 
         try:
             res = S.score_project(site, indicators, REGION, MATERIALS_TABLE, ledger=ledger)
@@ -322,7 +389,8 @@ def main() -> int:
         print(f"{r['name']:<20} {fmt(r['score'])} {str(r['band']):>9} | "
               + " ".join(fmt(s.get(f)) for f in FACTORS)
               + f" | {r['built_pct']:>6.1f} {r['veg_pct']:>5.1f} {lst:>6} {ref:>6} "
-                f"{uhi:>5} {r['trees']:>6,} {can:>7} {r['drain_m']:>6.0f} "
+                f"{uhi:>5} {r['trees']:>6,} {can:>7} "
+                f"{(format(r['drain_m'], '>6.0f') if r['drain_m'] is not None else '     -'):>6} "
                 f"{'Y' if r['complete'] else 'PART':>4}")
 
     print()
@@ -370,7 +438,7 @@ def main() -> int:
     for r in rows:
         print(f"  {r['score']:>5.1f}  {r['name']:<20} (expected: {r['expect']})")
 
-    Path(OUT).write_text(json.dumps({"rows": rows}, indent=2))
+    Path(OUT).write_text(json.dumps({"rows": rows, "provenance": _provenance()}, indent=2))
     print(f"\nwrote {OUT}")
     return 0
 

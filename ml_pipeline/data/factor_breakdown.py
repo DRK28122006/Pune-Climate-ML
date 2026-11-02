@@ -49,11 +49,16 @@ def main() -> int:
     for r in rows:
         s = r["sub_scores"]
         uhi = r["uhi_delta_c"]
+        def _f(v):
+            return f"{v:>7.1f}" if isinstance(v, (int, float)) and not isinstance(v, bool) else f"{'-':>7}"
+        uhi_s = f"{uhi:>+6.2f}" if uhi is not None else "     - "
+        canopy_s = f"{r['tree_canopy_pct']:>8.1f}" if r.get("tree_canopy_pct") is not None else "       -"
+        trees_s = f"{r['trees_loaded']:>9,}" if r.get("trees_loaded") is not None else "        -"
         print(
             f"{r['ward']:>5} {r['score']:>7.1f} | "
-            + " ".join(f"{s.get(f, float('nan')):>7.1f}" for f in FACTORS)
+            + " ".join(_f(s.get(f)) for f in FACTORS)
             + f" | {r['built_pct']:>7.1f} {r['veg_pct']:>6.1f} "
-              f"{uhi:>+6.2f} {r['tree_canopy_pct']:>8.1f} {r['trees_loaded']:>9,}"
+              f"{uhi_s} {canopy_s} {trees_s}"
         )
 
     print()
@@ -83,7 +88,9 @@ def main() -> int:
         xs = [a for a, _ in pairs]
         ys = [b for _, b in pairs]
         c = corr(xs, ys)
-        direction = "drives" if c > 0.4 else ("drives (inverse)" if c < -0.4 else "weak")
+        # Sub-scores are higher = worse; the final score here is climate_score
+        # (higher = better), so a factor should correlate NEGATIVELY with it.
+        direction = "drives (inverse)" if c < -0.4 else ("drives" if c > 0.4 else "weak")
         print(f"{f:<10} r = {c:+.3f}   {direction}")
 
     print()
@@ -100,9 +107,11 @@ def main() -> int:
     print("=" * 70)
     print("READING THIS")
     print("=" * 70)
-    print("Score = 100 - weighted impact, so a HIGHER sub-score means a BETTER")
-    print("outcome for that factor. A factor should correlate POSITIVELY with")
-    print("the final score: high green coverage should raise the score.")
+    print("Sub-scores are 0-100 with HIGHER = WORSE for that factor; the final")
+    print("score is climate_score (higher = better). A factor should therefore")
+    print("correlate NEGATIVELY with the final score: high flood/heat/green/carbon")
+    print("sub-scores lower the climate score. A positive correlation here is a") 
+    print("sign-convention red flag, not a validation.")
     print()
     print("Note the model scores the SUBMITTED PLOT (a fixed 2,000 m2 building"),
     print("on a 4,000 m2 plot), not the ward as a whole. Ward-level satellite"),

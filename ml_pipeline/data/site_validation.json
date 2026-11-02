@@ -7,102 +7,26 @@
       "lat": 18.5089,
       "built_sqm": 4160,
       "trees": 0,
-      "canopy_pct": null,
-      "score": 57.1,
-      "impact": 42.9,
+      "canopy_pct": 0.0,
+      "score": 62.0,
+      "impact": 38.0,
       "band": "Moderate",
-      "complete": true,
-      "missing": [],
+      "complete": false,
+      "missing": [
+        "green"
+      ],
       "subs": {
-        "flood": 31.7,
-        "heat": 0.0,
-        "green": 94.2,
-        "carbon": 72.6
+        "flood": 16.7,
+        "heat": 28.2,
+        "green": null,
+        "carbon": 84.5
       },
-      "built_pct": 20.5,
-      "veg_pct": 19.25,
+      "built_pct": 26.340000000000003,
+      "veg_pct": 68.72,
       "lst": 37.0518,
-      "ref": 37.3498,
-      "uhi": -0.2980000000000018,
-      "drain_m": 200.0
-    },
-    {
-      "name": "Pashan hill edge",
-      "expect": "cool-hill",
-      "lon": 73.852,
-      "lat": 18.538,
-      "built_sqm": 1920,
-      "trees": 18,
-      "canopy_pct": 9.1,
-      "score": 52.2,
-      "impact": 47.8,
-      "band": "Moderate",
-      "complete": true,
-      "missing": [],
-      "subs": {
-        "flood": 48.4,
-        "heat": 0.0,
-        "green": 93.6,
-        "carbon": 72.6
-      },
-      "built_pct": 51.94,
-      "veg_pct": 7.359999999999999,
-      "lst": 35.7704,
-      "ref": 35.8452,
-      "uhi": -0.0747999999999962,
-      "drain_m": 41.4
-    },
-    {
-      "name": "Shivajinagar core",
-      "expect": "worst",
-      "lon": 73.8475,
-      "lat": 18.5303,
-      "built_sqm": 4800,
-      "trees": 28,
-      "canopy_pct": 21.1,
-      "score": 50.0,
-      "impact": 50.0,
-      "band": "Moderate",
-      "complete": true,
-      "missing": [],
-      "subs": {
-        "flood": 46.6,
-        "heat": 15.0,
-        "green": 85.2,
-        "carbon": 72.6
-      },
-      "built_pct": 53.669999999999995,
-      "veg_pct": 9.21,
-      "lst": 36.0725,
-      "ref": 35.7734,
-      "uhi": 0.2990999999999957,
-      "drain_m": 30.9
-    },
-    {
-      "name": "Aundh park edge",
-      "expect": "mid",
-      "lon": 73.8075,
-      "lat": 18.559,
-      "built_sqm": 2560,
-      "trees": 107,
-      "canopy_pct": 24.0,
-      "score": 49.4,
-      "impact": 50.6,
-      "band": "Moderate",
-      "complete": true,
-      "missing": [],
-      "subs": {
-        "flood": 50.2,
-        "heat": 14.6,
-        "green": 83.2,
-        "carbon": 72.6
-      },
-      "built_pct": 66.85,
-      "veg_pct": 7.37,
-      "lst": 36.7149,
-      "ref": 36.4229,
-      "uhi": 0.2920000000000016,
-      "drain_m": 71.0
+      "ref": 37.3531,
+      "uhi": -0.3012999999999977,
+      "drain_m": null
     },
     {
       "name": "Katraj plain",
@@ -110,77 +34,27 @@
       "lon": 73.867,
       "lat": 18.448,
       "built_sqm": 3200,
-      "trees": 19,
-      "canopy_pct": 5.0,
-      "score": 45.6,
-      "impact": 54.4,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 41.9,
+      "impact": 58.1,
       "band": "Moderate",
-      "complete": true,
-      "missing": [],
+      "complete": false,
+      "missing": [
+        "green"
+      ],
       "subs": {
-        "flood": 52.0,
-        "heat": 16.6,
-        "green": 96.5,
-        "carbon": 72.6
+        "flood": 53.3,
+        "heat": 45.2,
+        "green": null,
+        "carbon": 84.5
       },
-      "built_pct": 69.42,
-      "veg_pct": 3.44,
+      "built_pct": 99.1,
+      "veg_pct": 0.8999999999999999,
       "lst": 37.6614,
-      "ref": 37.3299,
-      "uhi": 0.33149999999999835,
-      "drain_m": 19.7
-    },
-    {
-      "name": "Koregaon Park green",
-      "expect": "best",
-      "lon": 73.8936,
-      "lat": 18.5362,
-      "built_sqm": 2240,
-      "trees": 8,
-      "canopy_pct": 5.4,
-      "score": 38.1,
-      "impact": 61.9,
-      "band": "High",
-      "complete": true,
-      "missing": [],
-      "subs": {
-        "flood": 42.0,
-        "heat": 53.8,
-        "green": 93.3,
-        "carbon": 72.6
-      },
-      "built_pct": 48.18,
-      "veg_pct": 15.079999999999998,
-      "lst": 34.8073,
-      "ref": 33.7312,
-      "uhi": 1.0760999999999967,
-      "drain_m": 57.9
-    },
-    {
-      "name": "Mula riverside",
-      "expect": "flood-exposed",
-      "lon": 73.873,
-      "lat": 18.494,
-      "built_sqm": 3840,
-      "trees": 77,
-      "canopy_pct": 17.3,
-      "score": 37.8,
-      "impact": 62.2,
-      "band": "High",
-      "complete": true,
-      "missing": [],
-      "subs": {
-        "flood": 50.8,
-        "heat": 49.5,
-        "green": 87.9,
-        "carbon": 72.6
-      },
-      "built_pct": 64.62,
-      "veg_pct": 5.01,
-      "lst": 36.2889,
-      "ref": 35.2997,
-      "uhi": 0.9891999999999967,
-      "drain_m": 27.7
+      "ref": 40.7562,
+      "uhi": -3.0947999999999993,
+      "drain_m": null
     },
     {
       "name": "Bhosari MIDC",
@@ -188,25 +62,186 @@
       "lon": 73.902,
       "lat": 18.51,
       "built_sqm": 5632,
-      "trees": 84,
-      "canopy_pct": 9.5,
-      "score": 37.3,
-      "impact": 62.7,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 34.1,
+      "impact": 65.9,
       "band": "High",
-      "complete": true,
-      "missing": [],
+      "complete": false,
+      "missing": [
+        "green"
+      ],
+      "subs": {
+        "flood": 39.2,
+        "heat": 80.1,
+        "green": null,
+        "carbon": 84.5
+      },
+      "built_pct": 73.06,
+      "veg_pct": 26.939999999999998,
+      "lst": 37.0745,
+      "ref": 40.388,
+      "uhi": -3.3134999999999977,
+      "drain_m": null
+    },
+    {
+      "name": "Shivajinagar core",
+      "expect": "worst",
+      "lon": 73.8475,
+      "lat": 18.5303,
+      "built_sqm": 4800,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 30.9,
+      "impact": 69.1,
+      "band": "High",
+      "complete": false,
+      "missing": [
+        "green"
+      ],
+      "subs": {
+        "flood": 47.0,
+        "heat": 80.9,
+        "green": null,
+        "carbon": 84.5
+      },
+      "built_pct": 87.55,
+      "veg_pct": 12.44,
+      "lst": 36.0725,
+      "ref": 38.2296,
+      "uhi": -2.1571,
+      "drain_m": null
+    },
+    {
+      "name": "Pashan hill edge",
+      "expect": "cool-hill",
+      "lon": 73.852,
+      "lat": 18.538,
+      "built_sqm": 1920,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 30.9,
+      "impact": 69.1,
+      "band": "High",
+      "complete": false,
+      "missing": [
+        "green"
+      ],
       "subs": {
         "flood": 46.3,
-        "heat": 52.0,
-        "green": 93.3,
-        "carbon": 72.6
+        "heat": 81.7,
+        "green": null,
+        "carbon": 84.5
       },
-      "built_pct": 45.58,
-      "veg_pct": 9.35,
-      "lst": 37.0745,
-      "ref": 36.0354,
-      "uhi": 1.0390999999999977,
-      "drain_m": 71.2
+      "built_pct": 73.21,
+      "veg_pct": 14.499999999999998,
+      "lst": 35.7704,
+      "ref": 35.5491,
+      "uhi": 0.22129999999999939,
+      "drain_m": null
+    },
+    {
+      "name": "Aundh park edge",
+      "expect": "mid",
+      "lon": 73.8075,
+      "lat": 18.559,
+      "built_sqm": 2560,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 28.8,
+      "impact": 71.2,
+      "band": "High",
+      "complete": false,
+      "missing": [
+        "green"
+      ],
+      "subs": {
+        "flood": 53.2,
+        "heat": 80.4,
+        "green": null,
+        "carbon": 84.5
+      },
+      "built_pct": 98.89,
+      "veg_pct": 1.11,
+      "lst": 36.7149,
+      "ref": 39.0474,
+      "uhi": -2.332500000000003,
+      "drain_m": null
+    },
+    {
+      "name": "Koregaon Park green",
+      "expect": "best",
+      "lon": 73.8936,
+      "lat": 18.5362,
+      "built_sqm": 2240,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 28.5,
+      "impact": 71.5,
+      "band": "High",
+      "complete": false,
+      "missing": [
+        "green"
+      ],
+      "subs": {
+        "flood": 47.2,
+        "heat": 87.2,
+        "green": null,
+        "carbon": 84.5
+      },
+      "built_pct": 87.94999999999999,
+      "veg_pct": 12.049999999999999,
+      "lst": 34.8073,
+      "ref": 33.4641,
+      "uhi": 1.343199999999996,
+      "drain_m": null
+    },
+    {
+      "name": "Mula riverside",
+      "expect": "flood-exposed",
+      "lon": 73.873,
+      "lat": 18.494,
+      "built_sqm": 3840,
+      "trees": 0,
+      "canopy_pct": 0.0,
+      "score": 24.9,
+      "impact": 75.1,
+      "band": "High",
+      "complete": false,
+      "missing": [
+        "green"
+      ],
+      "subs": {
+        "flood": 52.6,
+        "heat": 91.4,
+        "green": null,
+        "carbon": 84.5
+      },
+      "built_pct": 97.92,
+      "veg_pct": 2.08,
+      "lst": 36.2889,
+      "ref": 35.1299,
+      "uhi": 1.158999999999999,
+      "drain_m": null
     }
-  ]
+  ],
+  "provenance": {
+    "code_commit": "81ae2e2936b2c7a823525f7a1498a167786b5ace",
+    "working_tree_dirty": true,
+    "scorer_version": "session3",
+    "region_config_sha256": "5c592030ccd22df547828acdb6580a32b1bac6b072785f8e4877d470dce2a955",
+    "epoch_cube_sha256": "3a88ae667bad0e0ec3c7888a632a2c4cf70fdee148b5288920dce42d3734bad6",
+    "tree_index_sha256": null,
+    "tree_index_status": "MISSING",
+    "heat_mode": "NIGHT_MODIS_LST",
+    "design_storm_mm": 214.0,
+    "hsg": "B",
+    "weights": {
+      "flood": 0.3,
+      "heat": 0.3,
+      "green": 0.2,
+      "carbon": 0.2
+    },
+    "generated_at_utc": "2026-11-02T11:11:39.616027+00:00"
+  }
 }
