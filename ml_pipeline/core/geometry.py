@@ -28,16 +28,18 @@ EARTH_RADIUS_M = 6_371_008.8
 # Citywide census total, used only to state coverage — never to fabricate a count
 # for an unloaded ward.
 #
-# The MEASURED value is 4,009,624: deduplicating the `id` column across all 17
-# CSV parts gives 16 x 250,000 + 9,623 with zero duplicate ids. PMC's published
-# figure is 4,090,000, which is close but not the same number, and using it here
-# silently under-reported coverage as 98.03% instead of ~100% and printed PMC's
-# published total next to our own count as if they were the same figure.
+# The MEASURED value is 4,009,623: deduplicating the `id` column across all 17
+# CSV parts gives 16 x 250,000 + 9,623 with zero duplicate ids. The earlier
+# 4,009,624 was an off-by-one, not a dropped tree: 4,009,623 is exactly what the
+# loaded index reports. PMC's published figure is 4,090,000, which is close but
+# not the same number, and using it here silently under-reported coverage as
+# 98.03% instead of ~100% and printed PMC's published total next to our own
+# count as if they were the same figure.
 #
 # The single source of truth is pune.json trees.census_total_city_trees, so this
 # value is read from config with the measured figure as the fallback for any
 # caller that runs without config available.
-_CENSUS_FALLBACK = 4_009_624
+_CENSUS_FALLBACK = 4_009_623
 
 
 def _census_total_city_trees() -> int:
@@ -96,6 +98,81 @@ def haversine_m(a: Coord, b: Coord) -> float:
     dlon, dlat = lon2 - lon1, lat2 - lat1
     h = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
     return 2 * EARTH_RADIUS_M * math.asin(min(1.0, math.sqrt(h)))
+
+
+def _cube_keys(lon: float, lat: float) -> List[str]:
+    """Candidate string keys for a cube coordinate.
+
+    Cube keys were written by rounding the cell centre to four decimals, so a
+    coordinate that lies exactly on a cell centre can be written as either
+    ``73.85`` (trailing zeros stripped) or ``73.8500``. Include both forms.
+    """
+    keys: List[str] = []
+    for ndigits in (4, 3):
+        lon_s = str(round(lon, ndigits))
+        lat_s = str(round(lat, ndigits))
+        keys.append(f"{lon_s}_{lat_s}")
+        keys.append(f"{lon:.{ndigits}f}_{lat:.{ndigits}f}")
+    # Preserve order while removing duplicates.
+    return list(dict.fromkeys(keys))
+
+
+def cube_cell_for_point(
+    cube: Optional[Dict[str, Any]],
+    lon: float,
+    lat: float,
+    max_fallback_m: float = 2000.0,
+) -> Optional[Dict[str, Any]]:
+    """Return the epoch-cube cell containing (lon, lat), or None.
+
+    The old lookup rounded the query to three decimals while the cube keys used
+    four, so an exact key match was impossible and every call scanned all 864
+    cells. Try the candidate keys first, then derive the grid cell centre from
+    the cube's bbox/cell size, and only then fall back to a bounded nearest-cell
+    search. The fallback is retained for edge cells and hand-built test cubes.
+    """
+    if not cube:
+        return None
+    cells = cube.get("cells") or {}
+    if not cells:
+        return None
+
+    for key in _cube_keys(float(lon), float(lat)):
+        if key in cells:
+            return cells[key]
+
+    bbox = cube.get("bbox")
+    cell_deg = cube.get("cell_deg")
+    try:
+        if bbox and len(bbox) == 4 and cell_deg and float(cell_deg) > 0:
+            west, south, east, north = (float(v) for v in bbox)
+            step = float(cell_deg)
+            col = math.floor((float(lon) - west) / step)
+            row = math.floor((float(lat) - south) / step)
+            lon0 = west + col * step
+            lat0 = south + row * step
+            lon1 = min(lon0 + step, east)
+            lat1 = min(lat0 + step, north)
+            centre = ((lon0 + lon1) / 2.0, (lat0 + lat1) / 2.0)
+            for key in _cube_keys(*centre):
+                if key in cells:
+                    return cells[key]
+    except (TypeError, ValueError, ZeroDivisionError):
+        pass
+
+    best: Optional[Dict[str, Any]] = None
+    best_d: Optional[float] = None
+    for key, value in cells.items():
+        try:
+            lon_s, lat_s = key.split("_")
+            d = haversine_m((float(lon), float(lat)), (float(lon_s), float(lat_s)))
+        except (TypeError, ValueError):
+            continue
+        if best_d is None or d < best_d:
+            best, best_d = value, d
+    if best_d is not None and best_d <= float(max_fallback_m):
+        return best
+    return None
 
 
 def polygon_area_m2(ring: Sequence[Coord]) -> float:

@@ -58,8 +58,8 @@
   "trees": {
     "census_year": 2019,
     "census_source": "PMC Tree Census 2019 (data.opencity.in, CKAN package f00d83b8-c70f-4fff-9ac7-9a6ab4255edf)",
-    "census_total_city_trees": 4009624,
-    "census_total_note": "MEASURED, not quoted: 4,009,624 unique trees, verified by deduplicating the `id` column across all 17 CSV parts (16 x 250,000 + 9,623, zero duplicate ids). PMC's published figure of 4,090,000 is within 2%. Note that `wc -l` on these files OVERSTATES the row count by ~68% because quoted fields contain embedded newlines -- do not count census rows with wc.",
+    "census_total_city_trees": 4009623,
+    "census_total_note": "MEASURED, not quoted: 4,009,623 unique trees, verified by deduplicating the `id` column across all 17 CSV parts (16 x 250,000 + 9,623, zero duplicate ids). The earlier 4,009,624 was an off-by-one; 4,009,623 is the same figure the loaded index reports. PMC's published figure of 4,090,000 is within 2%. Note that `wc -l` on these files OVERSTATES the row count by ~68% because quoted fields contain embedded newlines -- do not count census rows with wc.",
     "census_data_age_years_at_2026": 7,
     "ward_id_join": "POLYGON_ONLY",
     "ward_id_join_note": "CRITICAL: census 'ward'/'ward_name' values are ids in the range 3..63 (36 distinct in the 250k sample), which do NOT correspond to the 2025 ward boundary numbering 1..41 used by pmc_wards_2025.kml. A join on ward id is invalid. Ward assignment must be computed by point-in-polygon against the KML boundary file.",
@@ -115,6 +115,21 @@
     "heat": 0.3,
     "green": 0.2,
     "carbon": 0.2
+  },
+  "decision_policy": {
+    "factor_review_threshold": 80.0,
+    "factor_review_thresholds": {
+      "flood": 50.0
+    },
+    "carbon_review_bands": [
+      "Very High"
+    ],
+    "partial_results_review": true,
+    "composite": {
+      "approve_below": 30.0,
+      "conditions_below": 60.0
+    },
+    "note": "Verdict safety gate. Any factor at or above its threshold forces REVIEW even when the weighted composite is low. Flood uses 50 because its current scale tops out near 56.6 (C6); Session 4 may normalise the scale, at which point the flood threshold should be revisited with the other factors' 80. Carbon band Very High also forces REVIEW. Partial results always REVIEW. Weights are unchanged. See ml_pipeline/research/07_decisions/0001-core-safety-policy.md."
   },
   "green": {
     "canopy_weight": 0.7,

@@ -27,6 +27,8 @@ from ml_pipeline.core.canopy import (  # noqa: E402
     maturity_tier,
     species_key,
 )
+from ml_pipeline.core.geometry import cube_cell_for_point  # noqa: E402
+from ml_pipeline.core.geometry import CENSUS_TOTAL_CITY_TREES  # noqa: E402
 from ml_pipeline.core.scoring import (  # noqa: E402
     area_weighted_cn,
     clamp,
@@ -34,6 +36,7 @@ from ml_pipeline.core.scoring import (  # noqa: E402
     compute_flood,
     compute_green,
     compute_heat,
+    _decision,
     score_project,
     scs_cn_runoff_mm,
     UNKNOWN_MASS_EXCLUDE_PCT,
@@ -742,6 +745,176 @@ def test_green_score_is_monotonic_in_canopy():
         prev = r["score"]
 
 
+def test_green_uses_proposed_canopy_so_felling_trees_worsens_the_score():
+    """The main climate score must react to the tree ledger's decisions.
+
+    `process_site` already computed canopy_before and canopy_after, but the
+    scorer used canopy_before. A project that felled every tree therefore got
+    the same green score as one that preserved every tree. Keep both values in
+    the ledger, but score the proposed one.
+    """
+    site = {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 10000.0,
+        "materials": [{"name": "cement", "quantityKg": 100_000}],
+    }
+    indicators = {
+        "impervious_pct": 50.0,
+        "vegetation_pct": 30.0,
+        "water_pct": 0.0,
+        "lst_mean_c": 35.0,
+        "lst_reference_c": 34.0,
+        "mean_slope_deg": 2.0,
+        "dist_to_storm_drain_m": 100.0,
+    }
+    ledger_engine = CanopyLedger(SPECIES)
+
+    def ledger_for(girth_cm):
+        trees = [
+            TreeRecord(
+                tree_id=i, lon=73.85, lat=18.53,
+                botanical_name="Mangifera indica Linn.",
+                girth_cm=girth_cm, canopy_dia_m=8.0, condition="Healthy",
+            )
+            for i in range(10)
+        ]
+        out = ledger_engine.process_site(trees, plot_area_m2=10000.0)
+        out["census_reliable_for_this_site"] = True
+        return out
+
+    felled = ledger_for(80.0)    # inside footprint -> FELL_AND_COMPENSATE
+    preserved = ledger_for(100.0)  # heritage class -> MUST_PRESERVE
+
+    assert felled["canopy_cover_pct"] == preserved["canopy_cover_pct"]
+    assert felled["canopy_cover_pct_proposed"] < preserved["canopy_cover_pct_proposed"]
+
+    felled_score = score_project(site, indicators, REGION, MATERIALS, ledger=felled)
+    preserved_score = score_project(site, indicators, REGION, MATERIALS, ledger=preserved)
+
+    assert felled_score["factors"]["green"]["canopy_basis"] == "proposed"
+    assert felled_score["sub_scores"]["green"] > preserved_score["sub_scores"]["green"], (
+        "felling trees must produce a worse (higher) green-loss score: "
+        f"{felled_score['sub_scores']['green']} vs "
+        f"{preserved_score['sub_scores']['green']}"
+    )
+
+
+def test_unreliable_census_withholds_green_instead_of_scoring_zero():
+    """A partial census is unknown, not a measured zero-tree site."""
+    site = {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 10000.0,
+        "materials": [{"name": "cement", "quantityKg": 100_000}],
+    }
+    indicators = {
+        "impervious_pct": 50.0,
+        "vegetation_pct": 30.0,
+        "water_pct": 0.0,
+        "lst_mean_c": 35.0,
+        "lst_reference_c": 34.0,
+        "mean_slope_deg": 2.0,
+        "dist_to_storm_drain_m": 100.0,
+    }
+    ledger = {
+        "canopy_cover_pct": 20.0,
+        "census_reliable_for_this_site": False,
+    }
+    r = score_project(site, indicators, REGION, MATERIALS, ledger=ledger)
+    green = r["factors"]["green"]
+    assert green["score"] is None
+    assert green["status"] == "UNAVAILABLE"
+    assert "incomplete" in green["reason"].lower()
+    assert "green" in r["missing_factors"]
+    assert r["complete"] is False
+
+
+def test_missing_ledger_withholds_green_instead_of_scoring_zero():
+    """No ledger at all is also unknown, not a treeless site."""
+    site = {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 10000.0,
+        "materials": [{"name": "cement", "quantityKg": 100_000}],
+    }
+    indicators = {
+        "impervious_pct": 50.0,
+        "vegetation_pct": 30.0,
+        "water_pct": 0.0,
+        "lst_mean_c": 35.0,
+        "lst_reference_c": 34.0,
+        "mean_slope_deg": 2.0,
+        "dist_to_storm_drain_m": 100.0,
+    }
+    r = score_project(site, indicators, REGION, MATERIALS, ledger=None)
+    green = r["factors"]["green"]
+    assert green["score"] is None
+    assert "ledger unavailable" in green["reason"].lower()
+    assert "green" in r["missing_factors"]
+    assert r["complete"] is False
+
+
+def test_reliable_zero_canopy_is_scored_not_withheld():
+    """A genuine zero from a complete census must still score 0% canopy."""
+    site = {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 10000.0,
+        "materials": [{"name": "cement", "quantityKg": 100_000}],
+    }
+    indicators = {
+        "impervious_pct": 50.0,
+        "vegetation_pct": 30.0,
+        "water_pct": 0.0,
+        "lst_mean_c": 35.0,
+        "lst_reference_c": 34.0,
+        "mean_slope_deg": 2.0,
+        "dist_to_storm_drain_m": 100.0,
+    }
+    ledger = {
+        "total_trees": 0,
+        "canopy_cover_pct": 0.0,
+        "canopy_cover_pct_proposed": 0.0,
+        "census_reliable_for_this_site": True,
+    }
+    r = score_project(site, indicators, REGION, MATERIALS, ledger=ledger)
+    green = r["factors"]["green"]
+    assert green["score"] is not None
+    assert green["canopy_basis"] == "proposed"
+    assert green["canopy_cover_pct"] == 0.0
+    assert r["complete"] is True
+
+
+def test_flood_marks_missing_slope_and_does_not_invent_three_degrees():
+    """No slope band means no multiplier, with the basis stated."""
+    flat = compute_flood(80, 15, 5, HYD["design_storm_mm"], CN_TABLE)
+    assert flat["slope_available"] is False
+    assert flat["slope_deg"] is None
+    assert flat["slope_multiplier"] == 1.0
+    assert "unavailable" in flat["slope_basis"].lower()
+
+    steep = compute_flood(
+        80, 15, 5, HYD["design_storm_mm"], CN_TABLE, mean_slope_deg=15.0
+    )
+    assert steep["slope_available"] is True
+    assert steep["slope_deg"] == 15.0
+    assert steep["slope_multiplier"] == 1.25
+    assert steep["score"] > flat["score"]
+
+
+def test_cube_lookup_matches_four_decimal_keys_and_grid_centre():
+    """The old 3-decimal query could never match the 4-decimal cube keys."""
+    cube = {
+        "bbox": [73.7318, 18.3856, 74.0183, 18.6216],
+        "cell_deg": 0.009,
+        "cells": {
+            "73.7363_18.3901": {"id": "first"},
+            "73.7453_18.3901": {"id": "second"},
+        },
+    }
+    assert cube_cell_for_point(cube, 73.7363, 18.3901) == {"id": "first"}
+    # A point in the south-west corner of the first cell derives the same
+    # cell centre from bbox + cell size.
+    assert cube_cell_for_point(cube, 73.7319, 18.3860) == {"id": "first"}
+
+
 def test_empty_boq_is_unavailable_not_a_perfect_score():
     """An undescribed project must not be reported as the cleanest possible."""
     r = compute_carbon([], 3000.0, MATERIALS, REGION["carbon"]["bands"])
@@ -894,6 +1067,243 @@ def test_cn_never_exceeds_bounds_and_degrades_sensibly():
     assert 0 < cn <= 100
     # Nothing classified must not manufacture an impervious assumption.
     assert area_weighted_cn(0, 0, 0, CN_TABLE) == pytest_approx(60.0, tol=0.01)
+
+
+# =========================================================================
+# Core safety policy (Session 2): C1, C2, C4, C13
+# =========================================================================
+
+
+def _complete_indicators() -> dict:
+    """All land-cover inputs present, so flood is scorable."""
+    return {
+        "impervious_pct": 50.0,
+        "vegetation_pct": 30.0,
+        "water_pct": 0.0,
+        "bare_pct": 0.0,
+        "lst_mean_c": 35.0,
+        "lst_reference_c": 34.0,
+        "mean_slope_deg": 2.0,
+        "dist_to_storm_drain_m": 100.0,
+    }
+
+
+def _safety_site() -> dict:
+    return {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 4000.0,
+        "materials": [{"name": "cement", "quantityKg": 100_000}],
+    }
+
+
+def test_empty_indicators_flood_is_none_and_verdict_is_review():
+    """C1: absent land cover is unknown, not a perfect-score zero.
+
+    Before this fix, `indicators.get("impervious_pct", 0.0)` made an empty dict
+    score flood 0, impact 0, climate 100, Low and APPROVE.
+    """
+    r = score_project(_safety_site(), {}, REGION, MATERIALS, ledger=None)
+
+    assert r["sub_scores"]["flood"] is None, r["sub_scores"]
+    assert r["factors"]["flood"]["status"] == "UNAVAILABLE"
+    assert "flood" in r["missing_factors"]
+    assert r["complete"] is False
+    assert r["recommendation"] == "REVIEW"
+    # Structured and legacy forms must agree.
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    assert r["impact_score"] != 0.0
+
+
+def test_missing_cube_has_no_flood_score_and_cannot_approve():
+    """C1: no cube means no measured land cover, not the old 70/24 defaults."""
+    from ml_pipeline.cli import indicators_from_cube
+
+    ring = [(73.85, 18.53), (73.86, 18.53), (73.86, 18.54), (73.85, 18.54)]
+    indicators = indicators_from_cube(ring, None)
+    assert indicators == {}
+
+    r = score_project(_safety_site(), indicators, REGION, MATERIALS, ledger=None)
+    assert r["sub_scores"]["flood"] is None
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    assert r["recommendation"] != "APPROVE"
+
+
+def test_null_landcover_field_withholds_flood():
+    """C1: None in any mandatory land-cover field is UNAVAILABLE."""
+    ledger = {
+        "canopy_cover_pct": 20.0,
+        "canopy_cover_pct_proposed": 20.0,
+        "census_reliable_for_this_site": True,
+    }
+    for field in ("impervious_pct", "vegetation_pct", "water_pct"):
+        indicators = _complete_indicators()
+        indicators[field] = None
+        r = score_project(_safety_site(), indicators, REGION, MATERIALS,
+                          ledger=ledger)
+        assert r["sub_scores"]["flood"] is None, field
+        assert "flood" in r["missing_factors"], field
+        assert r["recommendation"]["recommendation"] == "REVIEW", field
+
+
+def test_seasonal_bare_overlap_is_reported_not_silently_absorbed():
+    """C2: seasonal bare is not a fourth annual band.
+
+    A synthetic cell whose fractions sum to 1.3 must (a) report the sum,
+    (b) flag it, and (c) still return a non-saturated curve number.
+    """
+    overlap = compute_flood(
+        70.0, 30.0, 0.0, HYD["design_storm_mm"], CN_TABLE,
+        bare_pct=30.0, bare_season_pct=30.0,
+    )
+    assert math.isclose(overlap["landcover_sum"], 1.3, abs_tol=1e-6)
+    assert overlap["landcover_sum_within_bounds"] is False
+    assert overlap["landcover_warning"]
+    assert "sum to 1.300" in overlap["landcover_warning"]
+    assert overlap["seasonal_bare_used"] is False
+    assert overlap["curve_number"] < 99.99
+
+    # The same cell with the CORRECT annual bare=0 is a clean partition, and
+    # the seasonal value is reported but absent from the curve number.
+    annual = compute_flood(
+        70.0, 30.0, 0.0, HYD["design_storm_mm"], CN_TABLE,
+        bare_pct=0.0, bare_season_pct=30.0,
+    )
+    no_seasonal = compute_flood(
+        70.0, 30.0, 0.0, HYD["design_storm_mm"], CN_TABLE, bare_pct=0.0,
+    )
+    assert math.isclose(annual["landcover_sum"], 1.0, abs_tol=1e-6)
+    assert annual["landcover_sum_within_bounds"] is True
+    assert annual["seasonal_bare_pct"] == 30.0
+    assert annual["seasonal_bare_used"] is False
+    assert annual["curve_number"] == no_seasonal["curve_number"]
+
+
+def test_live_cube_has_no_seasonal_bare_saturation():
+    """C2 acceptance: annual bare must not reproduce the 166 saturated cells.
+
+    The old implementation added `bare_season_pct` to an annual partition that
+    already summed to one, and 166/864 cells reached CN >= 99.99.
+    """
+    cube = json.loads(
+        (REPO / "ml_pipeline" / "data" / "epoch_cube.json").read_text()
+    )
+    saturated = []
+    for cell_id, cell in cube["cells"].items():
+        if not cell:
+            continue
+        flood = compute_flood(
+            (cell.get("built_pct") or 0.0) * 100.0,
+            (cell.get("vegetation_pct") or 0.0) * 100.0,
+            (cell.get("water_pct") or 0.0) * 100.0,
+            HYD["design_storm_mm"],
+            CN_TABLE,
+            bare_pct=(cell.get("bare_pct") or 0.0) * 100.0,
+            bare_season_pct=(cell.get("bare_season_pct") or 0.0) * 100.0,
+        )
+        if flood["curve_number"] is not None and flood["curve_number"] >= 99.99:
+            saturated.append(cell_id)
+    assert saturated == [], (
+        f"{len(saturated)} cells still saturate from seasonal bare: "
+        f"{saturated[:5]}"
+    )
+
+
+def test_heat_99_alone_forces_review():
+    """C4: heat 99 with every other factor at 0 must not approve."""
+    d = _decision(
+        29.7, [],
+        factor_scores={"flood": 0.0, "heat": 99.0, "green": 0.0, "carbon": 0.0},
+        carbon_band="Low",
+        complete=True,
+        policy=REGION["decision_policy"],
+    )
+    assert d["recommendation"] == "REVIEW", d
+    assert any("heat" in t for t in d["decision_triggers"])
+
+
+def test_carbon_100_alone_forces_review():
+    """C4: carbon 100 (Very High) must not approve on a diluted composite."""
+    d = _decision(
+        20.0, [],
+        factor_scores={"flood": 0.0, "heat": 0.0, "green": 0.0, "carbon": 100.0},
+        carbon_band="Very High",
+        complete=True,
+        policy=REGION["decision_policy"],
+    )
+    assert d["recommendation"] == "REVIEW", d
+    assert any("carbon" in t for t in d["decision_triggers"])
+
+
+def test_green_100_alone_forces_review():
+    d = _decision(
+        20.0, [],
+        factor_scores={"flood": 0.0, "heat": 0.0, "green": 100.0, "carbon": 0.0},
+        carbon_band="Low",
+        complete=True,
+        policy=REGION["decision_policy"],
+    )
+    assert d["recommendation"] == "REVIEW", d
+
+
+def test_flood_at_its_measured_ceiling_forces_review():
+    """Flood's current scale tops out near 56.6, so the policy uses 50.
+
+    Session 4 may normalise the scale; until then an 80 threshold would make
+    the flood veto unreachable and a maximally flood-prone complete site could
+    still approve.
+    """
+    ceiling = compute_flood(100.0, 0.0, 0.0, HYD["design_storm_mm"], CN_TABLE)
+    assert 0.0 < ceiling["score"] < 80.0, ceiling["score"]
+    d = _decision(
+        ceiling["score"] * 0.3,
+        [],
+        factor_scores={
+            "flood": ceiling["score"], "heat": 0.0,
+            "green": 0.0, "carbon": 0.0,
+        },
+        carbon_band="Low",
+        complete=True,
+        policy=REGION["decision_policy"],
+    )
+    assert d["recommendation"] == "REVIEW", d
+    assert any("flood" in t for t in d["decision_triggers"])
+
+
+def test_complete_low_impact_result_can_still_approve():
+    """C4: the veto must not turn every low-impact complete result into REVIEW."""
+    site = {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 10000.0,
+        "materials": [{"name": "cement", "quantityKg": 1.0}],
+    }
+    indicators = {
+        "impervious_pct": 0.0,
+        "vegetation_pct": 100.0,
+        "water_pct": 0.0,
+        "bare_pct": 0.0,
+        "lst_night_mean_c": REGION["thermal"]["night_reference_c"],
+        "mean_slope_deg": 0.0,
+        "dist_to_storm_drain_m": 500.0,
+    }
+    ledger = {
+        "canopy_cover_pct": 100.0,
+        "canopy_cover_pct_proposed": 100.0,
+        "census_reliable_for_this_site": True,
+    }
+    r = score_project(site, indicators, REGION, MATERIALS, ledger=ledger)
+    assert r["complete"] is True, r["missing_factors"]
+    assert all(v is None or v < 80.0 for v in r["sub_scores"].values())
+    assert r["recommendation"] == "APPROVE", {
+        "impact": r["impact_score"],
+        "sub_scores": r["sub_scores"],
+        "triggers": r.get("decision_triggers"),
+    }
+
+
+def test_census_total_is_the_measured_4009623():
+    """C13: 16 x 250,000 + 9,623 = 4,009,623, not 4,009,624."""
+    assert REGION["trees"]["census_total_city_trees"] == 4_009_623
+    assert CENSUS_TOTAL_CITY_TREES == 4_009_623
 
 
 def _run() -> int:

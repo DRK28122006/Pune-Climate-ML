@@ -74,25 +74,11 @@ def indicators_from_cube(
     if not cube:
         return {}
     centroid = G.polygon_centroid([(float(a), float(b)) for a, b in ring])
-    cells = cube.get("cells") or {}
-    key = f"{round(centroid[0], 3)}_{round(centroid[1], 3)}"
-    cell = cells.get(key)
-    if not cell:
-        # Nearest cell fallback.
-        best, best_d = None, None
-        for k, v in cells.items():
-            try:
-                lon_s, lat_s = k.split("_")
-                d = G.haversine_m(centroid, (float(lon_s), float(lat_s)))
-            except ValueError:
-                continue
-            if best_d is None or d < best_d:
-                best, best_d = v, d
-        cell = best if (best_d is not None and best_d < 2000.0) else None
+    cell = G.cube_cell_for_point(cube, centroid[0], centroid[1])
     return dict(cell) if cell else {}
 
 
-def _pct(value: Any, default: float = 0.0) -> float:
+def _pct(value: Any, default: Optional[float] = 0.0) -> Optional[float]:
     """Cube land-cover values are fractions; the scorer expects percent."""
     if value is None:
         return default
@@ -102,22 +88,25 @@ def _pct(value: Any, default: float = 0.0) -> float:
         return default
 
 
-def _pct_cube_or_fallback(cube_value: Any, fallback_percent: float) -> float:
-    """Convert a cube fraction to percent, or take a CLI fallback as-is.
+def _pct_cube_or_fallback(
+    cube_value: Any, fallback_percent: Optional[float]
+) -> Optional[float]:
+    """Convert a cube fraction to percent, or take an explicit CLI assumption.
 
-    FIX 2026-10-10: the old code ran the already-percent CLI fallbacks
-    (--impervious 70, --vegetation 24) through _pct, multiplying them by
-    100 (70 -> 7000 -> clamped 100). A missing cube therefore scored flood
-    at full impervious and dropped green -- a plausible-looking answer
-    built on a default, the exact failure mode this project exists to
-    avoid. Cube values are fractions (x100); fallbacks are percent (as-is).
+    Cube values are fractions (x100); CLI fallbacks are already percent (as-is).
+    A missing cube value AND no explicit assumption returns None. Flood then
+    reports UNAVAILABLE, which is the honest answer: the old 70/24 defaults made
+    a missing cube look like measured land cover and produced a confident
+    approval from an assumption.
     """
-    if cube_value is None:
-        return float(fallback_percent)
-    try:
-        return float(cube_value) * 100.0
-    except (TypeError, ValueError):
-        return float(fallback_percent)
+    if cube_value is not None:
+        try:
+            return float(cube_value) * 100.0
+        except (TypeError, ValueError):
+            pass
+    if fallback_percent is None:
+        return None
+    return float(fallback_percent)
 
 
 def cmd_ward_profile(args: argparse.Namespace) -> int:
@@ -215,25 +204,40 @@ def cmd_assess(args: argparse.Namespace) -> int:
 
     cube = load_epoch_cube()
     sat = indicators_from_cube(site_ring, cube)
+
+    # When the cube is missing, a caller may still supply land cover with
+    # --impervious/--vegetation/--water. Those are explicit ASSUMPTIONS for a
+    # scenario, not measured satellite data, and every result that uses them
+    # says so. With no cube and no assumptions, flood is UNAVAILABLE.
+    assumption_fields: List[str] = []
+    if sat.get("built_pct") is None and args.impervious is not None:
+        assumption_fields.append("impervious_pct")
+    if sat.get("vegetation_pct") is None and args.vegetation is not None:
+        assumption_fields.append("vegetation_pct")
+    if sat.get("water_pct") is None and args.water is not None:
+        assumption_fields.append("water_pct")
+    landcover_source = (
+        "user_supplied_assumption" if assumption_fields
+        else "epoch_cube" if sat else "unavailable"
+    )
+
     indicators = {
         # Cube values are fractions (0..1) from Dynamic World / NDVI; the
-        # scorer's `*_pct` fields are percent. Convert once, here.
+        # scorer's `*_pct` fields are percent. Convert once, here. None stays
+        # None so a missing band cannot become a perfect-score zero.
         "impervious_pct": _pct_cube_or_fallback(
             sat.get("built_pct", sat.get("impervious_pct")), args.impervious
         ),
         "vegetation_pct": _pct_cube_or_fallback(
             sat.get("vegetation_pct"), args.vegetation
         ),
-        "water_pct": _pct(sat.get("water_pct", 0.0)),
-        # Bare soil drives flood's curve number and was previously dropped from
-        # the composite entirely. The cube carries two figures: `bare_pct` (annual
-        # modal label, which a majority vote drives to ~0 because bare ground is
-        # transient) and `bare_season_pct` (pre-monsoon, when bare earth actually
-        # peaks). The seasonal one is the physically meaningful estimate, so it
-        # wins when present.
-        "bare_pct": _pct(
-            sat.get("bare_season_pct", sat.get("bare_pct", 0.0))
-        ),
+        "water_pct": _pct_cube_or_fallback(sat.get("water_pct"), args.water),
+        # Annual partition band. `bare_season_pct` is a seasonal OVERLAY and is
+        # passed separately for reporting; it is not a fourth annual band.
+        "bare_pct": _pct(sat.get("bare_pct"), default=None),
+        "bare_season_pct": _pct(sat.get("bare_season_pct"), default=None),
+        "landcover_source": landcover_source,
+        "landcover_assumptions": assumption_fields,
         "lst_mean_c": sat.get("lst_mean_c"),
         "lst_reference_c": sat.get("lst_reference_c"),
         "lst_max_c": sat.get("lst_max_c"),
@@ -241,7 +245,11 @@ def cmd_assess(args: argparse.Namespace) -> int:
         # already Celsius in the cube, unlike the fraction bands above.
         # score_project prefers it over the day pair (see scoring.py).
         "lst_night_mean_c": sat.get("lst_night_mean_c"),
-        "mean_slope_deg": sat.get("mean_slope_deg", args.slope),
+        "mean_slope_deg": (
+            args.slope
+            if args.slope is not None
+            else sat.get("mean_slope_deg", sat.get("slope_deg"))
+        ),
         "dist_to_storm_drain_m": v.indicators.get("dist_to_storm_drain_m"),
     }
 
@@ -362,11 +370,19 @@ def main(argv: Optional[List[str]] = None) -> int:
     a.add_argument("--role", default="urban_planner",
                    choices=["municipal_authority", "urban_planner",
                             "environmental_consultant", "public_viewer"])
-    a.add_argument("--impervious", type=float, default=70.0,
-                   help="used only when no satellite cube exists")
-    a.add_argument("--vegetation", type=float, default=24.0,
-                   help="used only when no satellite cube exists")
-    a.add_argument("--slope", type=float, default=3.0)
+    a.add_argument("--impervious", type=float, default=None,
+                   help="explicit user-supplied impervious cover %% when no "
+                        "cube exists; an ASSUMPTION, not measured data")
+    a.add_argument("--vegetation", type=float, default=None,
+                   help="explicit user-supplied vegetation cover %% when no "
+                        "cube exists; an ASSUMPTION, not measured data")
+    a.add_argument("--water", type=float, default=None,
+                   help="explicit user-supplied water cover %% when no cube "
+                        "exists; an ASSUMPTION, not measured data")
+    a.add_argument(
+        "--slope", type=float, default=None,
+        help="explicit terrain slope in degrees; no default is invented",
+    )
     a.add_argument("--materials", default="[]")
     a.add_argument("--demo-materials", action="store_true")
     a.add_argument("--json-out", default=None, dest="json_out")

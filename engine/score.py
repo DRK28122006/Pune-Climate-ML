@@ -14,7 +14,7 @@ from engine.region import validate_config  # noqa: E402
 from ml_pipeline.core import scoring as S  # noqa: E402
 from ml_pipeline.core.canopy import CanopyLedger, TreeRecord  # noqa: E402
 from ml_pipeline.core.geometry import (  # noqa: E402
-    polygon_area_m2, polygon_centroid, trees_in_ring,
+    cube_cell_for_point, polygon_area_m2, polygon_centroid, trees_in_ring,
 )
 from ml_pipeline.core.recommendations import (  # noqa: E402
     RecommendationEngine,
@@ -29,41 +29,34 @@ def indicators_from_cube_dict(ring: List[Any],
     if not ring or len(ring) < 3:
         raise ValueError("site_ring needs at least 3 points")
     centroid = polygon_centroid([(float(a), float(b)) for a, b in ring])
-    cells = cube.get("cells") or {}
-    key = f"{round(centroid[0], 3)}_{round(centroid[1], 3)}"
-    cell = cells.get(key)
-    if not cell:
-        best, best_d = None, None
-        from ml_pipeline.core.geometry import haversine_m
-        for k, v in cells.items():
-            try:
-                lon_s, lat_s = k.split("_")
-                d = haversine_m(centroid, (float(lon_s), float(lat_s)))
-            except ValueError:
-                continue
-            if best_d is None or d < best_d:
-                best, best_d = v, d
-        cell = best if (best_d is not None and best_d < 2000.0) else None
+    cell = cube_cell_for_point(cube, centroid[0], centroid[1])
     if not cell:
         return {}
 
-    def pct(x: Any) -> float:
+    def pct(x: Any) -> Optional[float]:
+        # Missing bands stay None. They must never become 0.0: zero impervious
+        # and zero vegetation is the best possible flood score, not unknown
+        # land cover, and flood now refuses to score without all three.
+        if x is None:
+            return None
         try:
             return float(x) * 100.0
         except (TypeError, ValueError):
-            return 0.0
+            return None
 
     return {
-        "impervious_pct": pct(cell.get("built_pct", 0.0)),
-        "vegetation_pct": pct(cell.get("vegetation_pct", 0.0)),
-        "water_pct": pct(cell.get("water_pct", 0.0)),
-        "bare_pct": pct(cell.get("bare_season_pct",
-                                 cell.get("bare_pct", 0.0))),
+        "impervious_pct": pct(cell.get("built_pct")),
+        "vegetation_pct": pct(cell.get("vegetation_pct")),
+        "water_pct": pct(cell.get("water_pct")),
+        # Annual bare is the fourth band of the same partition. Seasonal bare
+        # is a separate overlay and is reported, never added to the annual sum.
+        "bare_pct": pct(cell.get("bare_pct")),
+        "bare_season_pct": pct(cell.get("bare_season_pct")),
         "lst_mean_c": cell.get("lst_mean_c"),
         "lst_reference_c": cell.get("lst_reference_c"),
         "lst_max_c": cell.get("lst_max_c"),
         "lst_night_mean_c": cell.get("lst_night_mean_c"),
-        "mean_slope_deg": cell.get("mean_slope_deg", 3.0),
+        "mean_slope_deg": cell.get("mean_slope_deg", cell.get("slope_deg")),
         "dist_to_storm_drain_m": None,
     }
 

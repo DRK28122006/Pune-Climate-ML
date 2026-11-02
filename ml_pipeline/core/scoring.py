@@ -28,6 +28,7 @@ Two structural properties this module is designed around:
 
 from __future__ import annotations
 
+import math
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -47,6 +48,57 @@ def clamp(value: float, low: float = MIN_SCORE, high: float = MAX_SCORE) -> floa
     if v != v:  # NaN
         return low
     return max(low, min(high, v))
+
+
+def _as_number(value: Any) -> Optional[float]:
+    """Return a finite float, or None for absent/non-numeric/NaN input.
+
+    This is the missing-data boundary for the flood factor. `_pct()` returns a
+    default (usually 0.0), which is useful for optional terms but catastrophic
+    for mandatory land cover: zero impervious and zero vegetation is a perfect
+    score, not an unknown one. Flood uses this helper so None can never be read
+    as "0%".
+    """
+    if value is None:
+        return None
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(v):
+        return None
+    return v
+
+
+class Recommendation(str):
+    """Verdict code that remains JSON-compatible with the legacy string schema.
+
+    `score_project` has always exposed `result["recommendation"]` as a plain
+    string. Callers also need the structured form, so this subclass answers
+    `result["recommendation"]["recommendation"]` and
+    `result["recommendation"]["headline"]` while serialising as the same string
+    JSON has always received. That avoids a schema break for the report,
+    narrator and existing artifacts.
+    """
+
+    def __new__(cls, code: str, headline: str = "") -> "Recommendation":
+        obj = super().__new__(cls, code)
+        obj.headline = headline
+        return obj
+
+    def __getitem__(self, key: Any) -> Any:
+        if key == "recommendation":
+            return str(self)
+        if key == "headline":
+            return self.headline
+        return super().__getitem__(key)
+
+
+# Four annual land-cover bands are fractions of the cell and should sum to 1.
+# A small tolerance absorbs four-decimal rounding in the cube (the live cube's
+# worst over-sum is 0.0001); anything larger is a source inconsistency and is
+# reported rather than absorbed.
+LANDCOVER_SUM_TOLERANCE = 0.001
 
 
 # Percentages above this are far more likely to be a units error than a real
@@ -107,6 +159,13 @@ def area_weighted_cn(
 
     With all four bands supplied and the cube as a true partition, the sum is
     100 and no residual is needed.
+
+    An over-sum is renormalised EXPLICITLY. The old code clamped `accounted` to
+    1.0 but left the fractions unnormalised, which silently counted the overlap
+    twice and drove CN to saturation (166/864 cells reached CN >= 99.99 when
+    seasonal bare was added to an already-complete annual partition). A source
+    that sums above 1 is still reported by `compute_flood`; this function only
+    keeps the arithmetic an honest areal mean.
     """
     imperv = clamp(_pct(impervious_pct)) / 100.0
     veg = clamp(_pct(vegetation_pct)) / 100.0
@@ -115,9 +174,13 @@ def area_weighted_cn(
 
     accounted = imperv + veg + water + bare
     if accounted > 1.0:
-        # Four bands that together exceed the cell mean the source is
-        # inconsistent. Renormalising silently would hide that, so it is
-        # reported rather than absorbed.
+        # Explicit renormalisation: the supplied bands over-describe the cell,
+        # so divide every band by the over-sum before weighting. This preserves
+        # the areal-mean definition AND avoids the old saturation bug.
+        imperv /= accounted
+        veg /= accounted
+        water /= accounted
+        bare /= accounted
         accounted = 1.0
 
     if accounted <= 0:
@@ -157,20 +220,33 @@ def scs_cn_runoff_mm(cn: float, rainfall_mm: float) -> float:
 
 
 def compute_flood(
-    impervious_pct: float,
-    vegetation_pct: float,
-    water_pct: float,
+    impervious_pct: Optional[float],
+    vegetation_pct: Optional[float],
+    water_pct: Optional[float],
     design_storm_mm: float,
     cn_table: Dict[str, float],
     bare_pct: Optional[float] = None,
-    mean_slope_deg: float = 0.0,
+    mean_slope_deg: Optional[float] = None,
     dist_to_storm_drain_m: Optional[float] = None,
     slope_full_effect_deg: float = 15.0,
     slope_max_multiplier: float = 1.25,
     drain_full_benefit_m: float = 500.0,
     drain_min_multiplier: float = 0.80,
+    bare_season_pct: Optional[float] = None,
+    landcover_source: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Flood factor.
+
+    `impervious_pct`, `vegetation_pct` and `water_pct` are MANDATORY measured
+    (or explicitly user-supplied) percentages. None, NaN or a non-numeric value
+    makes the factor UNAVAILABLE. They must never be defaulted to zero: zero
+    impervious and zero vegetation is the best possible flood score, so a
+    missing-data zero-fill would report an undescribed site as safe.
+
+    `bare_pct` is the ANNUAL bare fraction from the same partition as the other
+    three bands. `bare_season_pct` is a seasonal overlay and is reported only;
+    adding it to an annual partition that already sums to one double-counts the
+    cell and saturates the curve number.
 
     `dist_to_storm_drain_m` is distance to an ENGINEERED stormwater line or
     outfall only. Closer to engineered drainage means faster discharge, which
@@ -180,8 +256,61 @@ def compute_flood(
     Callers that only have a waterbody buffer must leave this None and apply
     the separate flood-plain penalty instead.
     """
+    required = {
+        "impervious_pct": impervious_pct,
+        "vegetation_pct": vegetation_pct,
+        "water_pct": water_pct,
+    }
+    missing = [name for name, value in required.items()
+               if _as_number(value) is None]
+    if missing:
+        return {
+            "score": None,
+            "status": "UNAVAILABLE",
+            "confidence": "none",
+            "reason": (
+                "Flood requires explicit numeric impervious_pct, "
+                "vegetation_pct and water_pct. Missing: "
+                + ", ".join(missing)
+                + ". A missing land-cover band is not zero cover, so the "
+                  "factor is withheld rather than scored as a perfect site."
+            ),
+            "missing_inputs": missing,
+            "curve_number": None,
+            "baseline_curve_number": None,
+            "runoff_mm": None,
+            "baseline_runoff_mm": None,
+            "excess_runoff_mm": None,
+            "design_storm_mm": round(_pct(design_storm_mm), 1),
+            "landcover_sum": None,
+            "landcover_sum_within_bounds": None,
+            "landcover_warning": None,
+            "seasonal_bare_pct": _as_number(bare_season_pct),
+            "seasonal_bare_used": False,
+            "landcover_source": landcover_source or "supplied",
+        }
+
+    imperv = float(required["impervious_pct"])
+    veg = float(required["vegetation_pct"])
+    water = float(required["water_pct"])
+    bare = _as_number(bare_pct)
+
+    # Gate: the annual bands describe one cell. If they sum above 1, an
+    # upstream caller has overlaid a seasonal value on a complete partition or
+    # mixed units. Report it loudly; do not cap it silently.
+    landcover_sum = (imperv + veg + water + (bare or 0.0)) / 100.0
+    landcover_within_bounds = landcover_sum <= 1.0 + LANDCOVER_SUM_TOLERANCE
+    landcover_warning: Optional[str] = None
+    if not landcover_within_bounds:
+        landcover_warning = (
+            f"Land-cover fractions sum to {landcover_sum:.3f}, above 1.0. "
+            f"Annual bands should partition the cell. The curve number is "
+            f"renormalised explicitly, and the flood result must not be read "
+            f"as a clean measurement until the overlap is resolved."
+        )
+
     cn_site = area_weighted_cn(
-        impervious_pct, vegetation_pct, water_pct, cn_table, bare_pct=bare_pct
+        imperv, veg, water, cn_table, bare_pct=bare
     )
     cn_baseline = float(cn_table.get("vegetation", 60.0))
 
@@ -193,9 +322,21 @@ def compute_flood(
     raw = (excess / p) * 100.0
 
     # Slope: steeper terrain sheds water faster, raising peak runoff.
-    slope = max(0.0, _pct(mean_slope_deg))
-    slope_ratio = min(slope / max(1e-6, slope_full_effect_deg), 1.0)
-    slope_multiplier = 1.0 + slope_ratio * (slope_max_multiplier - 1.0)
+    #
+    # Missing slope is not the same as flat terrain. The cube did not carry a
+    # slope band, and both the CLI and engine silently substituted 3 degrees,
+    # which made a constant look like a measured site input. Use no multiplier
+    # when the value is unavailable and say so in the factor output.
+    slope_available = mean_slope_deg is not None
+    if slope_available:
+        slope = max(0.0, _pct(mean_slope_deg))
+        slope_ratio = min(slope / max(1e-6, slope_full_effect_deg), 1.0)
+        slope_multiplier = 1.0 + slope_ratio * (slope_max_multiplier - 1.0)
+        slope_basis = "measured terrain slope"
+    else:
+        slope = 0.0
+        slope_multiplier = 1.0
+        slope_basis = "unavailable - no slope band; no slope multiplier applied"
 
     # Engineered drainage proximity: a discount, never a bonus.
     if dist_to_storm_drain_m is None:
@@ -221,12 +362,27 @@ def compute_flood(
 
     return {
         "score": round(score, 1),
+        "status": "OK",
+        "reason": None,
+        "confidence": "medium",
         "curve_number": round(cn_site, 1),
         "baseline_curve_number": round(cn_baseline, 1),
         "runoff_mm": round(q_site, 1),
         "baseline_runoff_mm": round(q_baseline, 1),
         "excess_runoff_mm": round(excess, 1),
         "design_storm_mm": round(_pct(design_storm_mm), 1),
+        "landcover_sum": round(landcover_sum, 4),
+        "landcover_sum_within_bounds": landcover_within_bounds,
+        "landcover_warning": landcover_warning,
+        "seasonal_bare_pct": (
+            round(float(bare_season_pct), 3)
+            if _as_number(bare_season_pct) is not None else None
+        ),
+        "seasonal_bare_used": False,
+        "landcover_source": landcover_source or "supplied",
+        "slope_deg": round(slope, 2) if slope_available else None,
+        "slope_available": slope_available,
+        "slope_basis": slope_basis,
         "slope_multiplier": round(slope_multiplier, 3),
         "drainage_multiplier": round(drain_multiplier, 3),
         "drainage_basis": drain_basis,
@@ -869,26 +1025,174 @@ def _risk_band(impact: float) -> str:
     return "High"
 
 
-def _decision(impact: float, blocking: List[Dict[str, Any]]) -> Dict[str, str]:
+def _decision(
+    impact: Optional[float],
+    blocking: List[Dict[str, Any]],
+    *,
+    factor_scores: Optional[Dict[str, Optional[float]]] = None,
+    carbon_band: Optional[str] = None,
+    complete: bool = True,
+    policy: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Turn a composite and its factor scores into a recommendation.
+
+    The composite is an arithmetic mean. A single catastrophic factor can be
+    diluted by three clean ones, so the verdict is also gated per factor:
+    any factor at or above its review threshold, a carbon band configured as
+    review-only, or a partial result forces REVIEW regardless of the weighted
+    number. The weights are deliberately unchanged -- see
+    research/07_decisions/0001-core-safety-policy.md.
+    """
+    policy = policy or {}
+    default_threshold = float(policy.get("factor_review_threshold", 80.0))
+    thresholds = policy.get("factor_review_thresholds", {}) or {}
+    review_bands = set(policy.get("carbon_review_bands", ["Very High"]))
+    partial_reviews = bool(policy.get("partial_results_review", True))
+    approve_below = float(
+        (policy.get("composite") or {}).get("approve_below", 30.0)
+    )
+    conditions_below = float(
+        (policy.get("composite") or {}).get("conditions_below", 60.0)
+    )
+
+    triggers: List[str] = []
     if blocking:
+        triggers.append("blocking condition must be resolved before approval")
+    if not complete and partial_reviews:
+        triggers.append(
+            "result is partial: at least one factor is unavailable"
+        )
+
+    for name, value in (factor_scores or {}).items():
+        if value is None:
+            continue
+        threshold = float(thresholds.get(name, default_threshold))
+        if float(value) >= threshold:
+            triggers.append(
+                f"{name} factor {float(value):.1f} is at or above its "
+                f"{threshold:.1f} review threshold"
+            )
+
+    if carbon_band in review_bands:
+        triggers.append(
+            f"carbon band '{carbon_band}' requires review by policy"
+        )
+
+    if triggers:
         return {
-            "recommendation": "REVIEW",
-            "headline": "Blocking conditions must be resolved before approval.",
+            "recommendation": Recommendation(
+                "REVIEW",
+                "Review required before approval.",
+            ),
+            "headline": (
+                "Review required: " + "; ".join(triggers) + "."
+            ),
+            "decision_triggers": triggers,
         }
-    if impact < 30.0:
+
+    if impact is None or not math.isfinite(float(impact)):
         return {
-            "recommendation": "APPROVE",
+            "recommendation": Recommendation(
+                "REVIEW",
+                "Insufficient data for a verdict.",
+            ),
+            "headline": "Review required: no impact score could be computed.",
+            "decision_triggers": ["no computable impact score"],
+        }
+
+    impact = float(impact)
+    if impact < approve_below:
+        return {
+            "recommendation": Recommendation(
+                "APPROVE",
+                "Climate impact low. No material conditions required.",
+            ),
             "headline": "Climate impact low. No material conditions required.",
+            "decision_triggers": [],
         }
-    if impact < 60.0:
+    if impact < conditions_below:
         return {
-            "recommendation": "APPROVE_WITH_CONDITIONS",
+            "recommendation": Recommendation(
+                "APPROVE_WITH_CONDITIONS",
+                "Approvable if the listed conditions are incorporated.",
+            ),
             "headline": "Approvable if the listed conditions are incorporated.",
+            "decision_triggers": [],
         }
     return {
-        "recommendation": "REJECT_OR_REDESIGN",
+        "recommendation": Recommendation(
+            "REJECT_OR_REDESIGN",
+            "Redesign required. Impact too high to condition.",
+        ),
         "headline": "Redesign required. Impact too high to condition.",
+        "decision_triggers": [],
     }
+
+
+def _canopy_for_green(
+    ledger: Optional[Dict[str, Any]],
+) -> Tuple[Optional[float], Optional[str], str]:
+    """Resolve the canopy value the green factor is allowed to use.
+
+    Returns ``(canopy_pct, unavailable_reason, basis)``.
+
+    The green factor is a loss factor: a proposed project that fells trees must
+    score worse than one that keeps them. `CanopyLedger.process_site` therefore
+    returns both the existing canopy (`canopy_cover_pct`) and the canopy left
+    after its tree decisions (`canopy_cover_pct_proposed`). Prefer the proposed
+    value.
+
+    A missing ledger, an explicitly unreliable census, or an explicitly null
+    canopy is NOT the same as a measured zero. Those cases return None so the
+    factor is withheld rather than reported as a perfect green score. A real
+    zero is a numeric 0.0 and is scored.
+    """
+    if not ledger:
+        return (
+            None,
+            "Tree census ledger unavailable. Green cover cannot be scored "
+            "without inventing a canopy value.",
+            "unavailable",
+        )
+
+    if ledger.get("census_reliable_for_this_site") is False:
+        return (
+            None,
+            "Tree census coverage is incomplete for this site. Zero loaded "
+            "trees does not mean treeless, so green cover is withheld.",
+            "unavailable",
+        )
+
+    for key, basis in (
+        ("canopy_cover_pct_proposed", "proposed"),
+        ("canopy_cover_pct", "existing"),
+    ):
+        if key not in ledger:
+            continue
+        raw = ledger.get(key)
+        if raw is None:
+            return (
+                None,
+                f"Tree census ledger has no usable {key}. Green cover is "
+                f"withheld rather than treating it as zero.",
+                "unavailable",
+            )
+        try:
+            return float(raw), None, basis
+        except (TypeError, ValueError):
+            return (
+                None,
+                f"Tree census ledger has a non-numeric {key}={raw!r}. Green "
+                f"cover is withheld.",
+                "unavailable",
+            )
+
+    return (
+        None,
+        "Tree census ledger has no canopy field. Green cover is withheld "
+        "rather than treating the site as treeless.",
+        "unavailable",
+    )
 
 
 def score_project(
@@ -902,22 +1206,27 @@ def score_project(
 
     site:        builtUpAreaSqm, plotAreaSqm, materials[]
     indicators:  impervious_pct, vegetation_pct, water_pct, lst_mean_c,
-                 mean_slope_deg, dist_to_storm_drain_m
+                 mean_slope_deg, dist_to_storm_drain_m. The three land-cover
+                 percentages are mandatory for flood; absent/None is
+                 UNAVAILABLE, never zero.
     region_config / materials_table: the JSON config objects
-    ledger:       output of CanopyLedger.process_site, used for canopy_cover_pct
+    ledger:       output of CanopyLedger.process_site; its proposed canopy is
+                  used so tree removal affects the green factor
 
     Any factor whose required input is missing returns score=None and is
     EXCLUDED from the composite with its weight redistributed. A score built
-    from two of four factors is reported as partial, never silently as complete.
+    from fewer than four factors is reported as partial, and a partial result
+    can never be APPROVE or REJECT_OR_REDESIGN -- it is always REVIEW.
     """
     hyd = region_config.get("hydrology", {}) or {}
     therm = region_config.get("thermal", {}) or {}
     green_cfg = region_config.get("green", {}) or {}
     weights: Dict[str, float] = region_config.get("weights", {}) or {}
+    decision_policy: Dict[str, Any] = region_config.get("decision_policy", {}) or {}
 
-    imperv = indicators.get("impervious_pct", 0.0)
-    veg = indicators.get("vegetation_pct", 0.0)
-    water = indicators.get("water_pct", 0.0)
+    imperv = indicators.get("impervious_pct")
+    veg = indicators.get("vegetation_pct")
+    water = indicators.get("water_pct")
 
     flood = compute_flood(
         impervious_pct=imperv,
@@ -926,11 +1235,16 @@ def score_project(
         design_storm_mm=hyd.get("design_storm_mm", 150.0),
         cn_table=hyd.get("cn_table", {"vegetation": 60.0, "impervious": 98.0,
                                       "water": 100.0, "bare": 86.0}),
-        # Bare soil is the highest-CN class and was previously dropped from the
-        # composite entirely, which inflated every curve number. Passed through
-        # from the cube's seasonal bare estimate.
+        # ANNUAL bare fraction, the fourth band of the same partition as built/
+        # vegetation/water. `bare_season_pct` is a seasonal overlay and is
+        # reported separately; it must never be added as a fourth band to a
+        # partition that already sums to one.
         bare_pct=indicators.get("bare_pct"),
-        mean_slope_deg=indicators.get("mean_slope_deg", 0.0),
+        bare_season_pct=indicators.get("bare_season_pct"),
+        landcover_source=indicators.get("landcover_source"),
+        # No invented fallback. If the cube has no slope band, flood still
+        # scores without a slope multiplier and reports that basis explicitly.
+        mean_slope_deg=indicators.get("mean_slope_deg"),
         dist_to_storm_drain_m=indicators.get("dist_to_storm_drain_m"),
         slope_full_effect_deg=hyd.get("slope_full_effect_deg", 15.0),
         slope_max_multiplier=hyd.get("slope_max_multiplier", 1.25),
@@ -968,7 +1282,7 @@ def score_project(
             uhi_max_delta_c=therm.get("uhi_max_delta_c", 10.0),
         )
 
-    canopy = (ledger or {}).get("canopy_cover_pct", 0.0)
+    canopy, canopy_unavailable_reason, canopy_basis = _canopy_for_green(ledger)
     green = compute_green(
         sat_veg_pct=veg,
         canopy_cover_pct=canopy,
@@ -976,6 +1290,22 @@ def score_project(
         ground_vegetation_weight=green_cfg.get("ground_vegetation_weight", 0.30),
         tolerance_pct=green_cfg.get("sat_census_tolerance_pct", 15.0),
     )
+    green["canopy_basis"] = canopy_basis
+    if ledger is not None:
+        green["census_reliable_for_this_site"] = ledger.get(
+            "census_reliable_for_this_site"
+        )
+    if canopy_unavailable_reason:
+        # compute_green already returns score=None for a missing canopy; this
+        # replaces its generic "missing census canopy" message with the actual
+        # reason (no ledger / incomplete census / null field) and keeps the
+        # factor out of the composite.
+        green["score"] = None
+        green["status"] = "UNAVAILABLE"
+        green["reason"] = canopy_unavailable_reason
+        green["canopy_unavailable_reason"] = canopy_unavailable_reason
+        green["confidence"] = "none"
+        green["confidence_note"] = "Not scored: canopy data is unavailable."
 
     carbon = compute_carbon(
         materials=site.get("materials", []) or [],
@@ -1055,7 +1385,18 @@ def score_project(
     else:
         result["blocking_issues"] = []
 
-    if impact == impact:
-        result.update(_decision(impact, result["blocking_issues"]))
+    # The verdict is always issued, including when no factor could be scored.
+    # A partial result is REVIEW by policy; it must never be APPROVE or
+    # REJECT_OR_REDESIGN on a renormalised subset of the evidence.
+    result.update(
+        _decision(
+            impact if impact == impact else None,
+            result["blocking_issues"],
+            factor_scores=scores,
+            carbon_band=carbon.get("band"),
+            complete=complete,
+            policy=decision_policy,
+        )
+    )
 
     return result
