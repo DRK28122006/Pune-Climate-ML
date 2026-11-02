@@ -56,6 +56,7 @@ def indicators_from_cube_dict(ring: List[Any],
         "lst_reference_c": cell.get("lst_reference_c"),
         "lst_max_c": cell.get("lst_max_c"),
         "lst_night_mean_c": cell.get("lst_night_mean_c"),
+        "lst_night_reference_c": cell.get("lst_night_reference_c"),
         "mean_slope_deg": cell.get("mean_slope_deg", cell.get("slope_deg")),
         "dist_to_storm_drain_m": None,
     }

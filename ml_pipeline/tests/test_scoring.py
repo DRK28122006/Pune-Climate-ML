@@ -231,16 +231,13 @@ def test_score_project_heat_prefers_per_cell_reference_over_config():
 
     out = score_project(site, indicators, REGION, MATERIALS)
 
-    assert out["sub_scores"]["heat"] is not None, out["factors"]["heat"]
+    # Session 4: day-only input no longer scores heat (LEGACY_DAY excluded).
+    assert out["sub_scores"]["heat"] is None, out["factors"]["heat"]
     heat = out["factors"]["heat"]
-    assert heat["status"] == "OK", heat
-    assert heat["lst_reference_c"] == 35.0, heat
-    assert heat["uhi_delta_c"] == 1.5, heat
-    # 1.5 C on the cube-derived 2.0 C span => 75.0. The span is derived, not
-    # assumed, so assert the ratio rather than a literal that would need
-    # editing every time the span is re-derived from a new cube.
-    span = REGION["thermal"]["uhi_max_delta_c"]
-    assert heat["score"] == min(100.0, (1.5 / span) * 100.0), heat["score"]
+    assert heat["status"] == "UNAVAILABLE"
+    assert "LEGACY_DAY" in (heat.get("reason") or "")
+    # The per-cell day reference is still carried for diagnostics.
+    assert heat["lst_reference_c"] == 35.0
 
     # With no cube reference the factor must degrade, not fall back to air temp.
     no_ref = dict(indicators)
@@ -865,6 +862,7 @@ def test_reliable_zero_canopy_is_scored_not_withheld():
         "water_pct": 0.0,
         "lst_mean_c": 35.0,
         "lst_reference_c": 34.0,
+        "lst_night_mean_c": 20.0,
         "mean_slope_deg": 2.0,
         "dist_to_storm_drain_m": 100.0,
     }
@@ -1304,6 +1302,33 @@ def test_census_total_is_the_measured_4009623():
     """C13: 16 x 250,000 + 9,623 = 4,009,623, not 4,009,624."""
     assert REGION["trees"]["census_total_city_trees"] == 4_009_623
     assert CENSUS_TOTAL_CITY_TREES == 4_009_623
+
+
+def test_water_cell_not_penalised_by_baseline():
+    r = compute_flood(
+        impervious_pct=0.0, vegetation_pct=0.0, water_pct=100.0,
+        design_storm_mm=214.0, cn_table=CN_TABLE,
+    )
+    assert r["fluvial_flood"] == "NOT_MODELLED"
+    assert r["attainable_score_max"] is not None
+    # baseline runoff must not be lower than site runoff for a water cell
+    # (water held invariant, not vegetated)
+    assert r["baseline_runoff_mm"] >= r["runoff_mm"] - 1e-6
+
+
+def test_flood_day_fallback_not_scored():
+    r = score_project(
+        {"builtUpAreaSqm": 100, "plotAreaSqm": 200, "materials": []},
+        {"impervious_pct": 50, "vegetation_pct": 30, "water_pct": 0,
+         "lst_mean_c": 35.0, "lst_reference_c": 33.0},
+        REGION, MATERIALS,
+    )
+    assert r["sub_scores"]["heat"] is None
+
+
+def test_heat_night_uses_percentile_scale_label():
+    r = compute_heat(lst_mean_c=20.0, lst_reference_c=17.96, uhi_max_delta_c=5.0)
+    assert str(r["heat_scale"]).startswith("percentile")
 
 
 def _run() -> int:

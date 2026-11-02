@@ -312,7 +312,33 @@ def compute_flood(
     cn_site = area_weighted_cn(
         imperv, veg, water, cn_table, bare_pct=bare
     )
-    cn_baseline = float(cn_table.get("vegetation", 60.0))
+
+    # Baseline = the same cell with the terrestrial bands converted to
+    # vegetation, but water held invariant. The old code used a single
+    # vegetation CN for the whole cell, which silently "vegetated" open water
+    # and overstated the excess runoff on water cells. (C12-adjacent; see
+    # research/07_decisions/0003-flood-plain.md for fluvial handling.)
+    veg_cn = float(cn_table.get("vegetation", 60.0))
+    water_cn = float(cn_table.get("water", 100.0))
+    try:
+        imperv_f = clamp(_pct(imperv)) / 100.0
+        veg_f = clamp(_pct(veg)) / 100.0
+        water_f = clamp(_pct(water)) / 100.0
+        bare_f = (clamp(_pct(bare)) / 100.0) if bare is not None else 0.0
+        accounted = imperv_f + veg_f + water_f + bare_f
+        if accounted > 1.0:
+            imperv_f /= accounted
+            veg_f /= accounted
+            water_f /= accounted
+            bare_f /= accounted
+            accounted = 1.0
+        terrestrial = imperv_f + veg_f + bare_f
+        if accounted > 0:
+            cn_baseline = terrestrial * veg_cn + water_f * water_cn
+        else:
+            cn_baseline = veg_cn
+    except Exception:
+        cn_baseline = veg_cn
 
     q_site = scs_cn_runoff_mm(cn_site, design_storm_mm)
     q_baseline = scs_cn_runoff_mm(cn_baseline, design_storm_mm)
@@ -360,6 +386,12 @@ def compute_flood(
     # the human's reporting decision; this only surfaces the condition.
     saturated = bool(q_site >= _pct(design_storm_mm) - 1e-9)
 
+    attainable_max = 0.0
+    try:
+        attainable_max = max(0.0, (float(design_storm_mm) - q_baseline) / max(1e-6, float(design_storm_mm)) * 100.0)
+    except Exception:
+        attainable_max = 0.0
+
     return {
         "score": round(score, 1),
         "status": "OK",
@@ -392,6 +424,9 @@ def compute_flood(
             f"measurable ceiling, not exactly {_pct(design_storm_mm):.1f} mm."
             if saturated else None
         ),
+        "fluvial_flood": "NOT_MODELLED",
+        "flood_scale_policy": "physical_excess_runoff_fraction (Option B; see 07_decisions/0002-flood-scale.md)",
+        "attainable_score_max": round(attainable_max, 1),
     }
 
 
@@ -425,6 +460,7 @@ def compute_heat(
             "lst_reference_c": lst_reference_c,
             "uhi_delta_c": None,
             "confidence": "none",
+            "heat_scale": "night_percentile_span",
         }
 
     site = _pct(lst_mean_c)
@@ -439,6 +475,7 @@ def compute_heat(
             "lst_reference_c": None,
             "uhi_delta_c": None,
             "confidence": "none",
+            "heat_scale": "night_percentile_span",
         }
 
     ref = _pct(lst_reference_c)
@@ -455,6 +492,7 @@ def compute_heat(
         "uhi_delta_c": round(delta, 2),
         "uhi_max_delta_c": round(span, 2),
         "confidence": "medium",
+        "heat_scale": "percentile_of_cohort_span (not a physical magnitude; see 07_decisions/0004-heat-elevation.md)",
         "confidence_note": "Surface temperature, not air temperature. Single-pass "
                           "composite; a seasonal multi-pass mean is stronger.",
     }
@@ -1259,6 +1297,8 @@ def score_project(
     # before the night branch still score exactly as before.
     _night_mean = indicators.get("lst_night_mean_c")
     _night_ref = therm.get("night_reference_c")
+    if _night_ref is None:
+        _night_ref = indicators.get("lst_night_reference_c")
     if _night_mean is not None and _night_ref is not None:
         heat = compute_heat(
             lst_mean_c=_night_mean,
@@ -1266,20 +1306,38 @@ def score_project(
             uhi_max_delta_c=therm.get("night_uhi_max_delta_c", 5.0),
         )
     else:
-        heat = compute_heat(
-            lst_mean_c=indicators.get("lst_mean_c"),
-            # Prefer the PER-CELL reference from the epoch cube. The config value
-            # is a city-wide fallback that stays null until a reference is accepted;
-            # reading only that was why heat remained UNAVAILABLE even with a
-            # fully built cube. A single fixed city-wide number would also be wrong
-            # here: Pune's UHI varies sharply over a few kilometres, so the
-            # reference has to come from the same ~1 km cell as the site.
-            lst_reference_c=(
-                indicators.get("lst_reference_c")
-                if indicators.get("lst_reference_c") is not None
-                else therm.get("reference_c")
+        # Day fallback is LEGACY_DAY and is NOT scored. Night LST is the only
+        # heat input; a missing night observation makes the factor UNAVAILABLE
+        # rather than silently substituting a daytime surface temperature.
+        heat = {
+            "score": None,
+            "status": "UNAVAILABLE",
+            "reason": (
+                "Night LST unavailable. Daytime surface contrast is LEGACY_DAY "
+                "and is excluded from the composite; no day fallback is used."
             ),
-            uhi_max_delta_c=therm.get("uhi_max_delta_c", 10.0),
+            "lst_celsius": (
+                round(float(indicators.get("lst_mean_c")), 2)
+                if indicators.get("lst_mean_c") is not None else None
+            ),
+            "lst_reference_c": indicators.get("lst_reference_c"),
+            "uhi_delta_c": None,
+            "uhi_max_delta_c": therm.get("uhi_max_delta_c"),
+            "confidence": "none",
+            "heat_scale": "night_percentile_span",
+            "legacy_day_lst_c": indicators.get("lst_mean_c"),
+        }
+
+    # Elevation is reported on the heat factor, not corrected: no elevation-banded
+    # rural reference exists in this checkout, so adjusting the score would be
+    # an unsourced constant. (See 07_decisions/0004-heat-elevation.md.)
+    if isinstance(heat, dict):
+        heat.setdefault("elevation_m", indicators.get("elevation_m"))
+        heat.setdefault(
+            "elevation_confounding",
+            "Night LST is confounded by elevation (partial r(built|elevation) "
+            "~0.41 on the 864-cell cube). Reported, not corrected: no "
+            "elevation-banded rural reference is available.",
         )
 
     canopy, canopy_unavailable_reason, canopy_basis = _canopy_for_green(ledger)
