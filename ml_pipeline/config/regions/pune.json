@@ -27,6 +27,7 @@
       "bare": 86.0
     },
     "cn_table_source": "SCS-CN standard land-cover classes. Pune soils are largely Black Cotton (Vertisol) / alluvial, hydrologic soil group B. Vegetation 60 = 'Woods, fair condition', HSG B (TR-55 Table 2-2a; row reads A36 B60 C73 D79). NOTE 2026-10-10: an earlier revision of this string labelled 60 as 'Open space, fair condition, grass 50-75%' -- that label belongs to CN 69 (Table 2-2a open-space fair: A49 B69 C79 D84). The VALUE 60 was always Woods-fair; only the citation is corrected, the number is unchanged. Impervious 98 = 'Paved parking lots, roofs, driveways' -- 98 across ALL soil groups (TR-55 Table 2-2a). Water 100 = open water bodies. Bare 86 = 'Fallow, bare soil', HSG B, AMC II (TR-55 Table 2-2a; values A=77 B=86 C=91 D=94). SOURCE STATUS: HSG B is an ASSUMPTION for PMC -- no SSURGO soil-group extraction has been done.",
+    "cn_table_status": "ASSUMED_HSG_B",
     "slope_full_effect_deg": 15.0,
     "slope_max_multiplier": 1.25,
     "storm_drain_full_benefit_m": 500.0,
@@ -116,6 +117,7 @@
     "green": 0.2,
     "carbon": 0.2
   },
+  "composite_weights_status": "HOUSE_POLICY",
   "decision_policy": {
     "factor_review_threshold": 80.0,
     "factor_review_thresholds": {
@@ -136,6 +138,7 @@
     "ground_vegetation_weight": 0.3,
     "stratification_note": "Sentinel-2 vegetation pixels already include tree canopy. Averaging sat_veg_pct with census canopy_cover_pct counts the same trees twice. Stratify instead: canopy (0.70) + ground vegetation (0.30), where ground vegetation = max(0, sat_veg_pct - canopy_cover_pct). The 0.70/0.30 SPLIT is reasoned house judgment, not a literature coefficient: reviews (ISA 2025, WRI meta-analysis) rank canopy cooling above grass but publish no such weights -- do not cite i-Tree or any paper as their source. DEFINITIONAL FOOTNOTE 2026-10-10: sat vegetation_pct = trees+grass+crops+shrub_and_scrub and EXCLUDES flooded_vegetation (build_cube.py). Negligible for Pune (no measured flooded-veg signal) but state it in any methods footnote.",
     "sat_census_tolerance_pct": 15.0,
+    "green_weights_status": "HOUSE_JUDGMENT",
     "sat_census_tolerance_note": "Census is 2019, satellite pass is later. If |canopy_cover_pct - sat_veg_pct| exceeds this, the two sources disagree about tree cover; widen the confidence interval rather than silently trusting one."
   },
   "epochs": {

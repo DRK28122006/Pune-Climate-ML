@@ -83,6 +83,7 @@ def write_config_scaffold(spec: RegionSpec, out_path: str) -> str:
                          "water": 100.0, "bare": 86.0},
             "cn_table_source": "UNSOURCED -- cite TR-55 per value and state "
             "the assumed hydrologic soil group with its basis.",
+            "cn_table_status": "UNSOURCED",
             "cn_soil_group_assumption": "UNSOURCED -- extract from the "
             "national soil survey before issuing.",
             "slope_full_effect_deg": 15.0,
@@ -121,8 +122,10 @@ def write_config_scaffold(spec: RegionSpec, out_path: str) -> str:
                     "carbon": spec.carbon_weight},
         "green": {"canopy_weight": 0.7, "ground_vegetation_weight": 0.3,
                   "sat_census_tolerance_pct": 15.0,
+                  "green_weights_status": "HOUSE_JUDGMENT",
                   "stratification_note": "House split, not a literature "
                   "coefficient -- keep it labelled."},
+        "composite_weights_status": "HOUSE_POLICY",
         "epochs": {"scoring_supported": list(spec.scoring_years)},
     }
     validate_config(cfg)
@@ -132,8 +135,13 @@ def write_config_scaffold(spec: RegionSpec, out_path: str) -> str:
     return out_path
 
 
-def validate_config(cfg: Dict[str, Any]) -> bool:
-    """Gate: raise on any structural defect. Score refuses failures."""
+def validate_config(cfg: Dict[str, Any], strict: bool = False) -> bool:
+    """Gate: raise on any structural defect. Score refuses failures.
+
+    In strict mode, every scientific constant must carry an accepted status
+    (not PROVISIONAL / UNSOURCED / PENDING / STALE / UNSOURCED_BANDS /
+    HOUSE... where a real assessment is requested).
+    """
     import math
     if not isinstance(cfg, dict):
         raise ValueError("region config must be a dict")
@@ -165,4 +173,39 @@ def validate_config(cfg: Dict[str, Any]) -> bool:
         raise ValueError("epochs.scoring_supported must list scored years")
     if "bands" not in cfg["carbon"]:
         raise ValueError("carbon.bands missing")
+
+    BAD_STATUSES = {"PROVISIONAL", "PROVISIONAL_UNVERIFIED", "UNSOURCED",
+                    "PENDING", "PENDING_SATELLITE", "PENDING_DERIVATION",
+                    "STALE", "UNSOURCED_BANDS"}
+
+    if strict:
+        hyd = cfg["hydrology"]
+        # design storm status
+        st = hyd.get("design_storm_status")
+        if st in BAD_STATUSES:
+            raise ValueError(f"design_storm_status not accepted for a real "
+                             f"assessment: {st}")
+        # cn table status (optional field)
+        cn_status = hyd.get("cn_table_status")
+        if cn_status is not None and cn_status in BAD_STATUSES:
+            raise ValueError(f"cn_table_status not accepted: {cn_status}")
+        # thermal statuses
+        therm = cfg["thermal"]
+        for key in ("reference_c_status", "uhi_max_delta_status",
+                    "night_reference_status", "night_uhi_max_delta_status"):
+            st = therm.get(key)
+            if st is not None and st in BAD_STATUSES:
+                raise ValueError(f"{key} not accepted for a real assessment: {st}")
+        # carbon bands
+        cb = cfg["carbon"].get("bands_status")
+        if cb is not None and cb in BAD_STATUSES:
+            raise ValueError(f"carbon bands_status not accepted: {cb}")
+        # green weights status (optional)
+        gw = cfg.get("green", {}).get("green_weights_status")
+        if gw is not None and gw in BAD_STATUSES:
+            raise ValueError(f"green_weights_status not accepted: {gw}")
+        # composite weights status (optional)
+        cw = cfg.get("composite_weights_status")
+        if cw is not None and cw in BAD_STATUSES:
+            raise ValueError(f"composite_weights_status not accepted: {cw}")
     return True

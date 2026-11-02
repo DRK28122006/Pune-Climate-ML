@@ -72,9 +72,10 @@ def score_site(*, region_config: Dict[str, Any],
                built_up_m2: float,
                plot_m2: float,
                materials: List[Dict[str, Any]],
-               with_recommendations: bool = True) -> Dict[str, Any]:
+               with_recommendations: bool = True,
+               strict: bool = False) -> Dict[str, Any]:
     """Score one proposal. Returns score + recommendations + ledger."""
-    validate_config(region_config)
+    validate_config(region_config, strict=strict)
     if built_up_m2 <= 0 or plot_m2 <= 0:
         raise ValueError("built_up_m2 and plot_m2 must be positive")
     if built_up_m2 > plot_m2:
