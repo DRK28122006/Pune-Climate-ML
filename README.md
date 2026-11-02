@@ -126,6 +126,16 @@ cross-check (GEDI LiDAR heights) found no ward-level contradiction; one
 ward's overlapping crowns summing past 100% is labelled as a density index
 rather than a fraction. Ranges from ward_validation.json provenance.
 
+## Web demo and scientific pipeline
+
+The web app (`frontend/`, `backend/`) is a **prototype scenario calculator**.
+It uses a legacy JavaScript scorer with slider-derived inputs, fixed
+coordinates, and seeded fixtures; it is **not** wired to the Python scorer
+in `ml_pipeline/`. Results from the web demo are labelled `isDemo: true`,
+`source: "user-supplied scenario"` / `"illustrative-scenario"`, and must
+not be presented as measured assessments. The scientific system is the
+Python pipeline in `ml_pipeline/` and `engine/`.
+
 ## Carbon: the materials ledger
 
 **Method.** Each bill-of-quantities line times its India-specific

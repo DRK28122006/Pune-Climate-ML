@@ -57,7 +57,7 @@ export function optimizeProject(project) {
       impervious_pct: round(targetImpervious),
     },
     lst_celsius_mean: round(Math.max(project.mlOutput.lst_celsius_mean - 1.8, 28)),
-    source: "verified-scenario",
+    source: "illustrative-scenario",
   };
   const optimizedMaterials = Object.fromEntries(
     Object.entries(project.input.materials || {}).map(([name, amount]) => [name, round(amount * 0.85)]),
