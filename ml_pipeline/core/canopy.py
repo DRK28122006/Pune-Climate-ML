@@ -432,7 +432,17 @@ class CanopyLedger:
         plot = max(1.0, float(plot_area_m2))
         # Crown areas can overlap each other; cap the union estimate so a dense
         # stand cannot report >100% canopy cover.
+        #
+        # Two values are returned deliberately:
+        #   canopy_cover_pct          = existing / pre-decision canopy
+        #   canopy_cover_pct_proposed = canopy remaining after the tree decisions
+        #
+        # The scoring path must use the proposed value. Using only the existing
+        # value made the green factor identical whether every tree was felled or
+        # every tree was preserved. Keep the existing value for reports and for
+        # callers that genuinely need the baseline.
         canopy_cover_pct = min(100.0, (canopy_before / plot) * 100.0)
+        canopy_cover_pct_proposed = min(100.0, (canopy_after / plot) * 100.0)
 
         comp_species = self._compensatory_mix(species_risk, comp_hi)
 
@@ -442,6 +452,7 @@ class CanopyLedger:
             "tree_canopy_m2_after": round(canopy_after, 1),
             "tree_canopy_m2_lost": round(canopy_before - canopy_after, 1),
             "canopy_cover_pct": round(canopy_cover_pct, 1),
+            "canopy_cover_pct_proposed": round(canopy_cover_pct_proposed, 1),
             "action_counts": counts,
             "rare_trees_in_site": sum(1 for t in trees if t.is_rare),
             "rare_trees_at_risk": rare_at_risk,

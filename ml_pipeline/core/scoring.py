@@ -509,6 +509,7 @@ def compute_green(
     canopy_weight: float = 0.70,
     ground_vegetation_weight: float = 0.30,
     tolerance_pct: float = 15.0,
+    satellite_resolution_m: int = 1000,
 ) -> Dict[str, Any]:
     """Green factor via ecological stratification rather than averaging.
 
@@ -627,10 +628,19 @@ def compute_green(
         "canopy_cover_pct": round(canopy, 1),
         "ground_vegetation_pct": round(ground, 1),
         "effective_green_pct": round(effective, 1),
+        "effective_green_exceeds_satellite": bool(effective > sat + 1e-9),
         "canopy_weight": canopy_weight,
         "ground_vegetation_weight": ground_vegetation_weight,
+        "green_algebra": (
+            "effective = 0.70*canopy + 0.30*max(0, sat_veg - canopy) "
+            "= 0.30*sat_veg + 0.40*canopy when canopy <= sat_veg; "
+            "ground vegetation is constrained to max(0, sat_veg - canopy). "
+            "See 07_decisions/0006-green-algebra.md."
+        ),
         "source_divergence_pts": round(divergence, 1),
         "resolution_mismatch_pts": round(max(0.0, canopy - sat), 1),
+        "satellite_resolution_m": satellite_resolution_m,
+        "census_resolution": "point (individual trees)",
         "confidence": confidence,
         "confidence_note": note,
     }
@@ -895,14 +905,16 @@ def compute_carbon(
                       "line was unknown, so embodied carbon cannot be computed "
                       "without inventing an emission factor.",
             "total_kgco2e": round(total, 1),
-            "intensity_kgco2e_m2": round(intensity, 1),
-            "band": band_label if band_table else None,
+            "intensity_kgco2e_m2": None,
+            "band": None,
             "built_up_area_m2": round(area, 1),
             "line_items": line_items,
             "dominant_material": None,
             "dominant_share_pct": 0.0,
             "unknown_materials": unknown,
             "double_count_warning": double_count,
+            "unknown_mass_pct": round(unknown_mass_pct, 1) if 'unknown_mass_pct' in locals() else 0.0,
+            "unknown_carbon_share_pct": 0.0,
             "ecological_advisories": advisories,
             "confidence": "none",
             "confidence_note": "No emission factor could be applied to any line.",
@@ -961,24 +973,38 @@ def compute_carbon(
     total_mass = known_mass + unknown_mass
     unknown_mass_pct = (100.0 * unknown_mass / total_mass) if total_mass > 0 else 0.0
 
-    # A factor computed while ignoring a material share of the BOQ is not a
-    # defensible number. Above UNKNOWN_MASS_EXCLUDE_PCT the score is withheld
-    # and the factor drops out of the composite with its weight redistributed,
-    # because a silently understated carbon figure is worse than no figure.
-    if unknown_mass_pct > UNKNOWN_MASS_EXCLUDE_PCT:
+    # Carbon-share (not mass-share) gate: a small mass of a high-factor material
+    # can dominate carbon. Use a conservative upper bound where each unknown kg
+    # carries the largest known emission factor.
+    known_efs = [float(li.get("ef")) for li in line_items
+                 if li.get("kgco2e") is not None and li.get("ef") is not None]
+    max_known_ef = max(known_efs) if known_efs else 0.0
+    unknown_carbon_upper = unknown_mass * max_known_ef
+    total_carbon_upper = total + unknown_carbon_upper
+    unknown_carbon_share_pct = (
+        100.0 * unknown_carbon_upper / total_carbon_upper
+        if total_carbon_upper > 0 else 0.0
+    )
+
+    # Withhold when either the mass share or the (upper-bound) carbon share
+    # exceeds the documented limit.
+    withhold = (
+        unknown_mass_pct > UNKNOWN_MASS_EXCLUDE_PCT
+        or unknown_carbon_share_pct > UNKNOWN_MASS_EXCLUDE_PCT
+    )
+    if withhold:
         return {
             "score": None,
             "status": "UNAVAILABLE",
             "reason": (
-                f"{unknown_mass_pct:.1f}% of the bill of quantities by mass "
-                f"({unknown_mass:,.0f} kg) is material with no emission factor, "
-                f"above the {UNKNOWN_MASS_EXCLUDE_PCT:.0f}% limit. Carbon cannot "
-                f"be scored without either a factor for those materials or a "
-                f"confirmed quantity."
+                f"Unknown material share exceeds the {UNKNOWN_MASS_EXCLUDE_PCT:.0f}% "
+                f"limit (mass {unknown_mass_pct:.1f}%, carbon upper-bound "
+                f"{unknown_carbon_share_pct:.1f}%). Carbon cannot be scored "
+                f"without factors for those materials."
             ),
             "total_kgco2e": round(total, 1),
-            "intensity_kgco2e_m2": round(intensity, 1),
-            "band": band_label if band_table else None,
+            "intensity_kgco2e_m2": None,
+            "band": None,
             "built_up_area_m2": round(area, 1),
             "line_items": line_items,
             "dominant_material": None,
@@ -986,11 +1012,14 @@ def compute_carbon(
             "double_count_warning": double_count,
             "unknown_materials": unknown,
             "unknown_mass_pct": round(unknown_mass_pct, 1),
+            "unknown_carbon_share_pct": round(unknown_carbon_share_pct, 1),
+            "unknown_carbon_upper_bound_kgco2e": round(unknown_carbon_upper, 1),
             "ecological_advisories": advisories,
             "confidence": "none",
             "confidence_note": (
-                f"Excluded: {unknown_mass_pct:.1f}% of BOQ mass has no emission "
-                f"factor."
+                f"Excluded: {unknown_mass_pct:.1f}% of BOQ mass "
+                f"({unknown_carbon_share_pct:.1f}% carbon upper bound) has no "
+                f"emission factor."
             ),
         }
 
@@ -1026,6 +1055,7 @@ def compute_carbon(
 
     return {
         "score": round(score, 1),
+        "status": "OK",
         "total_kgco2e": round(total, 1),
         "intensity_kgco2e_m2": round(intensity, 1),
         "band": band_label,
@@ -1038,6 +1068,8 @@ def compute_carbon(
         "double_count_warning": double_count,
         "unknown_materials": unknown,
         "unknown_mass_pct": round(unknown_mass_pct, 1),
+        "unknown_carbon_share_pct": round(unknown_carbon_share_pct, 1),
+        "unknown_carbon_upper_bound_kgco2e": round(unknown_carbon_upper, 1),
         "ecological_advisories": advisories,
         "confidence": "low" if unknown else "medium",
         "confidence_note": (
@@ -1262,6 +1294,29 @@ def score_project(
     weights: Dict[str, float] = region_config.get("weights", {}) or {}
     decision_policy: Dict[str, Any] = region_config.get("decision_policy", {}) or {}
 
+    # GFA vs footprint (Session 5). Flood uses the impervious footprint/plot;
+    # carbon divides by GFA. Backward-compatible: fall back to builtUpAreaSqm
+    # when the new keys are absent, clearly labelled as legacy.
+    plot_area = site.get("plot_area_m2", site.get("plotAreaSqm"))
+    footprint = site.get("impervious_footprint_m2", site.get("builtUpAreaSqm"))
+    gfa = site.get("total_gfa_m2", site.get("builtUpAreaSqm"))
+    # Only override when the new explicit keys are supplied. Legacy
+    # builtUpAreaSqm/plotAreaSqm are NOT treated as a footprint/plot ratio
+    # here, so a None land-cover band stays None (missing data).
+    if ("impervious_footprint_m2" in site or "plot_area_m2" in site) and footprint is not None and plot_area:
+        try:
+            fp = float(footprint); pa = float(plot_area)
+            if pa > 0:
+                indicators = dict(indicators)
+                indicators["impervious_pct"] = (fp / pa) * 100.0
+        except (TypeError, ValueError):
+            pass
+    carbon_area = gfa if gfa is not None else site.get("builtUpAreaSqm", 0.0)
+    carbon_area_basis = (
+        "GFA" if site.get("total_gfa_m2") is not None
+        else "builtUpAreaSqm (legacy single area)"
+    )
+
     imperv = indicators.get("impervious_pct")
     veg = indicators.get("vegetation_pct")
     water = indicators.get("water_pct")
@@ -1367,10 +1422,12 @@ def score_project(
 
     carbon = compute_carbon(
         materials=site.get("materials", []) or [],
-        built_up_area_m2=site.get("builtUpAreaSqm", 1.0),
+        built_up_area_m2=carbon_area or 0.0,
         materials_table=materials_table,
         bands=(region_config.get("carbon", {}) or {}).get("bands"),
     )
+    if isinstance(carbon, dict):
+        carbon["area_basis"] = carbon_area_basis
 
     factors = {"flood": flood, "heat": heat, "green": green, "carbon": carbon}
     scores = {k: (v.get("score") if v.get("score") is not None else None) for k, v in factors.items()}
@@ -1421,17 +1478,21 @@ def score_project(
             f"Missing: {', '.join(missing)}. Weights were renormalised over the "
             f"available factors, so this is NOT comparable to a complete score."
         )
+    _blocking: List[Dict[str, Any]] = []
     if carbon.get("unknown_materials"):
-        result["blocking_issues"] = [
-            {
-                "type": "unknown_material",
-                "detail": f"No emission factor for: "
-                          f"{', '.join(carbon['unknown_materials'])}. Carbon "
-                          f"intensity is understated until these are resolved.",
-            }
-        ]
-    elif blocking:
-        result["blocking_issues"] = [
+        _blocking.append({
+            "type": "unknown_material",
+            "detail": f"No emission factor for: "
+                      f"{', '.join(carbon['unknown_materials'])}. Carbon "
+                      f"intensity is understated until these are resolved.",
+        })
+    if carbon.get("double_count_warning"):
+        _blocking.append({
+            "type": "carbon_double_count",
+            "detail": carbon["double_count_warning"],
+        })
+    if blocking:
+        _blocking.extend([
             {
                 "type": "material_sourcing",
                 "detail": adv["text"],
@@ -1439,9 +1500,8 @@ def score_project(
                 "alternatives": adv["alternatives"],
             }
             for adv in blocking
-        ]
-    else:
-        result["blocking_issues"] = []
+        ])
+    result["blocking_issues"] = _blocking
 
     # The verdict is always issued, including when no factor could be scored.
     # A partial result is REVIEW by policy; it must never be APPROVE or

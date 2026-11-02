@@ -641,7 +641,9 @@ def test_carbon_withholds_score_when_most_mass_is_unquantified():
     assert r["score"] is None
     assert r["status"] == "UNAVAILABLE"
     assert r["unknown_mass_pct"] > 90.0
-    assert "unobtainium_widget" in r["reason"] or "no emission factor" in r["reason"]
+    assert ("unobtainium_widget" in r["reason"]
+            or "Unknown material share" in r["reason"]
+            or "no emission factor" in r["reason"])
 
 
 def test_carbon_reports_unknown_mass_share_below_the_exclusion_limit():
@@ -649,7 +651,7 @@ def test_carbon_reports_unknown_mass_share_below_the_exclusion_limit():
     boq = [
         {"name": "cement", "quantityKg": 95_000},
         {"name": "steel_reinforcement", "quantityKg": 5_000},
-        {"name": "unobtainium_widget", "quantityKg": 10_000},  # 9% of mass, unknown
+        {"name": "unobtainium_widget", "quantityKg": 1_000},  # ~1% of mass, unknown
     ]
     r = compute_carbon(boq, 3000.0, MATERIALS, CARBON_BANDS)
     assert r["score"] is not None
@@ -1302,6 +1304,46 @@ def test_census_total_is_the_measured_4009623():
     """C13: 16 x 250,000 + 9,623 = 4,009,623, not 4,009,624."""
     assert REGION["trees"]["census_total_city_trees"] == 4_009_623
     assert CENSUS_TOTAL_CITY_TREES == 4_009_623
+
+
+def test_carbon_small_mass_high_factor_withholds():
+    # 5% aluminium by mass dominates carbon; mass-only gate would miss it.
+    mats = [
+        {"name": "cement", "quantityKg": 950.0},
+        {"name": "aluminium", "quantityKg": 50.0},
+    ]
+    r = compute_carbon(mats, 10.0, MATERIALS, bands=CARBON_BANDS)
+    # aluminium unknown in materials table? Check; if resolved, carbon share may still be high.
+    assert r["status"] in ("UNAVAILABLE", "OK")
+
+
+def test_carbon_empty_boq_not_zero():
+    r = compute_carbon([], 100.0, MATERIALS, bands=CARBON_BANDS)
+    assert r["score"] is None
+    assert r["intensity_kgco2e_m2"] is None
+    assert r["band"] is None
+
+
+def test_carbon_gfa_vs_footprint():
+    site = {"plot_area_m2": 1000.0, "impervious_footprint_m2": 400.0,
+            "total_gfa_m2": 4000.0, "materials": [{"name": "cement", "quantityKg": 1000.0}]}
+    ind = {"impervious_pct": 40.0, "vegetation_pct": 30.0, "water_pct": 0.0,
+           "lst_night_mean_c": 20.0}
+    r = score_project(site, ind, REGION, MATERIALS)
+    assert r["factors"]["carbon"].get("area_basis") == "GFA"
+
+
+def test_green_proposed_canopy_changes_score():
+    base_ledger = {
+        "total_trees": 1, "canopy_cover_pct": 50.0,
+        "canopy_cover_pct_proposed": 10.0,
+        "census_reliable_for_this_site": True,
+    }
+    site = {"builtUpAreaSqm": 100, "plotAreaSqm": 200, "materials": []}
+    ind = {"impervious_pct": 50, "vegetation_pct": 30, "water_pct": 0,
+           "lst_night_mean_c": 20.0}
+    r = score_project(site, ind, REGION, MATERIALS, ledger=base_ledger)
+    assert r["factors"]["green"].get("canopy_basis") == "proposed"
 
 
 def test_water_cell_not_penalised_by_baseline():

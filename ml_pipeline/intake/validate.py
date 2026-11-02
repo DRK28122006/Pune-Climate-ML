@@ -216,20 +216,54 @@ def validate_submission(
     built_up = num("builtUpAreaSqm", 1.0)
     plot = num("plotAreaSqm", 1.0)
 
-    if built_up is None:
+    # New explicit inputs (Session 5). Backward compatible: fall back to the
+    # legacy single area when the new keys are absent, but label them legacy.
+    plot_area_m2 = num("plot_area_m2", 1.0)
+    footprint = num("impervious_footprint_m2", 0.0)
+    gfa = num("total_gfa_m2", 1.0)
+
+    if plot_area_m2 is None:
+        plot_area_m2 = plot
+    if footprint is None:
+        footprint = built_up
+    if gfa is None:
+        gfa = built_up
+
+    if built_up is None and footprint is None:
         res.add_error("builtUpAreaSqm_missing",
                       "Built-up area (the area actually covered by the building, in m2) "
                       "is required. Without it there is no carbon denominator.", "builtUpAreaSqm")
     else:
-        res.site["builtUpAreaSqm"] = built_up
+        if built_up is not None:
+            res.site["builtUpAreaSqm"] = built_up
 
-    if plot is None:
+    if plot is None and plot_area_m2 is None:
         res.add_error("plotAreaSqm_missing",
                       "Plot area (total site area in m2) is required. Without it the "
                       "impervious fraction cannot be computed, which drives the flood score.",
                       "plotAreaSqm")
     else:
-        res.site["plotAreaSqm"] = plot
+        if plot is not None:
+            res.site["plotAreaSqm"] = plot
+        if plot_area_m2 is not None:
+            res.site["plot_area_m2"] = plot_area_m2
+
+    if footprint is not None:
+        res.site["impervious_footprint_m2"] = footprint
+    if gfa is not None:
+        res.site["total_gfa_m2"] = gfa
+
+    # GFA / footprint validation (Session 5).
+    if footprint is not None and plot_area_m2 is not None and plot_area_m2 > 0:
+        if footprint > plot_area_m2:
+            res.add_error("footprint_exceeds_plot",
+                          f"Impervious footprint {footprint:.0f} m2 exceeds plot area "
+                          f"{plot_area_m2:.0f} m2.", "impervious_footprint_m2")
+    if gfa is not None and footprint is not None:
+        if gfa < footprint:
+            res.add_error("gfa_less_than_footprint",
+                          f"Total GFA {gfa:.0f} m2 is less than the impervious "
+                          f"footprint {footprint:.0f} m2.", "total_gfa_m2")
 
     if built_up and plot:
         if built_up > plot:
@@ -258,6 +292,7 @@ def validate_submission(
                 continue
             name = m.get("name") or m.get("material")
             qty = m.get("quantityKg", m.get("quantity_kg"))
+            unit = m.get("unit", "kg")
             if not name:
                 res.add_error("material_name_missing", f"materials[{i}] has no name.", "materials")
                 continue
@@ -265,13 +300,38 @@ def validate_submission(
                 qty_f = float(qty or 0.0)
             except (TypeError, ValueError):
                 res.add_error("material_quantity_invalid",
-                              f"materials[{i}] ({name}) quantityKg is not a number.", "materials")
+                              f"materials[{i}] ({name}) quantity is not a number.", "materials")
                 continue
             if qty_f < 0:
                 res.add_error("material_quantity_negative",
                               f"materials[{i}] ({name}) quantity is negative.", "materials")
                 continue
-            clean.append({"name": str(name), "quantityKg": qty_f})
+
+            # Unit handling (Session 5): only mass (kg) is native. Volume
+            # inputs are converted using documented densities; anything else is
+            # rejected rather than silently treated as kg.
+            unit_l = str(unit).lower().strip()
+            if unit_l in ("", "kg", "kilogram", "kilograms", "kgs"):
+                qty_kg = qty_f
+            elif unit_l in ("m3", "m^3", "cubic_meter", "cubic_metre", "cum"):
+                # Densities: concrete 2400 kg/m3 (standard RCC, IS 456),
+                # brick masonry 1800 kg/m3, default 2000 kg/m3. Source: IS 875
+                # (dead loads) typical material densities.
+                lname = str(name).lower()
+                if "concrete" in lname:
+                    density = 2400.0
+                elif "brick" in lname:
+                    density = 1800.0
+                else:
+                    density = 2000.0
+                qty_kg = qty_f * density
+            else:
+                res.add_error("material_unit_unsupported",
+                              f"materials[{i}] ({name}) unit '{unit}' is not supported. "
+                              f"Use kg, or m3 for concrete/brick (converted with documented density).",
+                              "materials")
+                continue
+            clean.append({"name": str(name), "quantityKg": qty_kg})
         if clean:
             res.site["materials"] = clean
             if sum(m["quantityKg"] for m in clean) == 0:
