@@ -75,9 +75,12 @@ the Maharashtra flood day — the extraction is on the right cell.
 measured 100-year value is 214 mm. Larger storms shrink excess fractions,
 so adopting it moved flood scores down, honestly.*
 
-**Measured state.** Across 41 wards with identical test proposals:
-14.5–53.3. Built-up share predicts flood at r = +0.92, vegetation cover
-predicts it inversely at r = −0.95. Both directions correct, both strong.
+**Measured state.** Across 41 wards with identical test proposals, the
+flood factor spans its attainable range (max ~56.6 under the 214 mm
+storm; see `ml_pipeline/research/07_decisions/0002-flood-scale.md`).
+Built-up share predicts flood at r = +0.92, vegetation cover predicts it
+inversely at r = −0.95. Both directions correct, both strong. Ranges are
+from the committed validation artifacts (ward_validation.json provenance).
 
 <img src="docs/assets/correlations.png" width="680" alt="Factor correlation scatters">
 *Takeaway: more concrete means more runoff; more vegetation means less.
@@ -103,7 +106,8 @@ so in words instead of faking a score.
 heat release, labelled as such on every report.*
 
 **Measured state.** 0.8–99.0 across wards — the widest spread of any
-factor, driven by real night contrast.
+factor, driven by real night contrast. Night mode only; day fallback is
+LEGACY_DAY/UNAVAILABLE. Ranges from ward_validation.json provenance.
 
 ## Green cover: trees kept versus trees lost
 
@@ -115,10 +119,12 @@ assessment), never a single number, under the 1975 Trees Act as amended
 in 2021. The 90 cm preservation rule is stated as house policy, not law.
 
 **Measured state.** 62–100 across wards, r = −0.81 against vegetation.
-The census total (4,009,623 indexed) matches the published 40,09,623
-exactly. Independent satellite cross-check (GEDI LiDAR heights) found no
-ward-level contradiction; one ward's overlapping crowns summing past 100%
-is now labelled as a density index rather than a fraction.
+Green is a loss factor with a floor of 30 on effective green; the
+attainable range is documented, not 0–100. The census total (4,009,623
+indexed) matches the measured 4,009,623 exactly. Independent satellite
+cross-check (GEDI LiDAR heights) found no ward-level contradiction; one
+ward's overlapping crowns summing past 100% is labelled as a density index
+rather than a fraction. Ranges from ward_validation.json provenance.
 
 ## Carbon: the materials ledger
 
