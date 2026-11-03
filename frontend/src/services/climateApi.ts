@@ -144,6 +144,14 @@ export type WaqiStation = {
   iso: string | null;
   attributions: Array<{ name: string; url: string }>;
   forecast: Record<string, Array<{ avg: number; day: string; max: number; min: number }>>;
+  historical?: {
+    monthly_2025: Record<string, number>;
+    monthly_2026: Record<string, number>;
+    yearly_2025: number | null;
+    yearly_2026: number | null;
+    current_month_daily: Record<string, number>;
+    prev_month_daily: Record<string, number>;
+  };
 };
 
 export type AirQualityData = {
@@ -161,6 +169,14 @@ export type AirQualityData = {
   iso: string | null;
   attributions: Array<{ name: string; url: string }>;
   forecast: Record<string, Array<{ avg: number; day: string; max: number; min: number }>>;
+  historical?: {
+    monthly_2025: Record<string, number>;
+    monthly_2026: Record<string, number>;
+    yearly_2025: number | null;
+    yearly_2026: number | null;
+    current_month_daily: Record<string, number>;
+    prev_month_daily: Record<string, number>;
+  };
 };
 
 export async function getAirQuality(): Promise<AirQualityData> {

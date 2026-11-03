@@ -165,6 +165,43 @@ export default function AirQuality() {
                 ))}
                 {d.attributions.length === 0 && <p className="note">No source attributions available.</p>}
               </Panel>
+
+              {d.historical && (
+                <Panel title="Historical comparison" note="PM2.5 monthly averages. 2025 vs 2026.">
+                  <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 700, color: '#1b2a26' }}>{d.historical!.yearly_2025}</div>
+                      <div style={{ fontSize: '11px', color: '#4a5a55' }}>2025 avg (µg/m³)</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 700, color: '#1b2a26' }}>{d.historical!.yearly_2026}</div>
+                      <div style={{ fontSize: '11px', color: '#4a5a55' }}>2026 avg (µg/m³)</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 700, color: (d.historical!.yearly_2026 ?? 0) > (d.historical!.yearly_2025 ?? 0) ? '#a8371f' : '#2e7d4f' }}>
+                        {(d.historical!.yearly_2026 ?? 0) > (d.historical!.yearly_2025 ?? 0) ? '+' : ''}{((d.historical!.yearly_2026 ?? 0) - (d.historical!.yearly_2025 ?? 0)).toFixed(1)}
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#4a5a55' }}>YoY change</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '4px', fontSize: '11px' }}>
+                    {Object.entries(d.historical!.monthly_2026).map(([month, val]) => {
+                      const prevVal = d.historical!.monthly_2025[month];
+                      const change = prevVal ? (val - prevVal).toFixed(1) : '—';
+                      return (
+                        <div key={month} style={{ textAlign: 'center', padding: '4px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.12)', borderRadius: '4px' }}>
+                          <div style={{ fontWeight: 600, color: '#1b2a26' }}>{month.slice(5)}</div>
+                          <div style={{ color: '#1b2a26' }}>{val}</div>
+                          {prevVal && <div style={{ color: val > prevVal ? '#a8371f' : '#2e7d4f', fontSize: '10px' }}>{val > prevVal ? '+' : ''}{change}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="note" style={{ marginTop: '8px' }}>
+                    Monthly PM2.5 averages (µg/m³). Red = worse than 2025, green = better. Data from Open-Meteo Air Quality API.
+                  </p>
+                </Panel>
+              )}
             </>
           );
         }}
