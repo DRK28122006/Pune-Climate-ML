@@ -3,13 +3,14 @@ import DataGate from '../../components/DataGate';
 import { BarRow, Ring } from '../../components/charts/Visuals';
 import { DemoBadge, MetricCard, PageHeader, Panel, Segmented } from '../../components/ui';
 import { getWards } from '../../data/api';
-import { cityOverview } from '../../data/sample';
+import { getCityOverview } from '../../data/api';
 import { CANOPY_TARGET_PCT } from '../../config';
 import { useAsync } from '../../lib/useAsync';
 import { usePlan } from '../../state/PlanContext';
 
 export default function GreenCover() {
   const state = useAsync(getWards);
+  const cityState = useAsync(getCityOverview);
   const { result } = usePlan();
   const [view, setView] = useState<'now' | 'plan'>('now');
   const [target, setTarget] = useState(CANOPY_TARGET_PCT);
@@ -31,7 +32,7 @@ export default function GreenCover() {
               return { ...w, shown: planned, changed: planned !== w.canopyPct };
             })
             .sort((a, b) => a.shown - b.shown);
-          const cityNow = cityOverview.canopyPct;
+          const cityNow = cityState.data?.canopyPct ?? 0;
           const belowTarget = rows.filter((r) => r.shown < target).length;
           return (
             <>

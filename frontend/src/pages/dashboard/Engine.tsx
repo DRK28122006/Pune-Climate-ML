@@ -5,7 +5,7 @@ import DataGate from '../../components/DataGate';
 import { DemoBadge, EmptyState, MetricCard, PageHeader, Panel, Pill } from '../../components/ui';
 import { useAsync } from '../../lib/useAsync';
 import { usePlan } from '../../state/PlanContext';
-import { scoreProposal, type ScoreResult } from '../../services/climateApi';
+import { scoreProposal, narrateAssessment, type ScoreResult } from '../../services/climateApi';
 import EngineMap from '../../components/EngineMap';
 import type { Priority } from '../../types';
 
@@ -87,12 +87,23 @@ export default function Engine() {
     }
   };
 
-  const handleChat = (e: React.FormEvent) => {
+  const handleChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
     const userMsg = chatInput.trim();
     setChatMessages((prev) => [...prev, { role: 'user', text: userMsg }]);
     setChatInput('');
+
+    // If we have a scored result, use the Gemini narrator; otherwise rule-based
+    if (scoreResult) {
+      try {
+        const res = await narrateAssessment(scoreResult, userMsg);
+        setChatMessages((prev) => [...prev, { role: 'assistant', text: res.text }]);
+        return;
+      } catch {
+        // fall through to rule-based
+      }
+    }
 
     const lower = userMsg.toLowerCase();
     let response = '';
@@ -116,7 +127,7 @@ export default function Engine() {
     } else if (lower.includes('missing') || lower.includes('unavailable')) {
       response = '26/41 wards: green UNAVAILABLE (census not loaded). Slope: unavailable everywhere. Fluvial flood: NOT_MODELLED. Storm drain distance: None (all wards). Heat corroboration: INCONCLUSIVE. Carbon bands (400/800/1200): UNSOURCED.';
     } else {
-      response = 'Try: "ward 33", "safest wards", "worst wards", or "what data is missing?"';
+      response = 'Try: "ward 33", "safest wards", "worst wards", or "what data is missing?" Score a proposal first for AI-powered analysis.';
     }
     setChatMessages((prev) => [...prev, { role: 'assistant', text: response }]);
   };
@@ -249,7 +260,7 @@ export default function Engine() {
 
             {/* AI Assistant */}
             <div style={{ marginTop: '16px' }}>
-              <Panel title="Climate Assistant" note="Rule-based for now. Will be wired to the Gemini narrator (narrative.py) via the backend API.">
+              <Panel title="Climate Assistant" note="Powered by Gemini 2.5 Flash. Scores a proposal first, then ask questions about it.">
                 <div style={{ maxHeight: '240px', overflowY: 'auto', padding: '8px', marginBottom: '8px' }}>
                   {chatMessages.map((m, i) => (
                     <div key={i} style={{ textAlign: m.role === 'user' ? 'right' : 'left', marginBottom: '8px' }}>

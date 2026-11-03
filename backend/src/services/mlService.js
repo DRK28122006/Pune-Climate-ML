@@ -147,3 +147,28 @@ export async function getScore(input, config) {
     };
   }
 }
+
+
+export async function narrateAssessment(assessment, question, config) {
+  const child = spawn(config.pythonCommand, [path.join(config.backendRoot, "python", "narrate_bridge.py")], {
+    cwd: config.repositoryRoot,
+    env: process.env,
+    shell: false,
+    windowsHide: true,
+  });
+  return new Promise((resolve, reject) => {
+    let stdout = "";
+    let stderr = "";
+    const timeout = setTimeout(() => child.kill(), 60 * 1000);
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      clearTimeout(timeout);
+      if (code !== 0) return reject(new Error(stderr.trim() || `narrate exited with code ${code}`));
+      try { resolve(JSON.parse(stdout)); }
+      catch { reject(new Error("narrate returned invalid JSON")); }
+    });
+    child.stdin.end(JSON.stringify({ assessment, question, role: "urban_planner" }));
+  });
+}

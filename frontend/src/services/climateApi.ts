@@ -126,4 +126,11 @@ export async function scoreProposal(payload: {
   });
 }
 
+export async function narrateAssessment(assessment: unknown, question: string): Promise<{ text: string; source: string }> {
+  return request('/narrate', {
+    method: 'POST',
+    body: JSON.stringify({ assessment, question }),
+  });
+}
+
 export { API_ROOT };
