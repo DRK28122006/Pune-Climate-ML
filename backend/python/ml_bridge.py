@@ -56,37 +56,52 @@ def _run_extraction(request: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
-    """Fetch real WAQI data for Pune via Python (Node HTTPS is unreliable here)."""
+    """Fetch real WAQI data for multiple Pune stations via Python."""
     token = os.environ.get("WAQI_TOKEN")
     if not token:
         return {
             "unavailable": True,
             "reason": "WAQI_TOKEN not set in environment",
         }
-    try:
-        url = f"https://api.waqi.info/feed/pune/?token={token}"
-        with urllib.request.urlopen(url, timeout=15) as resp:
-            data = json.load(resp)
-        if data.get("status") != "ok":
-            return {"unavailable": True, "reason": f"WAQI API error: {data.get('status')}"}
-        d = data.get("data", {})
-        iaqi = d.get("iaqi", {})
-        forecast = d.get("forecast", {}).get("daily", {})
-        return {
-            "source": "waqi",
-            "city": d.get("city", {}).get("name", "Pune"),
-            "geo": d.get("city", {}).get("geo"),
-            "aqi": d.get("aqi"),
-            "dominant": d.get("dominant"),
-            "iaqi": iaqi,
-            "time": d.get("time", {}).get("s"),
-            "iso": d.get("time", {}).get("iso"),
-            "attributions": d.get("attributions", []),
-            "forecast": forecast,
-            "unavailable": False,
-        }
-    except Exception as e:
-        return {"unavailable": True, "reason": str(e)}
+    stations = [
+        ("pune", "Shivajinagar"),
+        ("pune/katraj", "Katraj"),
+        ("pune/pashan", "Pashan"),
+        ("pune/lohegaon", "Lohegaon"),
+        ("pune/nigdi", "Nigdi"),
+    ]
+    results = []
+    for feed, name in stations:
+        try:
+            url = f"https://api.waqi.info/feed/{feed}/?token={token}"
+            with urllib.request.urlopen(url, timeout=15) as resp:
+                data = json.load(resp)
+            if data.get("status") != "ok":
+                continue
+            d = data.get("data", {})
+            results.append({
+                "station": name,
+                "city": d.get("city", {}).get("name", ""),
+                "geo": d.get("city", {}).get("geo"),
+                "aqi": d.get("aqi"),
+                "dominant": d.get("dominantpol"),
+                "iaqi": d.get("iaqi", {}),
+                "time": d.get("time", {}).get("s"),
+                "iso": d.get("time", {}).get("iso"),
+                "attributions": d.get("attributions", []),
+                "forecast": d.get("forecast", {}).get("daily", {}),
+            })
+        except Exception:
+            continue
+
+    if not results:
+        return {"unavailable": True, "reason": "No WAQI stations returned data"}
+
+    return {
+        "source": "waqi",
+        "stations": results,
+        "unavailable": False,
+    }
 
 
 def _ward_ring(ward_no: int) -> Optional[List[Any]]:

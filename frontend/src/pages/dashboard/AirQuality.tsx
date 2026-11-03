@@ -111,20 +111,25 @@ export default function AirQuality() {
               </Panel>
 
               <div className="two-col">
-                <Panel title="Monitoring station" note="WAQI station for Pune.">
+                <Panel title="Pune monitoring stations" note="WAQI stations across Pune. All readings from 2021 (WAQI free tier).">
                   <ul className="stations">
-                    {d.stations.map((s: { name: string; index: number; dominant?: string }) => (
-                      <li key={s.name}>
-                        <span>{s.name}</span>
-                        <b style={{ color: aqiColor(s.index) }}>{s.index}</b>
-                        <Pill tone={bandTone(s.index)}>{bandFor(s.index).label}</Pill>
-                        {s.dominant && <span style={{ fontSize: '11px', color: '#4a5a55', marginLeft: '8px' }}>{`dominant: ${s.dominant}`}</span>}
+                    {d.stations.map((s: { station: string; aqi: number; dominant: string | null; geo: [number, number] | null }) => (
+                      <li key={s.station} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid rgba(40,34,26,0.08)' }}>
+                        <div>
+                          <span style={{ fontWeight: 600, fontSize: '13px' }}>{s.station}</span>
+                          {s.geo && <span style={{ fontSize: '11px', color: '#4a5a55', marginLeft: '8px' }}>({s.geo[0].toFixed(2)}, {s.geo[1].toFixed(2)})</span>}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <b style={{ color: aqiColor(s.aqi), fontSize: '16px' }}>{s.aqi}</b>
+                          <Pill tone={bandTone(s.aqi)}>{bandFor(s.aqi).label}</Pill>
+                        </div>
                       </li>
                     ))}
                   </ul>
+                  {d.stations.length === 0 && <p className="note">No station data available.</p>}
                 </Panel>
 
-                <Panel title="Pollutant breakdown (IAQI)" note="Individual pollutant sub-indices.">
+                <Panel title="Pollutant breakdown (IAQI)" note="Individual pollutant sub-indices for Shivajinagar station.">
                   {Object.entries(d.iaqi).map(([pol, v]) => (
                     <div key={pol} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(40,34,26,0.08)' }}>
                       <span style={{ fontSize: '13px', color: '#4a5a55' }}>{pol.toUpperCase()}</span>

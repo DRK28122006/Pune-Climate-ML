@@ -133,46 +133,71 @@ export async function narrateAssessment(assessment: unknown, question: string): 
   });
 }
 
-export type AirQualityData = {
-  source: string;
+export type WaqiStation = {
+  station: string;
   city: string;
+  geo: [number, number] | null;
   aqi: number;
-  dominant: string;
+  dominant: string | null;
   iaqi: Record<string, { v: number }>;
   time: string | null;
   iso: string | null;
   attributions: Array<{ name: string; url: string }>;
+  forecast: Record<string, Array<{ avg: number; day: string; max: number; min: number }>>;
+};
+
+export type AirQualityData = {
+  source: string;
+  stations: WaqiStation[];
   unavailable?: boolean;
   reason?: string;
   hourly: number[];
   daily: number[];
-  stations: Array<{ name: string; index: number; dominant?: string }>;
-  forecast?: Record<string, Array<{ avg: number; day: string; max: number; min: number }>>;
+  aqi: number;
+  city: string;
+  dominant: string | null;
+  iaqi: Record<string, { v: number }>;
+  time: string | null;
+  iso: string | null;
+  attributions: Array<{ name: string; url: string }>;
+  forecast: Record<string, Array<{ avg: number; day: string; max: number; min: number }>>;
 };
 
 export async function getAirQuality(): Promise<AirQualityData> {
   const data = await request('/air-quality', { method: 'GET' }) as any;
   if (data.unavailable) {
-    return { 
-      hourly: [], 
-      daily: [], 
-      stations: [], 
-      unavailable: true, 
+    return {
+      source: 'waqi',
+      stations: [],
+      unavailable: true,
       reason: data.reason,
-      source: '',
-      city: '',
+      hourly: [],
+      daily: [],
       aqi: 0,
+      city: '',
       dominant: '',
       iaqi: {},
       time: null,
       iso: null,
       attributions: [],
+      forecast: {},
     };
   }
 
-  const { aqi, dominant, iaqi, time, iso, city, attributions, forecast } = data;
+  const stations = (data.stations || []) as WaqiStation[];
+  // Use first station with data as primary
+  const primary = stations.length > 0 ? stations[0] : null;
 
-  // Build an hourly series from current AQI (WAQI free tier: current + daily forecast)
+  const aqi = primary?.aqi ?? 0;
+  const city = primary?.city ?? 'Pune';
+  const dominant = primary?.dominant ?? '';
+  const iaqi = primary?.iaqi ?? {};
+  const time = primary?.time ?? null;
+  const iso = primary?.iso ?? null;
+  const attributions = primary?.attributions ?? [];
+  const forecast = primary?.forecast ?? {};
+
+  // Build an hourly series from current AQI
   const hourly: number[] = [];
   for (let i = 23; i >= 0; i--) {
     hourly.push(aqi);
@@ -187,26 +212,19 @@ export async function getAirQuality(): Promise<AirQualityData> {
     daily.push(aqi);
   }
 
-  const stations = [
-    {
-      name: city,
-      index: aqi,
-      dominant,
-    },
-  ];
-
   return {
+    source: 'waqi',
+    stations,
     hourly,
     daily,
-    stations,
-    source: 'waqi',
-    city,
     aqi,
+    city,
     dominant,
     iaqi,
     time,
     iso,
     attributions,
+    forecast,
     unavailable: false,
   };
 }
