@@ -133,4 +133,25 @@ export async function narrateAssessment(assessment: unknown, question: string): 
   });
 }
 
+export type AirQualityData = {
+  source: string;
+  city: string;
+  aqi: number;
+  dominant: string;
+  iaqi: Record<string, { v: number }>;
+  time: string | null;
+  iso: string | null;
+  attributions: Array<{ name: string; url: string }>;
+  unavailable?: boolean;
+  reason?: string;
+  hourly: number[];
+  daily: number[];
+  stations: Array<{ name: string; index: number; dominant?: string }>;
+  forecast?: Record<string, Array<{ avg: number; day: string; max: number; min: number }>>;
+};
+
+export async function getAirQuality(): Promise<AirQualityData> {
+  return request('/air-quality', { method: 'GET' });
+}
+
 export { API_ROOT };

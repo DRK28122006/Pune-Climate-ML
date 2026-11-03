@@ -149,6 +149,31 @@ export async function getScore(input, config) {
 }
 
 
+export async function getAirQuality(config) {
+  // Use Python bridge (Node fetch/HTTPS is broken in this env)
+  const child = spawn(config.pythonCommand, [path.join(config.backendRoot, "python", "ml_bridge.py")], {
+    cwd: config.repositoryRoot,
+    env: process.env,
+    shell: false,
+    windowsHide: true,
+  });
+  return new Promise((resolve, reject) => {
+    let stdout = "";
+    let stderr = "";
+    const timeout = setTimeout(() => child.kill(), 30 * 1000);
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      clearTimeout(timeout);
+      if (code !== 0) return reject(new Error(stderr.trim() || `ML process exited with code ${code}`));
+      try { resolve(JSON.parse(stdout)); }
+      catch { reject(new Error("ML process returned invalid JSON")); }
+    });
+    child.stdin.end(JSON.stringify({ mode: "air_quality" }));
+  });
+}
+
 export async function narrateAssessment(assessment, question, config) {
   const child = spawn(config.pythonCommand, [path.join(config.backendRoot, "python", "narrate_bridge.py")], {
     cwd: config.repositoryRoot,

@@ -1,6 +1,6 @@
 """Adapter between the Node API and the ML pipeline.
 
-Two modes, selected by the request payload:
+Three modes, selected by the request payload:
 
   * Extraction mode (default, when ``coordinates`` is present and no ``ward``
     / ``mode`` is given): runs the GEE + SegFormer extractor. Requires
@@ -12,13 +12,17 @@ Two modes, selected by the request payload:
     tree index, materials/species config). Returns the full ``score_project``
     result plus recommendations and the canopy ledger.
 
-Both modes read JSON from stdin and print JSON to stdout, so the Node side
+  * Air quality mode (when ``mode == "air_quality"``): fetches real WAQI
+    data for Pune via Python (Node HTTPS is unreliable in this env).
+
+All modes read JSON from stdin and print JSON to stdout, so the Node side
 can use the same spawn plumbing for both.
 """
 
 import json
 import os
 import sys
+import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -49,6 +53,40 @@ def _run_extraction(request: Dict[str, Any]) -> Dict[str, Any]:
         request.get("bufferM", 500),
     )
     return {**result, "source": "gee-segformer"}
+
+
+def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
+    """Fetch real WAQI data for Pune via Python (Node HTTPS is unreliable here)."""
+    token = os.environ.get("WAQI_TOKEN")
+    if not token:
+        return {
+            "unavailable": True,
+            "reason": "WAQI_TOKEN not set in environment",
+        }
+    try:
+        url = f"https://api.waqi.info/feed/pune/?token={token}"
+        with urllib.request.urlopen(url, timeout=15) as resp:
+            data = json.load(resp)
+        if data.get("status") != "ok":
+            return {"unavailable": True, "reason": f"WAQI API error: {data.get('status')}"}
+        d = data.get("data", {})
+        iaqi = d.get("iaqi", {})
+        forecast = d.get("forecast", {}).get("daily", {})
+        return {
+            "source": "waqi",
+            "city": d.get("city", {}).get("name", "Pune"),
+            "geo": d.get("city", {}).get("geo"),
+            "aqi": d.get("aqi"),
+            "dominant": d.get("dominant"),
+            "iaqi": iaqi,
+            "time": d.get("time", {}).get("s"),
+            "iso": d.get("time", {}).get("iso"),
+            "attributions": d.get("attributions", []),
+            "forecast": forecast,
+            "unavailable": False,
+        }
+    except Exception as e:
+        return {"unavailable": True, "reason": str(e)}
 
 
 def _ward_ring(ward_no: int) -> Optional[List[Any]]:
@@ -309,7 +347,9 @@ def _run_scoring(request: Dict[str, Any]) -> Dict[str, Any]:
 def main() -> None:
     request = json.load(sys.stdin)
     mode = request.get("mode")
-    if mode == "score" or request.get("ward") is not None or request.get("geometry"):
+    if mode == "air_quality":
+        result = _run_air_quality(request)
+    elif mode == "score" or request.get("ward") is not None or request.get("geometry"):
         result = _run_scoring(request)
     else:
         result = _run_extraction(request)
