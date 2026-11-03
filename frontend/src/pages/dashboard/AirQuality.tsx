@@ -2,11 +2,10 @@ import { useState } from 'react';
 import DataGate from '../../components/DataGate';
 import LineChart, { type Band } from '../../components/charts/LineChart';
 import { DemoBadge, MetricCard, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
-import { getAirQuality, type AirQualityData } from '../../services/climateApi';
+import { getAirQuality } from '../../services/climateApi';
 import { useAsync } from '../../lib/useAsync';
-import { usePlan } from '../../state/PlanContext';
 
-type Range = 'hourly' | 'daily';
+type Range = 'monthly' | 'daily';
 
 const BAND_FILL = [
   'rgba(35,112,74,0.12)',   // good
@@ -30,17 +29,16 @@ const bandTone = (v: number): 'high' | 'med' | 'low' => {
 };
 
 const aqiColor = (v: number): string => {
-  if (v <= 50) return '#2e7d4f';   // leaf
-  if (v <= 100) return '#7d5400';  // amber
-  if (v <= 150) return '#c9821a';  // orange
-  if (v <= 200) return '#a8371f';  // heat
-  return '#6a1b1b';                // very unhealthy
+  if (v <= 50) return '#2e7d4f';
+  if (v <= 100) return '#7d5400';
+  if (v <= 150) return '#c9821a';
+  if (v <= 200) return '#a8371f';
+  return '#6a1b1b';
 };
 
 export default function AirQuality() {
   const state = useAsync(getAirQuality);
-  const [range, setRange] = useState<Range>('hourly');
-  const { result } = usePlan();
+  const [range, setRange] = useState<Range>('monthly');
 
   return (
     <>
@@ -60,12 +58,19 @@ export default function AirQuality() {
             );
           }
 
-          const series = range === 'hourly' ? d.hourly : d.daily;
-          const labels = range === 'hourly'
-            ? Array.from({ length: 24 }, (_, i) => `${String((i + 1) % 24).padStart(2, '0')}:00`)
-            : d.iso ? ['Today', 'Tomorrow', '+2d', '+3d', '+4d', '+5d', '+6d'] : [];
-          const peak = Math.max(...series);
-          const avg = series.reduce((a: number, b: number) => a + b, 0) / series.length;
+          const h = (d.historical || {}) as any;
+          const monthly2025 = h.monthly_2025 || {};
+          const monthly2026 = h.monthly_2026 || {};
+          const yearly2025 = h.yearly_2025 ?? 0;
+          const yearly2026 = h.yearly_2026 ?? 0;
+          const change = yearly2026 - yearly2025;
+
+          const series = range === 'monthly'
+            ? Object.values(monthly2026) as number[]
+            : d.hourly;
+          const labels = range === 'monthly'
+            ? Object.keys(monthly2026).map((m) => m.slice(5))
+            : Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
           return (
             <>
@@ -75,62 +80,65 @@ export default function AirQuality() {
                   value={String(d.aqi)}
                   unit=""
                   pill={{ tone: bandTone(d.aqi), text: bandFor(d.aqi).label }}
-                  note={d.city ? `Station: ${d.city}` : ''}
+                  note={`Station: ${d.city}`}
                 />
-                <MetricCard label="24h average" value={avg.toFixed(0)} unit="AQI" />
-                <MetricCard label="Dominant pollutant" value={d.dominant?.toUpperCase() ?? '—'} unit="" />
-                <MetricCard label="Data time" value={d.time ?? '—'} unit="" note={d.iso ?? ''} />
+                <MetricCard label="2025 avg" value={String(yearly2025)} unit="µg/m³" note="PM2.5 yearly average" />
+                <MetricCard label="2026 avg (so far)" value={String(yearly2026)} unit="µg/m³" note="PM2.5 yearly average" />
+                <MetricCard
+                  label="YoY change"
+                  value={`${change > 0 ? '+' : ''}${change.toFixed(1)}`}
+                  unit="µg/m³"
+                  pill={{ tone: change > 0 ? 'high' : 'low', text: change > 0 ? 'Worse' : 'Better' }}
+                />
               </div>
 
               <Panel
-                title="City air index"
+                title="Pune air quality: 2025 vs 2026"
                 actions={
                   <Segmented<Range>
                     label="Time range"
                     value={range}
                     onChange={setRange}
                     options={[
-                      { value: 'hourly', label: 'Last 24 hours' },
-                      { value: 'daily', label: 'Daily forecast' },
+                      { value: 'monthly', label: 'Monthly' },
+                      { value: 'daily', label: 'Daily (current)' },
                     ]}
                   />
                 }
-                note="Real Open-Meteo air quality data. Current reading + 3-day forecast. No API key needed."
+                note="Real Open-Meteo data. Monthly = PM2.5 averages. Daily = current month hourly."
               >
                 <LineChart
                   values={series}
                   xLabels={labels}
-                  labelEvery={range === 'hourly' ? 4 : 1}
-                  yMax={300}
-                  yTicks={[0, 50, 100, 150, 200, 250, 300]}
-                  yLabel="Air quality index"
-                  xLabel={range === 'hourly' ? 'Hour' : 'Day'}
+                  labelEvery={range === 'monthly' ? 1 : 4}
+                  yMax={120}
+                  yTicks={[0, 25, 50, 75, 100, 125]}
+                  yLabel="PM2.5 (µg/m³)"
+                  xLabel={range === 'monthly' ? 'Month' : 'Hour'}
                   bands={bands}
-                  ariaLabel={`Air index. Peak ${peak} at AQI ${d.aqi}.`}
+                  ariaLabel={`Air quality. 2025 avg ${yearly2025}, 2026 avg ${yearly2026}.`}
                 />
               </Panel>
 
               <div className="two-col">
-                <Panel title="Pune monitoring stations" note="WAQI stations across Pune. All readings from 2021 (WAQI free tier).">
-                  <ul className="stations">
-                    {d.stations.map((s: { station: string; aqi: number; dominant: string | null; geo: [number, number] | null }) => (
-                      <li key={s.station} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid rgba(40,34,26,0.08)' }}>
-                        <div>
-                          <span style={{ fontWeight: 600, fontSize: '13px' }}>{s.station}</span>
-                          {s.geo && <span style={{ fontSize: '11px', color: '#4a5a55', marginLeft: '8px' }}>({s.geo[0].toFixed(2)}, {s.geo[1].toFixed(2)})</span>}
+                <Panel title="2025 vs 2026 monthly" note="PM2.5 monthly averages. Red = worse, green = better.">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '4px', fontSize: '11px' }}>
+                    {Object.entries(monthly2026 as Record<string, number>).map(([month, val]) => {
+                      const prevVal = (monthly2025 as Record<string, number>)[month];
+                      const diff = prevVal ? (val - prevVal) : 0;
+                      return (
+                        <div key={month} style={{ textAlign: 'center', padding: '4px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.12)', borderRadius: '4px' }}>
+                          <div style={{ fontWeight: 600, color: '#1b2a26' }}>{month.slice(5)}</div>
+                          <div style={{ color: '#1b2a26' }}>{val}</div>
+                          {prevVal && <div style={{ color: diff > 0 ? '#a8371f' : '#2e7d4f', fontSize: '10px' }}>{diff > 0 ? '+' : ''}{diff.toFixed(1)}</div>}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <b style={{ color: aqiColor(s.aqi), fontSize: '16px' }}>{s.aqi}</b>
-                          <Pill tone={bandTone(s.aqi)}>{bandFor(s.aqi).label}</Pill>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  {d.stations.length === 0 && <p className="note">No station data available.</p>}
+                      );
+                    })}
+                  </div>
                 </Panel>
 
-                <Panel title="Pollutant breakdown (IAQI)" note="Individual pollutant sub-indices for Shivajinagar station.">
-                  {Object.entries(d.iaqi).map(([pol, v]) => (
+                <Panel title="Pollutant breakdown (current)" note="Individual pollutant sub-indices.">
+                  {Object.entries(d.iaqi as Record<string, { v: number }>).map(([pol, v]) => (
                     <div key={pol} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(40,34,26,0.08)' }}>
                       <span style={{ fontSize: '13px', color: '#4a5a55' }}>{pol.toUpperCase()}</span>
                       <b>{v.v}</b>
@@ -138,24 +146,16 @@ export default function AirQuality() {
                   ))}
                   {Object.keys(d.iaqi).length === 0 && <p className="note">No individual pollutant data available.</p>}
                 </Panel>
-
-                {result && (
-                  <Panel title="Effect of your plan (demo)" note="Simulated for the plan area only.">
-                    {result ? (
-                      <div>
-                        <p>
-                          For <b>{result.inputs.planName}</b>, the demo model evaluates the plan area against current AQI {d.aqi}.
-                        </p>
-                        <p className="note">Simulated scenario — unrelated to live station readings.</p>
-                      </div>
-                    ) : (
-                      <p className="note">Evaluate a plan to see its modelled effect.</p>
-                    )}
-                  </Panel>
-                )}
               </div>
 
-              <Panel title="Data source" note="Open-Meteo Air Quality API.">
+              <Panel title="Data source" note="Open-Meteo Air Quality API (real-time + historical).">
+                <p style={{ fontSize: '13px', color: '#4a5a55', lineHeight: 1.6 }}>
+                  <b>Source:</b> Open-Meteo Air Quality API (open-meteo.com) — satellite-derived, no API key needed.<br />
+                  <b>Location:</b> Pune grid point (18.52°N, 73.86°E).<br />
+                  <b>Current data:</b> {d.time} (today).<br />
+                  <b>Historical:</b> Jan 2025 – Nov 2026 monthly averages.<br />
+                  <b>Limitation:</b> Modelled data, not ground station. No per-ward differentiation (grid resolution ~25km). WAQI free tier returns stale 2021 data.
+                </p>
                 {d.attributions.map((a, i) => (
                   <div key={i} style={{ padding: '4px 0', fontSize: '13px', color: '#4a5a55' }}>
                     <a href={a.url} target="_blank" rel="noopener noreferrer" style={{ color: '#1f5a8c', textDecoration: 'underline' }}>
@@ -163,45 +163,7 @@ export default function AirQuality() {
                     </a>
                   </div>
                 ))}
-                {d.attributions.length === 0 && <p className="note">No source attributions available.</p>}
               </Panel>
-
-              {d.historical && (
-                <Panel title="Historical comparison" note="PM2.5 monthly averages. 2025 vs 2026.">
-                  <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '24px', fontWeight: 700, color: '#1b2a26' }}>{d.historical!.yearly_2025}</div>
-                      <div style={{ fontSize: '11px', color: '#4a5a55' }}>2025 avg (µg/m³)</div>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '24px', fontWeight: 700, color: '#1b2a26' }}>{d.historical!.yearly_2026}</div>
-                      <div style={{ fontSize: '11px', color: '#4a5a55' }}>2026 avg (µg/m³)</div>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '24px', fontWeight: 700, color: (d.historical!.yearly_2026 ?? 0) > (d.historical!.yearly_2025 ?? 0) ? '#a8371f' : '#2e7d4f' }}>
-                        {(d.historical!.yearly_2026 ?? 0) > (d.historical!.yearly_2025 ?? 0) ? '+' : ''}{((d.historical!.yearly_2026 ?? 0) - (d.historical!.yearly_2025 ?? 0)).toFixed(1)}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#4a5a55' }}>YoY change</div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '4px', fontSize: '11px' }}>
-                    {Object.entries(d.historical!.monthly_2026).map(([month, val]) => {
-                      const prevVal = d.historical!.monthly_2025[month];
-                      const change = prevVal ? (val - prevVal).toFixed(1) : '—';
-                      return (
-                        <div key={month} style={{ textAlign: 'center', padding: '4px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.12)', borderRadius: '4px' }}>
-                          <div style={{ fontWeight: 600, color: '#1b2a26' }}>{month.slice(5)}</div>
-                          <div style={{ color: '#1b2a26' }}>{val}</div>
-                          {prevVal && <div style={{ color: val > prevVal ? '#a8371f' : '#2e7d4f', fontSize: '10px' }}>{val > prevVal ? '+' : ''}{change}</div>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className="note" style={{ marginTop: '8px' }}>
-                    Monthly PM2.5 averages (µg/m³). Red = worse than 2025, green = better. Data from Open-Meteo Air Quality API.
-                  </p>
-                </Panel>
-              )}
             </>
           );
         }}
