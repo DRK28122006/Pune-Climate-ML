@@ -9,6 +9,7 @@ import {
   assessmentInput, loginInput, notificationInput, refreshInput, registerInput, reassessmentInput,
 } from "./validation.js";
 import { buildProject, createAssessment } from "./services/assessmentService.js";
+import { getScore } from "./services/mlService.js";
 import { optimizeProject, toApiAssessment } from "./services/recommendationService.js";
 import { streamAssessmentReport } from "./services/reportService.js";
 import { ADMIN_ROLES, WRITE_ROLES, authenticate, authorize, canAccessAssessment } from "./middleware/auth.js";
@@ -120,6 +121,11 @@ export function createApp({ config, store, authService, objectStorage, jobQueue 
       return res.status(201).json({ assessment: toApiAssessment(project), optimization: optimizeProject(project) });
     }
     res.status(201).json(toApiAssessment(project));
+  }));
+
+  app.post("/api/v1/score", authorize(...WRITE_ROLES), asyncRoute(async (req, res) => {
+    const result = await getScore(req.body || {}, config);
+    res.json(result);
   }));
 
   app.get("/api/v1/assessments/:id", requireProject(store), (req, res) => res.json(toApiAssessment(req.project)));

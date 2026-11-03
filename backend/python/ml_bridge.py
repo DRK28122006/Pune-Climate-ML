@@ -72,6 +72,37 @@ def _ward_ring(ward_no: int) -> Optional[List[Any]]:
     return json.loads(row[0])
 
 
+def _ward_for_point(lat: float, lon: float) -> Optional[int]:
+    """Find the ward containing a point via point-in-polygon against reference layers."""
+    import sqlite3
+    from shapely.geometry import Point, Polygon
+
+    ref_db = _repository_root() / "ml_pipeline" / "data" / "reference_layers.sqlite"
+    if not ref_db.exists():
+        return None
+    try:
+        conn = sqlite3.connect(f"file:{ref_db}?mode=ro", uri=True)
+    except sqlite3.Error:
+        return None
+    try:
+        for ward_no, ring_json in conn.execute("SELECT ward_no, ring_json FROM wards"):
+            try:
+                ring = json.loads(ring_json)
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if len(ring) < 3:
+                continue
+            try:
+                poly = Polygon(ring)
+                if poly.is_valid and poly.contains(Point(lon, lat)):
+                    return int(ward_no)
+            except Exception:
+                continue
+    finally:
+        conn.close()
+    return None
+
+
 def _indicators_from_cube(ring: List[Any], cube: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     """Satellite indicators for a ring from the baked cube (fractions -> pct)."""
     repository_root = _repository_root()
@@ -169,12 +200,20 @@ def _run_scoring(request: Dict[str, Any]) -> Dict[str, Any]:
 
     ward_no = request.get("ward")
     ring = None
+    coords = request.get("coordinates")
     if ward_no is not None:
         ring = _ward_ring(int(ward_no))
+    elif coords:
+        lat = coords.get("lat") if isinstance(coords, dict) else (coords[0] if isinstance(coords, (list, tuple)) else None)
+        lon = coords.get("lon") if isinstance(coords, dict) else (coords[1] if isinstance(coords, (list, tuple)) else None)
+        if lat is not None and lon is not None:
+            ward_no = _ward_for_point(float(lat), float(lon))
+            if ward_no is not None:
+                ring = _ward_ring(ward_no)
     elif request.get("geometry"):
         ring = request["geometry"]
     if not ring:
-        raise ValueError("ward (with a polygon in reference_layers.sqlite) or geometry is required for scoring")
+        raise ValueError("ward, coordinates, or geometry is required for scoring")
 
     built_up = float(request.get("builtUpAreaSqm", 2000.0))
     plot = float(request.get("plotAreaSqm", 4000.0))

@@ -88,4 +88,42 @@ export async function getAssessment(id: string): Promise<BackendAssessment> {
   return request(`/assessments/${id}`);
 }
 
+export type ScoreResult = {
+  source: string;
+  mode: string;
+  ward: number | null;
+  score: {
+    impact_score: number | null;
+    climate_score: number | null;
+    risk_band: string | null;
+    evidence_status: string;
+    decision_grade: boolean;
+    factors: Record<string, { score: number | null; status?: string; reason?: string }>;
+    recommendations: Array<{ title?: string; impact?: number; target?: string; description?: string }>;
+  };
+  recommendations: Array<{ title?: string; impact?: number; target?: string; description?: string }>;
+  canopy: { canopy_cover_pct?: number; census_reliable_for_this_site?: boolean; total_trees?: number } | null;
+  indicators: Record<string, unknown>;
+  satellite_cube_available: boolean;
+};
+
+export async function scoreProposal(payload: {
+  ward?: number;
+  coordinates?: { lat: number; lon: number };
+  builtUpAreaSqm: number;
+  plotAreaSqm: number;
+  materials?: Array<{ name: string; quantityKg: number }>;
+  storeys?: number;
+  projectType?: string;
+  impervious?: number;
+  vegetation?: number;
+  water?: number;
+  slope?: number;
+}): Promise<ScoreResult> {
+  return request('/score', {
+    method: 'POST',
+    body: JSON.stringify({ ...payload, epoch: 2024 }),
+  });
+}
+
 export { API_ROOT };
