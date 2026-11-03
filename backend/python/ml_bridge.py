@@ -56,52 +56,89 @@ def _run_extraction(request: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
-    """Fetch real WAQI data for multiple Pune stations via Python."""
-    token = os.environ.get("WAQI_TOKEN")
-    if not token:
-        return {
-            "unavailable": True,
-            "reason": "WAQI_TOKEN not set in environment",
+    """Fetch real air quality data for Pune from Open-Meteo (no API key needed)."""
+    try:
+        url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
+               "?latitude=18.5204&longitude=73.8567"
+               "&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone"
+               "&timezone=Asia/Kolkata&forecast_days=3")
+        with urllib.request.urlopen(url, timeout=15) as resp:
+            data = json.load(resp)
+        hourly = data.get("hourly", {})
+        times = hourly.get("time", [])
+        pm25 = hourly.get("pm2_5", [])
+        pm10 = hourly.get("pm10", [])
+        co = hourly.get("carbon_monoxide", [])
+        no2 = hourly.get("nitrogen_dioxide", [])
+        so2 = hourly.get("sulphur_dioxide", [])
+        o3 = hourly.get("ozone", [])
+
+        # Current = last available hour
+        idx = len(times) - 1
+        # Find last non-None pm25
+        while idx >= 0 and (pm25[idx] is None):
+            idx -= 1
+        if idx < 0:
+            idx = len(times) - 1
+
+        current = {
+            "pm25": pm25[idx] if idx < len(pm25) else None,
+            "pm10": pm10[idx] if idx < len(pm10) else None,
+            "co": co[idx] if idx < len(co) else None,
+            "no2": no2[idx] if idx < len(no2) else None,
+            "so2": so2[idx] if idx < len(so2) else None,
+            "o3": o3[idx] if idx < len(o3) else None,
+            "time": times[idx] if idx < len(times) else None,
         }
-    stations = [
-        ("pune", "Shivajinagar"),
-        ("pune/katraj", "Katraj"),
-        ("pune/pashan", "Pashan"),
-        ("pune/lohegaon", "Lohegaon"),
-        ("pune/nigdi", "Nigdi"),
-    ]
-    results = []
-    for feed, name in stations:
-        try:
-            url = f"https://api.waqi.info/feed/{feed}/?token={token}"
-            with urllib.request.urlopen(url, timeout=15) as resp:
-                data = json.load(resp)
-            if data.get("status") != "ok":
-                continue
-            d = data.get("data", {})
-            results.append({
-                "station": name,
-                "city": d.get("city", {}).get("name", ""),
-                "geo": d.get("city", {}).get("geo"),
-                "aqi": d.get("aqi"),
-                "dominant": d.get("dominantpol"),
-                "iaqi": d.get("iaqi", {}),
-                "time": d.get("time", {}).get("s"),
-                "iso": d.get("time", {}).get("iso"),
-                "attributions": d.get("attributions", []),
-                "forecast": d.get("forecast", {}).get("daily", {}),
-            })
-        except Exception:
-            continue
 
-    if not results:
-        return {"unavailable": True, "reason": "No WAQI stations returned data"}
+        # Build hourly series (last 24h)
+        hourly_series = pm25[-24:] if len(pm25) >= 24 else pm25
+        daily_series = []
+        # Group by day
+        days = {}
+        for i, t in enumerate(times):
+            day = t[:10]
+            if pm25[i] is not None:
+                days.setdefault(day, []).append(pm25[i])
+        for day in sorted(days.keys()):
+            daily_series.append(round(sum(days[day]) / len(days[day]), 1))
 
-    return {
-        "source": "waqi",
-        "stations": results,
-        "unavailable": False,
-    }
+        # Compute simplified AQI (Indian standard breakpoints for PM2.5)
+        def pm25_aqi(v):
+            if v is None: return None
+            if v <= 30: return round(v * 50 / 30)
+            if v <= 60: return round(50 + (v - 30) * 50 / 30)
+            if v <= 90: return round(100 + (v - 60) * 100 / 30)
+            if v <= 120: return round(200 + (v - 90) * 100 / 30)
+            if v <= 250: return round(300 + (v - 120) * 100 / 130)
+            return round(400 + (v - 250) * 100 / 130)
+
+        aqi = pm25_aqi(current["pm25"]) or 0
+
+        return {
+            "source": "open-meteo-air-quality",
+            "city": "Pune",
+            "geo": [18.5204, 73.8567],
+            "aqi": aqi,
+            "dominant": "pm25",
+            "iaqi": {
+                "pm25": {"v": current["pm25"]},
+                "pm10": {"v": current["pm10"]},
+                "co": {"v": current["co"]},
+                "no2": {"v": current["no2"]},
+                "so2": {"v": current["so2"]},
+                "o3": {"v": current["o3"]},
+            },
+            "time": current["time"],
+            "iso": current["time"],
+            "attributions": [{"name": "Open-Meteo Air Quality API", "url": "https://open-meteo.com/en/docs/air-quality-api"}],
+            "hourly": hourly_series,
+            "daily": daily_series,
+            "stations": [{"station": "Pune (Open-Meteo)", "city": "Pune", "geo": [18.5204, 73.8567], "aqi": aqi, "dominant": "pm25", "iaqi": {"pm25": {"v": current["pm25"]}, "pm10": {"v": current["pm10"]}}, "time": current["time"], "iso": current["time"], "attributions": [], "forecast": {}}],
+            "unavailable": False,
+        }
+    except Exception as e:
+        return {"unavailable": True, "reason": str(e)}
 
 
 def _ward_ring(ward_no: int) -> Optional[List[Any]]:

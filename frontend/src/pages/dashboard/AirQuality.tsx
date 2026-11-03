@@ -47,7 +47,7 @@ export default function AirQuality() {
       <PageHeader
         eyebrow="Air quality"
         title="Air Quality"
-        badge={<DemoBadge label="WAQI real data" />}
+        badge={<DemoBadge label="Open-Meteo real data" />}
       />
       <DataGate state={state}>
         {(d) => {
@@ -95,7 +95,7 @@ export default function AirQuality() {
                     ]}
                   />
                 }
-                note="Real WAQI data via backend proxy. Free tier: current reading + daily forecast."
+                note="Real Open-Meteo air quality data. Current reading + 3-day forecast. No API key needed."
               >
                 <LineChart
                   values={series}
@@ -155,7 +155,7 @@ export default function AirQuality() {
                 )}
               </div>
 
-              <Panel title="Data sources" note="WAQI data attributions.">
+              <Panel title="Data source" note="Open-Meteo Air Quality API.">
                 {d.attributions.map((a, i) => (
                   <div key={i} style={{ padding: '4px 0', fontSize: '13px', color: '#4a5a55' }}>
                     <a href={a.url} target="_blank" rel="noopener noreferrer" style={{ color: '#1f5a8c', textDecoration: 'underline' }}>
