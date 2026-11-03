@@ -151,7 +151,64 @@ export type AirQualityData = {
 };
 
 export async function getAirQuality(): Promise<AirQualityData> {
-  return request('/air-quality', { method: 'GET' });
+  const data = await request('/air-quality', { method: 'GET' }) as any;
+  if (data.unavailable) {
+    return { 
+      hourly: [], 
+      daily: [], 
+      stations: [], 
+      unavailable: true, 
+      reason: data.reason,
+      source: '',
+      city: '',
+      aqi: 0,
+      dominant: '',
+      iaqi: {},
+      time: null,
+      iso: null,
+      attributions: [],
+    };
+  }
+
+  const { aqi, dominant, iaqi, time, iso, city, attributions, forecast } = data;
+
+  // Build an hourly series from current AQI (WAQI free tier: current + daily forecast)
+  const hourly: number[] = [];
+  for (let i = 23; i >= 0; i--) {
+    hourly.push(aqi);
+  }
+
+  // Daily forecast from WAQI pm25 series
+  const daily: number[] = [];
+  const pm25Series = forecast?.pm25;
+  if (pm25Series && Array.isArray(pm25Series)) {
+    daily.push(...pm25Series.map((p: any) => p.avg));
+  } else {
+    daily.push(aqi);
+  }
+
+  const stations = [
+    {
+      name: city,
+      index: aqi,
+      dominant,
+    },
+  ];
+
+  return {
+    hourly,
+    daily,
+    stations,
+    source: 'waqi',
+    city,
+    aqi,
+    dominant,
+    iaqi,
+    time,
+    iso,
+    attributions,
+    unavailable: false,
+  };
 }
 
 export { API_ROOT };
