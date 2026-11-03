@@ -58,7 +58,7 @@ def main():
     else:
         prompt = base_prompt
 
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent"
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.2, "maxOutputTokens": 1024}
@@ -73,7 +73,22 @@ def main():
         text = data["candidates"][0]["content"]["parts"][0]["text"]
         print(json.dumps({"text": text, "source": "gemini"}))
     except Exception as e:
-        print(json.dumps({"text": f"Gemini error: {e}", "source": "error"}))
+        # Gemini unavailable — fall back to rule-based summary
+        score = assessment.get("score", {}) or {}
+        impact = score.get("impact_score")
+        risk = score.get("risk_band")
+        ev = score.get("evidence_status")
+        factors = score.get("factors", {}) or {}
+        lines = [f"Impact: {impact}/100, Risk: {risk}, Evidence: {ev}."]
+        for k in ("flood", "heat", "green", "carbon"):
+            f = factors.get(k) or {}
+            sc = f.get("score")
+            if sc is not None:
+                lines.append(f"  {k}: {sc}/100")
+            else:
+                lines.append(f"  {k}: UNAVAILABLE")
+        lines.append(f"Note: Gemini narrator temporarily unavailable ({e}). Showing computed values.")
+        print(json.dumps({"text": "\n".join(lines), "source": "fallback"}))
 
 
 if __name__ == "__main__":
