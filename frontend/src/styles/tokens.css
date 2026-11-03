@@ -1,0 +1,46 @@
+/* Design tokens. Change colours, type and spacing here. */
+:root {
+  /* ink and surfaces */
+  --ink: #1b2a26;
+  --ink-soft: #4a5a55;
+  --panel: rgba(255, 252, 246, 0.93);
+  --panel-solid: #fffcf6;
+  --line: rgba(40, 34, 26, 0.18);
+
+  /* nature */
+  --leaf: #2e7d4f;
+  --leaf-deep: #1c5535;
+  --leaf-soft: #dcebe0;
+
+  /* city and pollution */
+  --city: #5b6b73;
+  --haze: #c9b9a3;
+  --dust: #8a735a;
+
+  /* status */
+  --heat: #a8371f;
+  --amber: #7d5400;
+  --good: #1f6b44;
+  --water: #1f5a8c;
+  --focus: #1f5a8c;
+
+  /* type: system stacks only, no external fonts */
+  --f-display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --f-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* spacing, radius, shadow */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --r-sm: 6px;
+  --r: 10px;
+  --shadow: 0 1px 2px rgba(40, 30, 20, 0.08), 0 8px 24px rgba(40, 30, 20, 0.1);
+
+  --sidebar-w: 248px;
+  --sidebar-w-collapsed: 72px;
+  color-scheme: light;
+}

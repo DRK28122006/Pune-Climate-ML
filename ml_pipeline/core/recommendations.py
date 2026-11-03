@@ -15,9 +15,30 @@ vegetation improvement and labelled it "impact".
 
 from __future__ import annotations
 
+import math
 from typing import Any, Dict, List, Optional, Sequence
 
 from ml_pipeline.core.scoring import score_project
+
+
+def _finite_number(value: Any) -> Optional[float]:
+    """Return a finite float, or None for None/non-numeric/NaN/inf.
+
+    Land-cover percentages are measured inputs. They must never fall back to a
+    plausible-looking default in the recommendation path: 60% impervious and
+    30% vegetation were invented for any site whose keys were absent, and a
+    key present with None raised TypeError. Both are missing data, not a
+    baseline to optimise.
+    """
+    if value is None:
+        return None
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(v):
+        return None
+    return v
 
 
 def _apply_materials(
@@ -112,9 +133,24 @@ class RecommendationEngine:
     def _material_substitutions(
         self, site, indicators, region_config, materials_table, base, ledger,
         fraction: float = 0.35,
+        skipped: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """Swap a fraction of each material for its lowest-carbon alternative."""
+        skipped = skipped if skipped is not None else []
         materials = site.get("materials") or []
+        if (base.get("sub_scores") or {}).get("carbon") is None:
+            skipped.append({
+                "id": "material_substitution",
+                "reason": "carbon was UNAVAILABLE in the baseline; no "
+                          "substitution effect can be verified",
+            })
+            return []
+        if not materials:
+            skipped.append({
+                "id": "material_substitution",
+                "reason": "no bill-of-quantities materials supplied",
+            })
+            return []
         swapped = _apply_materials(materials, {
             name: fraction for name in
             {str(m.get("name") or m.get("material") or "") for m in materials}
@@ -145,11 +181,32 @@ class RecommendationEngine:
     def _impervious_reduction(
         self, site, indicators, region_config, materials_table, base, ledger,
         reduction_pct: float = 18.0,
+        skipped: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """Convert impervious area to permeable. Raises vegetation, lowers impervious."""
-        imperv = float(indicators.get("impervious_pct", 60.0))
-        veg = float(indicators.get("vegetation_pct", 30.0))
-        shift = min(reduction_pct, imperv)
+        skipped = skipped if skipped is not None else []
+        imperv = _finite_number(indicators.get("impervious_pct"))
+        veg = _finite_number(indicators.get("vegetation_pct"))
+        if imperv is None or veg is None:
+            skipped.append({
+                "id": "impervious_reduction",
+                "reason": "impervious_pct or vegetation_pct unavailable",
+            })
+            return []
+        if (base.get("sub_scores") or {}).get("flood") is None:
+            skipped.append({
+                "id": "impervious_reduction",
+                "reason": "flood was UNAVAILABLE in the baseline; no "
+                          "improvement can be verified",
+            })
+            return []
+        shift = min(reduction_pct, imperv, max(0.0, 100.0 - veg))
+        if shift <= 0:
+            skipped.append({
+                "id": "impervious_reduction",
+                "reason": "no transferable land-cover headroom",
+            })
+            return []
         new_ind = dict(indicators)
         new_ind["impervious_pct"] = imperv - shift
         new_ind["vegetation_pct"] = veg + shift
@@ -167,6 +224,7 @@ class RecommendationEngine:
 
     def _preserve_mature_trees(
         self, site, indicators, region_config, materials_table, base, ledger,
+        skipped: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """Reduce the built-up footprint so mature trees stay on site.
 
@@ -183,25 +241,65 @@ class RecommendationEngine:
         if not ledger or not ledger.get("always_preserve_count"):
             return []
 
+        skipped = skipped if skipped is not None else []
+        if (base.get("sub_scores") or {}).get("green") is None:
+            skipped.append({
+                "id": "preserve_mature_trees",
+                "reason": "green was UNAVAILABLE in the baseline; no "
+                          "improvement can be verified",
+            })
+            return []
+
         preserve = ledger["always_preserve_count"]
-        canopy_saved = ledger.get("always_preserve_canopy_m2", 0.0)
-        canopy_now_pct = float(ledger.get("canopy_cover_pct", 0.0) or 0.0)
+        canopy_saved = _finite_number(ledger.get("always_preserve_canopy_m2"))
+        canopy_saved = canopy_saved if canopy_saved is not None else 0.0
+        # Match the value the scorer actually uses. canopy_cover_pct is the
+        # existing canopy; the scoring path uses the proposed value. A missing
+        # or non-numeric canopy is not 0% -- skip rather than invent one.
+        canopy_now_pct = _finite_number(
+            ledger.get("canopy_cover_pct_proposed",
+                       ledger.get("canopy_cover_pct"))
+        )
+        if canopy_now_pct is None:
+            skipped.append({
+                "id": "preserve_mature_trees",
+                "reason": "canopy cover unavailable; the retained-canopy "
+                          "gain cannot be modelled",
+            })
+            return []
+        plot_area = _finite_number(site.get("plotAreaSqm"))
+        built_area = _finite_number(site.get("builtUpAreaSqm"))
+        if plot_area is None or plot_area <= 0:
+            skipped.append({
+                "id": "preserve_mature_trees",
+                "reason": "plotAreaSqm unavailable; the retained-canopy "
+                          "share cannot be modelled",
+            })
+            return []
+        if built_area is None or built_area <= 0:
+            skipped.append({
+                "id": "preserve_mature_trees",
+                "reason": "builtUpAreaSqm unavailable; the footprint proxy "
+                          "cannot be modelled",
+            })
+            return []
 
         # Preserving canopy can only raise census canopy coverage, never lower
         # it. Adding the retained canopy is the correct direction; the earlier
         # version halved the ledger's canopy, which modelled the trees as being
         # REMOVED and made this action look like a green regression.
         retained_pct = min(
-            100.0, canopy_now_pct + 100.0 * canopy_saved / max(1.0, float(site.get("plotAreaSqm", 1.0)))
+            100.0, canopy_now_pct + 100.0 * canopy_saved / max(1.0, plot_area)
         )
 
         new_site = dict(site)
         # Same materials, smaller footprint: carbon intensity per m2 rises even
         # though absolute emissions are unchanged.
-        new_site["builtUpAreaSqm"] = float(site.get("builtUpAreaSqm", 1.0)) * 0.92
+        new_site["builtUpAreaSqm"] = built_area * 0.92
 
         new_ledger = dict(ledger)
         new_ledger["canopy_cover_pct"] = max(0.0, retained_pct)
+        new_ledger["canopy_cover_pct_proposed"] = max(0.0, retained_pct)
 
         res = _rescore(new_site, indicators, region_config, materials_table, new_ledger)
         d = _delta(res, base)
@@ -260,16 +358,39 @@ class RecommendationEngine:
         """All candidate actions, each with a verified impact delta."""
         base = _rescore(site, indicators, region_config, materials_table, ledger)
 
+        skipped_actions: List[Dict[str, Any]] = []
         candidates: List[Dict[str, Any]] = []
         candidates += self._impervious_reduction(
-            site, indicators, region_config, materials_table, base, ledger
+            site, indicators, region_config, materials_table, base, ledger,
+            skipped=skipped_actions,
         )
         candidates += self._material_substitutions(
-            site, indicators, region_config, materials_table, base, ledger
+            site, indicators, region_config, materials_table, base, ledger,
+            skipped=skipped_actions,
         )
         candidates += self._preserve_mature_trees(
-            site, indicators, region_config, materials_table, base, ledger
+            site, indicators, region_config, materials_table, base, ledger,
+            skipped=skipped_actions,
         )
+
+        # Defence in depth: no recommendation may claim to improve a factor
+        # that was UNAVAILABLE in the baseline. Mandatory (blocking) sourcing
+        # conditions are not improvement claims, so they are exempt.
+        baseline_scores = base.get("sub_scores") or {}
+        eligible: List[Dict[str, Any]] = []
+        for c in candidates:
+            affected = c.get("affected")
+            if (not c.get("blocking")
+                    and affected in baseline_scores
+                    and baseline_scores.get(affected) is None):
+                skipped_actions.append({
+                    "id": c.get("id"),
+                    "reason": f"{affected} was UNAVAILABLE in the baseline; "
+                              f"no improvement can be verified",
+                })
+                continue
+            eligible.append(c)
+        candidates = eligible
 
         # Also surface blocking advisories (e.g. riverbed sand) as mandatory
         # conditions regardless of any numeric score.
@@ -312,7 +433,11 @@ class RecommendationEngine:
             "baseline_impact": base.get("impact_score"),
             "baseline_climate": base.get("climate_score"),
             "baseline_risk": base.get("risk_band"),
+            "baseline_evidence_status": base.get("evidence_status"),
+            "baseline_decision_grade": base.get("decision_grade"),
+            "baseline_available_factor_count": base.get("available_factor_count"),
             "recommendations": verified,
+            "skipped_actions": skipped_actions,
             "dropped_unverified": [
                 {"id": c["id"], "reason": "rescoring showed no measurable improvement"}
                 for c in unverified
@@ -356,12 +481,16 @@ class RecommendationEngine:
         ]
         total_shift = sum(shifts)
         if total_shift > 0:
-            imperv = float(indicators.get("impervious_pct", 60.0))
-            veg = float(indicators.get("vegetation_pct", 30.0))
-            # Never drive impervious negative or vegetation above 100.
-            total_shift = min(total_shift, imperv, max(0.0, 100.0 - veg))
-            new_ind["impervious_pct"] = imperv - total_shift
-            new_ind["vegetation_pct"] = veg + total_shift
+            # Same numeric guard as the individual action: no 60/30 defaults.
+            imperv = _finite_number(indicators.get("impervious_pct"))
+            veg = _finite_number(indicators.get("vegetation_pct"))
+            if imperv is None or veg is None:
+                total_shift = 0.0
+            else:
+                # Never drive impervious negative or vegetation above 100.
+                total_shift = min(total_shift, imperv, max(0.0, 100.0 - veg))
+                new_ind["impervious_pct"] = imperv - total_shift
+                new_ind["vegetation_pct"] = veg + total_shift
 
         # Aggregate: footprint rescale for tree preservation.
         # FIX 2026-10-10: the old code rescaled the footprint but rescored
@@ -370,14 +499,25 @@ class RecommendationEngine:
         # Mirror _preserve_mature_trees: carry the retained canopy forward.
         new_ledger = ledger
         if any(c["id"] == "preserve_mature_trees" for c in verified):
-            new_site["builtUpAreaSqm"] = float(site.get("builtUpAreaSqm", 1.0)) * 0.92
-            preserved_canopy = float((ledger or {}).get("always_preserve_canopy_m2", 0.0) or 0.0)
-            canopy_now = float((ledger or {}).get("canopy_cover_pct", 0.0) or 0.0)
-            plot = float(site.get("plotAreaSqm", 1.0) or 1.0)
-            new_ledger = dict(ledger or {})
-            new_ledger["canopy_cover_pct"] = min(
-                100.0, max(0.0, canopy_now + 100.0 * preserved_canopy / max(1.0, plot))
-            )
+            built_area = _finite_number(site.get("builtUpAreaSqm"))
+            plot = _finite_number(site.get("plotAreaSqm"))
+            if built_area is not None and built_area > 0 and plot is not None and plot > 0:
+                new_site["builtUpAreaSqm"] = built_area * 0.92
+                preserved_canopy = _finite_number(
+                    (ledger or {}).get("always_preserve_canopy_m2")
+                ) or 0.0
+                canopy_now = _finite_number(
+                    (ledger or {}).get("canopy_cover_pct_proposed",
+                                       (ledger or {}).get("canopy_cover_pct"))
+                )
+                if canopy_now is not None:
+                    new_ledger = dict(ledger or {})
+                    retained_pct = min(
+                        100.0,
+                        max(0.0, canopy_now + 100.0 * preserved_canopy / max(1.0, plot)),
+                    )
+                    new_ledger["canopy_cover_pct"] = retained_pct
+                    new_ledger["canopy_cover_pct_proposed"] = retained_pct
 
         res = _rescore(new_site, new_ind, region_config, materials_table, new_ledger)
         d = _delta(res, base)

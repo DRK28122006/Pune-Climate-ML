@@ -12,7 +12,7 @@ What it produces per grid cell (~1000 m, so a citywide cube stays small):
     vegetation_pct             NDVI-classified vegetation
     impervious_pct             built + bare fraction
     tree_canopy_pct            Dynamic World tree probability
-    elevation_m / slope_deg    SRTM 30 m
+    elevation_m / mean_slope_deg  SRTM 30 m
 
 Why reference is per-cell and not per-plot
 ------------------------------------------
@@ -347,10 +347,12 @@ def dynamic_world_bare_season(epoch: int) -> ee.Image:
         start, end
     ).filterBounds(ee.Geometry.Rectangle(BBOX, proj="EPSG:4326", geodesic=False))
 
-    def keep(image: ee.Image) -> ee.Image:
-        return image.updateMask(image.select("label").neq(0))
-
-    dw = dw.map(keep)
+    # Dynamic World label 0 is WATER, not no-data. The previous
+    # `label != 0` mask removed every water pixel before averaging, which
+    # renormalised the bare probability over land only and inflated the
+    # bare-season share. Dynamic World is a full-coverage product, so no
+    # label mask is needed here.
+    #
     # Probability, not mode: over a 3-month window the bare fraction is the
     # quantity of interest, and mode would again erase a class that dominates
     # only briefly. Here the soft mean is correct because it is read as a
@@ -359,9 +361,15 @@ def dynamic_world_bare_season(epoch: int) -> ee.Image:
 
 
 def terrain() -> ee.Image:
-    """SRTM 30 m elevation. Band is `elevation`; slope is computed by GEE in
-    degrees when we ask for it, so we do not precompute it here."""
+    """SRTM 30 m elevation."""
     return ee.Image("USGS/SRTMGL1_003").rename("elevation_m")
+
+
+def terrain_slope() -> ee.Image:
+    """SRTM 30 m slope in degrees, reduced to the cube as mean_slope_deg."""
+    return ee.Terrain.slope(ee.Image("USGS/SRTMGL1_003")).rename(
+        "mean_slope_deg"
+    )
 
 
 def grid_cells() -> List[Dict[str, Any]]:
@@ -517,6 +525,7 @@ def reduce_extent(
     terr: ee.Image,
     bare_season: Optional[ee.Image] = None,
     night: Optional[ee.Image] = None,
+    slope: Optional[ee.Image] = None,
 ) -> Dict[str, Any]:
     """Reduce the WHOLE extent in a few calls, keyed the same as reduce_cell.
 
@@ -584,6 +593,10 @@ def reduce_extent(
     )
     if bare_season is not None:
         other_image = other_image.addBands(bare_season.rename("bare_season_pct"))
+    if slope is not None:
+        # Mean 30 m slope, not the slope of the 1 km cell centres. Stored so
+        # downstream scoring never has to invent a 3-degree placeholder.
+        other_image = other_image.addBands(slope.rename("mean_slope_deg"))
     other_fc = other_image.reduceRegions(
         collection=fc,
         reducer=ee.Reducer.mean(),
@@ -868,6 +881,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     dw = dynamic_world_tree(epoch)
     bare_season = dynamic_world_bare_season(epoch)
     terr = terrain()
+    slope = terrain_slope()
     night = night_temperature(epoch, args.night_season[0], args.night_season[1])
     if args.night_season != ["01-01", "01-01"]:
         print(f"night season window: {args.night_season[0]} .. {args.night_season[1]}")
@@ -879,7 +893,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     # One reduceRegions over the whole grid, not 864 x 2 reduceRegion calls.
     # The per-cell loop cost ~1,700 sequential HTTP round-trips and looked
     # like a hang because it burns no CPU while blocked on the network.
-    out_cells = reduce_extent(lst, veg, dw, terr, bare_season, night)
+    out_cells = reduce_extent(
+        lst, veg, dw, terr, bare_season, night, slope=slope
+    )
 
     with_ok = sum(1 for v in out_cells.values() if v)
     with_lst = sum(1 for v in out_cells.values() if v.get("lst_mean_c") is not None)
@@ -907,6 +923,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             "vegetation": "Derived from the Dynamic World partition (trees+grass+crops+shrub_and_scrub), NOT Sentinel-2 NDVI. NDVI read roughly half the true cover.",
             "landcover": "GOOGLE/DYNAMICWORLD/V1 per-pixel MAJORITY-VOTE hard labels (9 classes), not mean probability bands (which spread uncertainty into phantom snow).",
             "elevation": "USGS/SRTMGL1_003",
+            "slope": "ee.Terrain.slope over USGS/SRTMGL1_003, reduced to mean degrees per cell",
         },
         "stats": {
             "cells_total": len(cells),

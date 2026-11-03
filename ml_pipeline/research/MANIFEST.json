@@ -10,8 +10,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "data.opencity.in",
     "tracked": false,
-    "status": "missing",
-    "notes": "17 CSV parts, ~1.2 GB. Rebuild: python ml_pipeline/data/fetch_census_parts.py --all (requires user approval). Not downloaded this session."
+    "status": "present",
+    "notes": "17 CSV parts, ~1.2 GB. Downloaded. Not committed (gitignored)."
   },
   {
     "id": "census-ward-profile",
@@ -80,8 +80,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-boq_low_carbon",
@@ -94,8 +94,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-carbon_high_carbon",
@@ -108,8 +108,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-carbon_low_carbon",
@@ -122,8 +122,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-e2e_summary",
@@ -136,8 +136,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_03",
@@ -150,8 +150,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_07",
@@ -164,8 +164,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_12",
@@ -178,8 +178,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_13",
@@ -192,8 +192,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_21",
@@ -206,8 +206,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_25",
@@ -220,8 +220,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_30",
@@ -234,8 +234,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_33",
@@ -248,8 +248,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_37",
@@ -262,8 +262,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_39",
@@ -276,8 +276,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "e2e-ward_41",
@@ -290,8 +290,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "End-to-end assessment output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "epoch-cube",
@@ -522,28 +522,28 @@
     "title": "Reference layers sqlite (missing)",
     "kind": "external",
     "path": "ml_pipeline/data/reference_layers.sqlite",
-    "bytes": null,
-    "sha256": null,
+    "bytes": 21663744,
+    "sha256": "708afa33746552c5e9e06b33b5000ed4d57c25a4dd903eda1ad2ee65cdc945a7",
     "source": "ml_pipeline/data/reference_layers.py",
     "retrieved_at": "2026-11-02",
     "licence": "derived",
     "tracked": false,
-    "status": "missing",
-    "notes": "Parks/nallas/drains. Rebuild after KML/KMZ available."
+    "status": "present",
+    "notes": "41 wards, 141,341 storm drains. Parks=0, nallas=0, rivers=0 (KMLs missing). Not committed (gitignored *.sqlite)."
   },
   {
     "id": "report-pdf",
     "title": "Dishadharti ML Report (PDF)",
     "kind": "report",
     "path": "docs/Dishadharti_ML_Report.pdf",
-    "bytes": 851294,
-    "sha256": "45be7934aba3b35dd6f87b40224ce2469d3b22ad4da0a9a168758f9472f329cd",
+    "bytes": 851446,
+    "sha256": "445d23ac92f0bc934a833f8e4c798423d554d5fa6df6040f5a8a5d6c290d3a1f",
     "source": "repository / report pipeline",
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
     "status": "current",
-    "notes": "Technical report. Do not edit; regenerate from scripts."
+    "notes": "Regenerated Session 12 from make_report.py using ward_validation.json."
   },
   {
     "id": "review-draft",
@@ -564,14 +564,14 @@
     "title": "Site validation",
     "kind": "validation",
     "path": "ml_pipeline/data/site_validation.json",
-    "bytes": 4554,
-    "sha256": "6f95f7cd25db5626c6c8415e2af2909cc06707c16fe2c0325de010b63aa1fd75",
+    "bytes": 7047,
+    "sha256": "017d9e893079bcefa52eec4142ea1da3f48789d8d09086bc1e4446042a02e48e",
     "source": "ml_pipeline/data/validate_sites.py",
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "stale",
-    "notes": "Stale validation artifact (C5)."
+    "status": "current",
+    "notes": "Regenerated Session 11. Night LST, varied carbon BOQ, unknown canopy handling."
   },
   {
     "id": "stormwater-kmz",
@@ -598,8 +598,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w02",
@@ -612,8 +612,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w03",
@@ -626,8 +626,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w04",
@@ -640,8 +640,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w05",
@@ -654,8 +654,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w07",
@@ -668,8 +668,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w09",
@@ -682,8 +682,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w11",
@@ -696,8 +696,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w12",
@@ -710,8 +710,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w13",
@@ -724,8 +724,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w14",
@@ -738,8 +738,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w16",
@@ -752,8 +752,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w18",
@@ -766,8 +766,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w21",
@@ -780,8 +780,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w22",
@@ -794,8 +794,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w23",
@@ -808,8 +808,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w25",
@@ -822,8 +822,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w26",
@@ -836,8 +836,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w27",
@@ -850,8 +850,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w30",
@@ -864,8 +864,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w31",
@@ -878,8 +878,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w33",
@@ -892,8 +892,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w34",
@@ -906,8 +906,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w36",
@@ -920,8 +920,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w37",
@@ -934,8 +934,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w38",
@@ -948,8 +948,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w39",
@@ -962,8 +962,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w40",
@@ -976,8 +976,8 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "stress-w41",
@@ -990,35 +990,147 @@
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "current",
-    "notes": "Ward-level stress output."
+    "status": "stale",
+    "notes": "STALE \u2014 pre-safety-fix artifact with fabricated slope (3.0), drainage (150/200), and census total (4,009,624). See STALE.md."
   },
   {
     "id": "tree-index",
     "title": "Tree index sqlite (missing)",
     "kind": "external",
     "path": "ml_pipeline/data/tree_index.sqlite",
-    "bytes": null,
-    "sha256": null,
+    "bytes": 1129594880,
+    "sha256": "2a1bc91875dbfc5a0825cd1a9e3df841a72b56a4981dbdf47e32113bd6ea93e4",
     "source": "built from census via ml_pipeline/cli.py build-data",
     "retrieved_at": "2026-11-02",
     "licence": "derived",
     "tracked": false,
-    "status": "missing",
-    "notes": "~52 MB. Rebuild: fetch_census_parts.py --all then python -m ml_pipeline.cli build-data. Do not fake."
+    "status": "local-only",
+    "notes": "4,009,623 unique trees. Built from census. Not committed (gitignored *.sqlite)."
   },
   {
     "id": "ward-validation",
     "title": "Ward validation",
     "kind": "validation",
     "path": "ml_pipeline/data/ward_validation.json",
-    "bytes": 2951,
-    "sha256": "1dd639a5694610941348184a660535b9ad196bb421cfd82fb66a8e8505f974d7",
+    "bytes": 5413,
+    "sha256": "0528b4526b91e663630815a32778cdbf41ada0dabddab794af99e0db3f934d13",
     "source": "ml_pipeline/data/validate_wards.py",
     "retrieved_at": "2026-11-02",
     "licence": "internal",
     "tracked": true,
-    "status": "stale",
-    "notes": "6 wards only; uses day LST and 2.0 C span (C5). Do not hand-edit; regenerate from script."
+    "status": "current",
+    "notes": "Regenerated Session 11. Night LST, true area weighting, provenance block."
+  },
+  {
+    "id": "example-assessment",
+    "title": "Example assessment JSON",
+    "kind": "example",
+    "path": "docs/example_assessment.json",
+    "bytes": 193404,
+    "sha256": "96697a11efc41dcb1c77c9b3d516bfb8772b0a946b029033c903d1e6fcd9f2e7",
+    "source": "Regenerated Session 12 via ml_pipeline/cli.py assess --ward 12",
+    "retrieved_at": "2026-11-03",
+    "licence": "internal",
+    "tracked": true,
+    "status": "current",
+    "notes": "Regenerated with real scorer. mean_slope_deg=None (slope missing). dist_to_storm_drain_m=38.2 (real, from storm drain layer). All 4 factors scored. evidence_status=COMPLETE."
+  },
+  {
+    "id": "stress-stale-md",
+    "title": "Stale artifact notice",
+    "kind": "notice",
+    "path": "ml_pipeline/data/stress/STALE.md",
+    "bytes": 728,
+    "sha256": "19543113e3ae26b3e6985d7837ed7816c9760096118eaae542ac5f1f22e38005",
+    "source": "Session 12",
+    "retrieved_at": "2026-11-03",
+    "licence": "internal",
+    "tracked": true,
+    "status": "current",
+    "notes": "Marks stress/e2e artifacts as stale (fabricated values)."
+  },
+  {
+    "id": "e2e-stale-md",
+    "title": "Stale artifact notice",
+    "kind": "notice",
+    "path": "ml_pipeline/data/e2e/STALE.md",
+    "bytes": 810,
+    "sha256": "225f9e8dea2288211527badc62d2f8d1c93c5f73cf77d97b0b00881054355da1",
+    "source": "Session 12",
+    "retrieved_at": "2026-11-03",
+    "licence": "internal",
+    "tracked": true,
+    "status": "current",
+    "notes": "Marks stress/e2e artifacts as stale (fabricated values)."
+  },
+  {
+    "id": "flood-layers-sqlite",
+    "title": "Flood layers (OSM waterways, PROXIMITY_ONLY)",
+    "kind": "external",
+    "path": "ml_pipeline/data/flood_layers.sqlite",
+    "bytes": 241664,
+    "sha256": "5c418349cacd0d008770f266ac581c021c0bdff92427cecd200d3dd30f8bb9e8",
+    "source": "OSM Overpass (maps.mail.ru mirror), tiled fetch 2026-11-03",
+    "retrieved_at": "2026-11-03",
+    "licence": "ODbL-1.0",
+    "tracked": false,
+    "status": "present",
+    "notes": "172 waterways (stream 97, canal 40, drain 23, river 12). Gitignored (*.sqlite). Rebuilt from tracked flood_layers_raw.json with build_flood_layers.py; only meta.raw_path changed. Proximity only; not an inundation extent."
+  },
+  {
+    "id": "flood-layers-raw",
+    "title": "OSM Overpass raw snapshot (Pune bbox, 2026-11-03)",
+    "kind": "external",
+    "path": "ml_pipeline/data/flood_layers_raw.json",
+    "bytes": 377059,
+    "sha256": "4ad69abcc2982e1cdc434b96f2960ae0139d6c1d35210a89a3510fcc363b87e6",
+    "source": "OSM Overpass (maps.mail.ru mirror), tiled fetch 2026-11-03",
+    "retrieved_at": "2026-11-03",
+    "licence": "ODbL-1.0",
+    "tracked": true,
+    "status": "current",
+    "notes": "Durable build input for flood_layers.sqlite. 172 waterways after filtering. Rebuild: python ml_pipeline/data/build_flood_layers.py --expect-sha256 5c418349cacd0d008770f266ac581c021c0bdff92427cecd200d3dd30f8bb9e8"
+  },
+  {
+    "id": "heat-crosscheck-csv",
+    "title": "Heat cross-check 2024 (Open-Meteo night air temp)",
+    "kind": "validation",
+    "path": "ml_pipeline/data/heat_crosscheck_2024.csv",
+    "bytes": 3988,
+    "sha256": "bc5c8aaca1fc97428328553a70448bcf2cfbf52a8aa7f1fbb4e3b625f191d85a",
+    "source": "Open-Meteo Archive API (2024, hourly temperature_2m)",
+    "retrieved_at": "2026-11-03",
+    "licence": "Open-Meteo (CC BY 4.0)",
+    "tracked": true,
+    "status": "current",
+    "notes": "41 wards. Result: Spearman rho = 0.2328, p = 0.143, INCONCLUSIVE. Tracked via .gitignore exception. See HEAT_CROSSCHECK.md."
+  },
+  {
+    "id": "heat-crosscheck-json",
+    "title": "Heat cross-check 2024 — full ward rows and summary",
+    "kind": "validation",
+    "path": "ml_pipeline/data/heat_crosscheck_2024.json",
+    "bytes": 13136,
+    "sha256": "32fc6c521cc3d44e774572d7d7be410a31cf4af873fe75893dec17c2fc6f025e",
+    "source": "Open-Meteo Archive API + epoch_cube night LST",
+    "retrieved_at": "2026-11-03",
+    "licence": "Open-Meteo (CC BY 4.0); LST internal",
+    "tracked": true,
+    "status": "current",
+    "notes": "41 rows with lst_night_mean_c. rho 0.2328, p 0.1430, permutation 0.1406, INCONCLUSIVE. Verify: python ml_pipeline/data/heat_crosscheck.py."
+  },
+  {
+    "id": "slope-band",
+    "title": "Derived 1 km slope band (evidence only; not enabled)",
+    "kind": "derived",
+    "path": "ml_pipeline/data/slope_band.json",
+    "bytes": 53695,
+    "sha256": "44980c245d6ae06f536801770e7133dfb2e6121c4f02853444af8222d97dd2d9",
+    "source": "epoch_cube.json elevation_m, WGS84 finite difference (Session 15)",
+    "retrieved_at": "2026-11-03",
+    "licence": "internal",
+    "tracked": true,
+    "status": "evidence",
+    "notes": "864/864 cells; median 0.8400 deg, p95 4.9895 deg, max 11.58 deg; 372 cells >1 deg, 43 >5 deg. Gate FAIL (0/6 wards, max +0.90); slope remains disabled."
   }
 ]

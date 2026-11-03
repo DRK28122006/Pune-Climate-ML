@@ -12,10 +12,20 @@ Reports, for 2024 over the PMC bbox:
 Bar for building the day cube layer (same as night): correctly signed
 city delta > +1 C and |r| > 0.5 with the physical drivers.
 
+Optional GEE script: skipped when `ee` is not installed.
+
 Usage:
-    PYTHONPATH=. .venv/bin/python ml_pipeline/data/day_signal_test.py
+    PYTHONPATH=. python ml_pipeline/data/day_signal_test.py
 """
-import ee
+try:
+    import ee  # noqa: F401
+except ImportError:
+    try:
+        import pytest  # noqa: F401
+        pytest.importorskip("ee")
+    except ImportError:
+        print("SKIP: ee (Google Earth Engine) is not installed; this script requires it.")
+        raise SystemExit(0)
 
 BBOX = [73.7318, 18.3856, 74.0183, 18.6216]
 RURAL_PAD = 0.09  # ~10 km halo outside the bbox

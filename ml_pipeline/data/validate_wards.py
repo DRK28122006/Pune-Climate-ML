@@ -35,6 +35,11 @@ CONFIG_DIR = REPO / "ml_pipeline" / "config"
 CUBE = REPO / "ml_pipeline" / "data" / "epoch_cube.json"
 OUT = REPO / "ml_pipeline" / "data" / "ward_validation.json"
 KML_WARDS = REPO / "ml_pipeline" / "research" / "05_sources" / "kml" / "pmc_wards_2025.kml"
+REF_DB = REPO / "ml_pipeline" / "data" / "reference_layers.sqlite"
+
+# Working CRS for area/distance maths. Shapely + pyproj are installed and used
+# by reference_layers.py for the same purpose.
+UTM43N = "EPSG:32643"
 
 # Identical site assumptions across every ward, so the ONLY thing varying is
 # location. A fixed 2,000 m2 footprint on a 4,000 m2 plot (50% built) and a
@@ -97,71 +102,100 @@ def _cell_ring(lon: float, lat: float, cell_deg: float) -> List[Any]:
     ]
 
 
-def _cells_for_ward(ring: List[Any], cube: Dict[str, Any]) -> Dict[str, Any]:
-    """Return area-weighted indicators for all cube cells intersecting the ward.
+def _project_ring(ring: List[Any]) -> List[tuple]:
+    """Project a lon/lat ring to EPSG:32643 using pyproj."""
+    from pyproj import Transformer
+    tr = Transformer.from_crs("EPSG:4326", UTM43N, always_xy=True)
+    return [tr.transform(lon, lat) for lon, lat in ring]
 
-    Majority-overlap by cell centre for membership, then area-weighted by cell
-    intersection. Reports cells_used and an area-coverage fraction. No single
-    centroid sample.
+
+def _cells_for_ward(ring: List[Any], cube: Dict[str, Any]) -> Dict[str, Any]:
+    """Return true area-weighted indicators for all cube cells intersecting the ward.
+
+    Each cube cell is a ~1 km square in lon/lat. We project both the ward
+    polygon and each cell polygon to EPSG:32643, compute the actual polygon-cell
+    intersection area, and weight each cell's indicators by that intersection.
+    Coverage is sum(intersection_area) / ward_area -- not selected_cells *
+    cell_area / ward_area, which overcounts edge cells.
     """
     from ml_pipeline.core import geometry as G
+    from shapely.geometry import Polygon
+    from pyproj import Transformer
+
+    tr = Transformer.from_crs("EPSG:4326", UTM43N, always_xy=True)
+
+    def to_utm(ring_ll: List[tuple]) -> List[tuple]:
+        return [tr.transform(lon, lat) for lon, lat in ring_ll]
+
+    ward_poly_utm = Polygon(to_utm(ring))
+    if not ward_poly_utm.is_valid or ward_poly_utm.area <= 0:
+        return {"cells_used": 0, "area_coverage": 0.0, "indicators": None}
+    ward_area_m2 = ward_poly_utm.area
 
     cell_deg = float(cube.get("cell_deg", 0.009))
     cells = cube.get("cells", {})
+    h = cell_deg / 2.0
+
     selected: List[str] = []
+    weights: Dict[str, float] = {}
+    covered_m2 = 0.0
     for key, cell in cells.items():
         try:
             clon, clat = (float(x) for x in key.split("_"))
         except (ValueError, AttributeError):
             continue
-        if G.point_in_polygon((clon, clat), ring):
+        cell_ring_ll = [
+            (clon - h, clat - h), (clon + h, clat - h),
+            (clon + h, clat + h), (clon - h, clat + h),
+            (clon - h, clat - h),
+        ]
+        cell_poly_utm = Polygon(to_utm(cell_ring_ll))
+        if not cell_poly_utm.is_valid or cell_poly_utm.area <= 0:
+            continue
+        inter = ward_poly_utm.intersection(cell_poly_utm)
+        inter_area = inter.area if not inter.is_empty else 0.0
+        if inter_area > 0:
             selected.append(key)
+            weights[key] = inter_area / cell_poly_utm.area
+            covered_m2 += inter_area
 
     if not selected:
         return {"cells_used": 0, "area_coverage": 0.0, "indicators": None}
 
-    # Area weight each selected cell by its intersection with the ward polygon.
-    # Approximate intersection area as the cell area clipped to the ward bbox
-    # using the cell centre membership already established; full polygon clip is
-    # expensive and the cells are ~1 km. Report coverage as selected/total cells
-    # weighted by cell area.
-    sample_key = selected[0].split("_")
-    cell_area_m2 = G.polygon_area_m2(_cell_ring(float(sample_key[0]), float(sample_key[1]), cell_deg))
+    coverage = min(1.0, covered_m2 / ward_area_m2) if ward_area_m2 > 0 else 0.0
 
-    ward_area_m2 = G.polygon_area_m2(ring)
-    covered_m2 = len(selected) * cell_area_m2
-    coverage = (covered_m2 / ward_area_m2) if ward_area_m2 > 0 else 0.0
-    coverage = min(1.0, coverage)
-
-    def _mean(field: str) -> Optional[float]:
-        vals = [cells[k].get(field) for k in selected if cells[k].get(field) is not None]
-        if not vals:
+    def _weighted(field: str) -> Optional[float]:
+        num = 0.0
+        den = 0.0
+        for k in selected:
+            v = cells[k].get(field)
+            if v is None:
+                continue
+            num += float(v) * weights[k]
+            den += weights[k]
+        if den <= 0:
             return None
-        return sum(vals) / len(vals)
+        return num / den
 
-    def _mean_pct(field: str) -> Optional[float]:
-        v = _mean(field)
+    def _weighted_pct(field: str) -> Optional[float]:
+        v = _weighted(field)
         return (v * 100.0) if v is not None else None
 
     indicators = {
-        "impervious_pct": _mean_pct("built_pct"),
-        "vegetation_pct": _mean_pct("vegetation_pct"),
-        "water_pct": _mean_pct("water_pct"),
-        "bare_pct": _mean_pct("bare_pct"),
-        "bare_season_pct": _mean("bare_season_pct"),
-        "lst_mean_c": _mean("lst_mean_c"),
-        "lst_reference_c": _mean("lst_reference_c"),
-        "lst_max_c": _mean("lst_max_c"),
-        "lst_night_mean_c": _mean("lst_night_mean_c"),
-        "lst_night_reference_c": _mean("lst_night_reference_c"),
-        "mean_slope_deg": _mean("mean_slope_deg") if any(cells[k].get("mean_slope_deg") is not None for k in selected) else None,
+        "impervious_pct": _weighted_pct("built_pct"),
+        "vegetation_pct": _weighted_pct("vegetation_pct"),
+        "water_pct": _weighted_pct("water_pct"),
+        "bare_pct": _weighted_pct("bare_pct"),
+        "bare_season_pct": _weighted("bare_season_pct"),
+        "lst_mean_c": _weighted("lst_mean_c"),
+        "lst_reference_c": _weighted("lst_reference_c"),
+        "lst_max_c": _weighted("lst_max_c"),
+        "lst_night_mean_c": _weighted("lst_night_mean_c"),
+        "lst_night_reference_c": _weighted("lst_night_reference_c"),
+        "mean_slope_deg": _weighted("mean_slope_deg"),
         "dist_to_storm_drain_m": None,
         "landcover_source": "area_weighted_cube_cells",
     }
-    if indicators["mean_slope_deg"] is None:
-        # fall back to slope_deg if present
-        s = _mean("slope_deg") if "slope_deg" in cells[selected[0]] else None
-        indicators["mean_slope_deg"] = s
 
     return {
         "cells_used": len(selected),
@@ -187,6 +221,13 @@ def _provenance() -> Dict[str, Any]:
     cfg = json.loads((REPO / "ml_pipeline" / "config" / "regions" / "pune.json").read_text())
     cube_path = Path(__file__).resolve().parents[2] / "ml_pipeline" / "data" / "epoch_cube.json"
     cube = json.loads(cube_path.read_text())
+    root = Path(__file__).resolve().parents[2]
+    tree_path = root / "ml_pipeline" / "data" / "tree_index.sqlite"
+    ref_path = root / "ml_pipeline" / "data" / "reference_layers.sqlite"
+    slope_present = any(
+        c.get("mean_slope_deg") is not None
+        for c in cube.get("cells", {}).values()
+    )
     def sha256_file(p):
         import hashlib
         h = hashlib.sha256()
@@ -194,8 +235,6 @@ def _provenance() -> Dict[str, Any]:
             for ch in iter(lambda: f.read(65536), b""):
                 h.update(ch)
         return h.hexdigest()
-    root = Path(__file__).resolve().parents[2]
-    tree_path = root / "ml_pipeline" / "data" / "tree_index.sqlite"
     return {
         "code_commit": commit,
         "working_tree_dirty": dirty,
@@ -204,6 +243,9 @@ def _provenance() -> Dict[str, Any]:
         "epoch_cube_sha256": sha256_file(cube_path),
         "tree_index_sha256": (sha256_file(tree_path) if tree_path.exists() else None),
         "tree_index_status": ("PRESENT" if tree_path.exists() else "MISSING"),
+        "reference_layers_sha256": (sha256_file(ref_path) if ref_path.exists() else None),
+        "reference_layers_status": ("PRESENT" if ref_path.exists() else "MISSING"),
+        "slope_status": ("PRESENT" if slope_present else "MISSING"),
         "heat_mode": "NIGHT_MODIS_LST",
         "design_storm_mm": cfg.get("hydrology", {}).get("design_storm_mm"),
         "hsg": "B",
@@ -389,15 +431,27 @@ def main(argv: Optional[List[str]] = None) -> int:
             "area_coverage": area_coverage,
             "built_pct": indicators["impervious_pct"],
             "veg_pct": indicators["vegetation_pct"],
-            "lst_mean_c": indicators["lst_mean_c"],
-            "lst_ref_c": indicators["lst_reference_c"],
+            # Night LST (MODIS Terra+Aqua) is the heat basis used by the scorer.
+            # Day values are retained only as explicitly labelled legacy diagnostics.
             "lst_night_mean_c": indicators["lst_night_mean_c"],
-            "uhi_delta_c": (indicators["lst_mean_c"] - indicators["lst_reference_c"])
-                           if (indicators["lst_mean_c"] is not None and indicators["lst_reference_c"] is not None)
-                           else None,
-            "trees_loaded": prof.get("trees"),
-            "tree_canopy_pct": prof.get("canopy_cover_pct"),
-            "trees_reliable": prof.get("trees_are_reliable", True),
+            "lst_night_reference_c": indicators["lst_night_reference_c"],
+            "night_uhi_delta_c": (
+                (indicators["lst_night_mean_c"] - indicators["lst_night_reference_c"])
+                if (indicators["lst_night_mean_c"] is not None
+                    and indicators["lst_night_reference_c"] is not None)
+                else None
+            ),
+            "legacy_day_lst_c": indicators["lst_mean_c"],
+            "legacy_day_reference_c": indicators["lst_reference_c"],
+            "legacy_day_uhi_c": (
+                (indicators["lst_mean_c"] - indicators["lst_reference_c"])
+                if (indicators["lst_mean_c"] is not None
+                    and indicators["lst_reference_c"] is not None)
+                else None
+            ),
+            "trees_loaded": prof.get("trees") if prof.get("available") else None,
+            "tree_canopy_pct": prof.get("canopy_cover_pct") if prof.get("available") else None,
+            "trees_reliable": bool(prof.get("trees_are_reliable")) if prof.get("available") else False,
             "sub_scores": res.get("sub_scores"),
         })
 
@@ -410,12 +464,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     print("WARD DISPERSION TEST  (fixed site, location varies)")
     print("=" * 100)
     print(f"{'ward':>5} {'score':>7} {'band':>9} {'built%':>7} {'veg%':>6} "
-          f"{'LST':>7} {'ref':>7} {'UHI':>6} {'trees':>8} {'canopy%':>8}")
+          f"{'nightLST':>7} {'nightRef':>7} {'nightUHI':>6} {'trees':>8} {'canopy%':>8}")
     print("-" * 100)
     for r in sorted(rows, key=lambda x: (x["score"] is None, x["score"])):
-        lst = f"{r['lst_mean_c']:.2f}" if r["lst_mean_c"] is not None else "  -  "
-        ref = f"{r['lst_ref_c']:.2f}" if r["lst_ref_c"] is not None else "  -  "
-        uhi = f"{r['uhi_delta_c']:+.2f}" if r["uhi_delta_c"] is not None else "  -  "
+        lst = f"{r['lst_night_mean_c']:.2f}" if r["lst_night_mean_c"] is not None else "  -  "
+        ref = f"{r['lst_night_reference_c']:.2f}" if r["lst_night_reference_c"] is not None else "  -  "
+        uhi = f"{r['night_uhi_delta_c']:+.2f}" if r["night_uhi_delta_c"] is not None else "  -  "
         bld = f"{r['built_pct']:.1f}" if r["built_pct"] else "  -  "
         veg = f"{r['veg_pct']:.1f}" if r["veg_pct"] else "  -  "
         tr = f"{r['trees_loaded']:,}" if r["trees_loaded"] else "0"
@@ -464,7 +518,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     if complete < len(rows):
         print()
         print(f"WARNING: {len(rows)-complete} ward(s) missing at least one factor.")
-        print("         Check that lst_mean_c and lst_reference_c are non-null for every ward.")
+        print("         Check that lst_night_mean_c and lst_night_reference_c are non-null for every ward.")
 
     Path(args.out).write_text(json.dumps({"rows": rows, "provenance": _provenance()}, indent=2))
     print(f"\nwrote {args.out}")

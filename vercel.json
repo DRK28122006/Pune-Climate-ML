@@ -6,11 +6,6 @@
   "functions": { "api/**/*.js": { "maxDuration": 60 } },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api" },
-    { "source": "/dashboard", "destination": "/index.html" },
-    { "source": "/assessment", "destination": "/index.html" },
-    { "source": "/assessment/result", "destination": "/index.html" },
-    { "source": "/optimizer", "destination": "/index.html" },
-    { "source": "/climate-map", "destination": "/index.html" },
-    { "source": "/reports", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

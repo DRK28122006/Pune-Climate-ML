@@ -1095,6 +1095,34 @@ def _risk_band(impact: float) -> str:
     return "High"
 
 
+# Evidence tiers. The tier is a function of how many of the four factors could
+# be scored, NOT of how good the available numbers look. Only a complete
+# assessment is decision-grade; see
+# research/07_decisions/0012-partial-evidence-contract.md. The weights and the
+# 30/60 approve/condition boundaries are unchanged by this contract.
+EVIDENCE_COMPLETE = "COMPLETE"
+EVIDENCE_PARTIAL = "PARTIAL"
+EVIDENCE_INSUFFICIENT = "INSUFFICIENT"
+EVIDENCE_UNAVAILABLE = "UNAVAILABLE"
+
+
+def _evidence_status(available_count: int, total_factors: int = 4) -> str:
+    """Map the number of scored factors onto the agreed evidence tiers.
+
+    4/4 -> COMPLETE (decision-grade)
+    3/4 -> PARTIAL (numeric diagnostic only, never approval)
+    2/4 -> INSUFFICIENT (no composite, no band)
+    1/4 or 0/4 -> UNAVAILABLE (no composite, no band)
+    """
+    if available_count >= total_factors:
+        return EVIDENCE_COMPLETE
+    if available_count == 3:
+        return EVIDENCE_PARTIAL
+    if available_count == 2:
+        return EVIDENCE_INSUFFICIENT
+    return EVIDENCE_UNAVAILABLE
+
+
 def _decision(
     impact: Optional[float],
     blocking: List[Dict[str, Any]],
@@ -1103,21 +1131,23 @@ def _decision(
     carbon_band: Optional[str] = None,
     complete: bool = True,
     policy: Optional[Dict[str, Any]] = None,
+    evidence_status: Optional[str] = None,
+    available_factor_count: Optional[int] = None,
 ) -> Dict[str, Any]:
     """Turn a composite and its factor scores into a recommendation.
 
     The composite is an arithmetic mean. A single catastrophic factor can be
     diluted by three clean ones, so the verdict is also gated per factor:
     any factor at or above its review threshold, a carbon band configured as
-    review-only, or a partial result forces REVIEW regardless of the weighted
-    number. The weights are deliberately unchanged -- see
-    research/07_decisions/0001-core-safety-policy.md.
+    review-only, or a non-decision-grade evidence tier forces REVIEW regardless
+    of the weighted number. The weights are deliberately unchanged -- see
+    research/07_decisions/0001-core-safety-policy.md and
+    research/07_decisions/0012-partial-evidence-contract.md.
     """
     policy = policy or {}
     default_threshold = float(policy.get("factor_review_threshold", 80.0))
     thresholds = policy.get("factor_review_thresholds", {}) or {}
     review_bands = set(policy.get("carbon_review_bands", ["Very High"]))
-    partial_reviews = bool(policy.get("partial_results_review", True))
     approve_below = float(
         (policy.get("composite") or {}).get("approve_below", 30.0)
     )
@@ -1125,12 +1155,38 @@ def _decision(
         (policy.get("composite") or {}).get("conditions_below", 60.0)
     )
 
+    if evidence_status is None:
+        # Backward-compatible default for direct callers of _decision.
+        evidence_status = EVIDENCE_COMPLETE if complete else EVIDENCE_PARTIAL
+    decision_grade = evidence_status == EVIDENCE_COMPLETE
+    if available_factor_count is None:
+        available_factor_count = (
+            4 if decision_grade else (3 if evidence_status == EVIDENCE_PARTIAL else 0)
+        )
+
     triggers: List[str] = []
     if blocking:
         triggers.append("blocking condition must be resolved before approval")
-    if not complete and partial_reviews:
-        triggers.append(
-            "result is partial: at least one factor is unavailable"
+
+    # A non-decision-grade result is ALWAYS REVIEW, whether the shortfall is
+    # one missing factor (PARTIAL) or more (INSUFFICIENT/UNAVAILABLE). This is
+    # deliberately unconditional rather than honouring a permissive policy
+    # flag: the contract is that a partial assessment can never approve.
+    if evidence_status == EVIDENCE_INSUFFICIENT:
+        triggers.insert(
+            0,
+            f"only {available_factor_count} of 4 factors are available",
+        )
+    elif evidence_status == EVIDENCE_UNAVAILABLE:
+        triggers.insert(
+            0,
+            f"only {available_factor_count} of 4 factors are available",
+        )
+    elif not decision_grade:
+        triggers.insert(
+            0,
+            "result is partial: at least one factor is unavailable, so the "
+            "renormalised composite is a diagnostic only",
         )
 
     for name, value in (factor_scores or {}).items():
@@ -1147,6 +1203,28 @@ def _decision(
         triggers.append(
             f"carbon band '{carbon_band}' requires review by policy"
         )
+
+    if not decision_grade:
+        if evidence_status == EVIDENCE_INSUFFICIENT:
+            headline = (
+                "Review required: insufficient evidence for a decision — "
+                + "; ".join(triggers) + "."
+            )
+        elif evidence_status == EVIDENCE_UNAVAILABLE:
+            headline = (
+                "Review required: assessment unavailable — "
+                + "; ".join(triggers) + "."
+            )
+        else:
+            headline = "Review required: " + "; ".join(triggers) + "."
+        return {
+            "recommendation": Recommendation(
+                "REVIEW",
+                "Review required before approval.",
+            ),
+            "headline": headline,
+            "decision_triggers": triggers,
+        }
 
     if triggers:
         return {
@@ -1284,9 +1362,16 @@ def score_project(
                   used so tree removal affects the green factor
 
     Any factor whose required input is missing returns score=None and is
-    EXCLUDED from the composite with its weight redistributed. A score built
-    from fewer than four factors is reported as partial, and a partial result
-    can never be APPROVE or REJECT_OR_REDESIGN -- it is always REVIEW.
+    EXCLUDED from the composite. The evidence tier follows the number of
+    scored factors (see research/07_decisions/0012-partial-evidence-contract.md):
+
+      4/4 COMPLETE      numeric composite and band, decision-grade
+      3/4 PARTIAL       numeric composite is a labelled diagnostic only
+      2/4 INSUFFICIENT  climate_score, impact_score and risk_band are None
+      1/4,0/4 UNAVAILABLE  all composite fields are None
+
+    A result below 4/4 can never be APPROVE or REJECT_OR_REDESIGN, and it is
+    never decision-grade.
     """
     hyd = region_config.get("hydrology", {}) or {}
     therm = region_config.get("thermal", {}) or {}
@@ -1434,14 +1519,21 @@ def score_project(
 
     available = {k: v for k, v in scores.items() if v is not None}
     missing = [k for k, v in scores.items() if v is None]
+    available_count = len(available)
+    evidence_status = _evidence_status(available_count, len(scores))
+    decision_grade = evidence_status == EVIDENCE_COMPLETE
 
-    if available:
+    # 4/4 -> numeric composite. 3/4 -> numeric DIAGNOSTIC (renormalised and
+    # explicitly non-comparable). 2/4 and below -> no composite at all: there
+    # must be no number downstream that a report could mistake for a decision.
+    impact: Optional[float]
+    if available_count >= 3:
         total_weight = sum(float(weights.get(k, 0.0)) for k in available) or 1.0
         impact = sum(
             float(v) * (float(weights.get(k, 0.0)) / total_weight) for k, v in available.items()
         )
     else:
-        impact = float("nan")
+        impact = None
 
     complete = not missing
 
@@ -1454,30 +1546,55 @@ def score_project(
     ]
 
     contributions: Dict[str, float] = {}
-    if complete:
+    if decision_grade:
         for k, v in available.items():
             contributions[k] = round(float(v) * float(weights.get(k, 0.0)), 1)
 
-    climate_score = (100.0 - impact) if impact == impact else None
+    climate_score = (100.0 - impact) if impact is not None else None
+
+    if decision_grade:
+        partial_notice: Optional[str] = None
+    else:
+        missing_text = ", ".join(missing) if missing else "none"
+        base_notice = (
+            f"Score computed from {available_count} of {len(scores)} factors. "
+            f"Missing: {missing_text}."
+        )
+        if evidence_status == EVIDENCE_PARTIAL:
+            partial_notice = (
+                base_notice
+                + " Weights were renormalised over the available factors, so "
+                  "this composite is a DIAGNOSTIC ONLY — NOT COMPARABLE TO A "
+                  "COMPLETE SCORE. It cannot support an approval."
+            )
+        elif evidence_status == EVIDENCE_INSUFFICIENT:
+            partial_notice = (
+                base_notice
+                + " Insufficient evidence: the composite climate score, impact "
+                  "score and risk band are NOT ISSUED."
+            )
+        else:
+            partial_notice = (
+                base_notice
+                + " Assessment unavailable: the composite climate score, impact "
+                  "score and risk band are NOT ISSUED."
+            )
 
     result: Dict[str, Any] = {
         "climate_score": round(climate_score, 1) if climate_score is not None else None,
-        "impact_score": round(impact, 1) if impact == impact else None,
-        "risk_band": _risk_band(impact) if impact == impact else None,
+        "impact_score": round(impact, 1) if impact is not None else None,
+        "risk_band": _risk_band(impact) if impact is not None else None,
         "complete": complete,
+        "evidence_status": evidence_status,
+        "decision_grade": decision_grade,
+        "available_factor_count": available_count,
         "missing_factors": missing,
+        "partial_notice": partial_notice,
         "sub_scores": {k: (round(v, 1) if v is not None else None) for k, v in scores.items()},
         "weight_contributions": contributions,
         "factors": factors,
         "canopy": ledger,
     }
-
-    if missing:
-        result["partial_notice"] = (
-            f"Score computed from {len(available)} of {len(scores)} factors. "
-            f"Missing: {', '.join(missing)}. Weights were renormalised over the "
-            f"available factors, so this is NOT comparable to a complete score."
-        )
     _blocking: List[Dict[str, Any]] = []
     if carbon.get("unknown_materials"):
         _blocking.append({
@@ -1508,12 +1625,14 @@ def score_project(
     # REJECT_OR_REDESIGN on a renormalised subset of the evidence.
     result.update(
         _decision(
-            impact if impact == impact else None,
+            impact,
             result["blocking_issues"],
             factor_scores=scores,
             carbon_band=carbon.get("band"),
             complete=complete,
             policy=decision_policy,
+            evidence_status=evidence_status,
+            available_factor_count=available_count,
         )
     )
 

@@ -49,10 +49,13 @@ def main():
         built = r.get("built_pct", 0) * 100
         veg = r.get("vegetation_pct", 0) * 100
         water = r.get("water_pct", 0) * 100
-        bare = (r.get("bare_season_pct", r.get("bare_pct", 0)) or 0) * 100
+        bare = (r.get("bare_pct") or 0) * 100
+        seasonal_bare = (r.get("bare_season_pct") or 0) * 100
         nm = r.get("lst_night_mean_c")
 
-        flood = compute_flood(built, veg, water, storm, cn_table, bare_pct=bare)
+        flood = compute_flood(built, veg, water, storm, cn_table,
+                              bare_pct=bare,
+                              bare_season_pct=seasonal_bare)
         heat = compute_heat(nm, night_ref, night_span) if nm is not None else {"score": None}
         green = compute_green(veg, 0.0)  # satellite-only context (no site canopy)
         cells.append({

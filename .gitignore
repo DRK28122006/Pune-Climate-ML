@@ -19,6 +19,9 @@ Thumbs.db
 # Do NOT commit: repo bloat and upstream data licensing.
 *.csv
 
+# Exception: the 41-row heat corroboration summary is small, tracked evidence.
+!ml_pipeline/data/heat_crosscheck_2024.csv
+
 # The PMC Tree Census: 17 parts, ~1.2 GB. Fetched, never committed.
 # Re-derive with: ml_pipeline/data/fetch_census_parts.py --all
 # then: ml_pipeline/cli.py build-data

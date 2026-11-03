@@ -41,6 +41,8 @@ from ml_pipeline.core.scoring import (  # noqa: E402
     scs_cn_runoff_mm,
     UNKNOWN_MASS_EXCLUDE_PCT,
 )
+from ml_pipeline.core.recommendations import RecommendationEngine  # noqa: E402
+from ml_pipeline.report.render import score_block  # noqa: E402
 
 CONFIG_DIR = REPO / "ml_pipeline" / "config"
 SPECIES = json.loads((CONFIG_DIR / "species.json").read_text())
@@ -1371,6 +1373,237 @@ def test_flood_day_fallback_not_scored():
 def test_heat_night_uses_percentile_scale_label():
     r = compute_heat(lst_mean_c=20.0, lst_reference_c=17.96, uhi_max_delta_c=5.0)
     assert str(r["heat_scale"]).startswith("percentile")
+
+
+# =========================================================================
+# Session 9: partial-evidence contract + recommendation safety
+# =========================================================================
+
+
+def _tier_site() -> dict:
+    return {
+        "builtUpAreaSqm": 2000.0,
+        "plotAreaSqm": 4000.0,
+        "materials": [{"name": "cement", "quantityKg": 100_000}],
+    }
+
+
+def _tier_ledger() -> dict:
+    return {
+        "total_trees": 5,
+        "canopy_cover_pct": 40.0,
+        "canopy_cover_pct_proposed": 40.0,
+        "census_reliable_for_this_site": True,
+        "always_preserve_count": 2,
+        "always_preserve_canopy_m2": 100.0,
+        "tree_canopy_m2_before": 300.0,
+        "tree_canopy_m2_after": 300.0,
+        "compensatory_required": {"low": 0, "high": 0},
+        "compensatory_basis": "test fixture",
+        "action_counts": {},
+    }
+
+
+def _tier_indicators_complete() -> dict:
+    return {
+        "impervious_pct": 50.0,
+        "vegetation_pct": 30.0,
+        "water_pct": 0.0,
+        "bare_pct": 0.0,
+        "lst_night_mean_c": REGION["thermal"]["night_reference_c"] + 1.0,
+        "mean_slope_deg": 2.0,
+        "dist_to_storm_drain_m": 100.0,
+    }
+
+
+def _tier_indicators_three() -> dict:
+    """Flood + green + carbon: night heat is deliberately absent."""
+    ind = _tier_indicators_complete()
+    ind.pop("lst_night_mean_c")
+    return ind
+
+
+def test_four_of_four_is_complete_and_decision_grade():
+    r = score_project(_tier_site(), _tier_indicators_complete(), REGION,
+                      MATERIALS, ledger=_tier_ledger())
+    assert r["evidence_status"] == "COMPLETE", r["partial_notice"]
+    assert r["decision_grade"] is True
+    assert r["available_factor_count"] == 4
+    assert r["complete"] is True
+    assert r["climate_score"] is not None
+    assert r["impact_score"] is not None
+    assert r["risk_band"] is not None
+    assert r["weight_contributions"], "complete results must carry contributions"
+    assert r["partial_notice"] is None
+
+
+def test_three_of_four_is_partial_diagnostic_and_review():
+    r = score_project(_tier_site(), _tier_indicators_three(), REGION,
+                      MATERIALS, ledger=_tier_ledger())
+    assert r["evidence_status"] == "PARTIAL", r["partial_notice"]
+    assert r["decision_grade"] is False
+    assert r["available_factor_count"] == 3
+    assert r["complete"] is False
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    # A diagnostic number may exist, but it must be labelled and it must not
+    # carry weight contributions as if it were decision-grade.
+    assert r["impact_score"] is not None
+    assert r["weight_contributions"] == {}
+    assert "DIAGNOSTIC ONLY" in (r["partial_notice"] or "")
+    block = score_block(r, REGION)
+    assert "EVIDENCE STATUS: PARTIAL" in block
+    assert "DIAGNOSTIC ONLY" in block
+    assert "RISK BAND       " not in block  # no normal decision-grade line
+
+
+def test_two_of_four_is_insufficient_with_no_composite_or_band():
+    # Flood + green: no heat, and no BOQ so carbon is unavailable.
+    site = dict(_tier_site())
+    site["materials"] = []
+    r = score_project(site, _tier_indicators_three(), REGION,
+                      MATERIALS, ledger=_tier_ledger())
+    assert r["evidence_status"] == "INSUFFICIENT", r["missing_factors"]
+    assert r["decision_grade"] is False
+    assert r["available_factor_count"] == 2
+    assert r["climate_score"] is None
+    assert r["impact_score"] is None
+    assert r["risk_band"] is None
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    assert "insufficient" in r["headline"].lower()
+    block = score_block(r, REGION)
+    assert "EVIDENCE STATUS: INSUFFICIENT" in block
+    assert "CLIMATE SCORE: NOT ISSUED" in block
+    assert "RISK BAND: NOT ISSUED" in block
+    assert "CLIMATE SCORE   " not in block
+
+
+def test_one_of_four_is_unavailable_with_no_composite_or_band():
+    site = dict(_tier_site())
+    r = score_project(site, {}, REGION, MATERIALS, ledger=None)
+    assert r["evidence_status"] == "UNAVAILABLE", r["missing_factors"]
+    assert r["decision_grade"] is False
+    assert r["available_factor_count"] == 1
+    assert r["climate_score"] is None
+    assert r["impact_score"] is None
+    assert r["risk_band"] is None
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    assert "unavailable" in r["headline"].lower()
+    assert r["weight_contributions"] == {}
+
+
+def test_zero_of_four_is_unavailable_with_no_composite_or_band():
+    site = {"builtUpAreaSqm": 2000.0, "plotAreaSqm": 4000.0,
+            "materials": []}
+    r = score_project(site, {}, REGION, MATERIALS, ledger=None)
+    assert r["evidence_status"] == "UNAVAILABLE", r["missing_factors"]
+    assert r["decision_grade"] is False
+    assert r["available_factor_count"] == 0
+    assert r["climate_score"] is None
+    assert r["impact_score"] is None
+    assert r["risk_band"] is None
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    assert "unavailable" in r["headline"].lower()
+
+
+def test_carbon_only_with_valid_boq_is_not_a_low_risk_approval():
+    """The review's carbon-only example: 92.4 / Low is no longer possible."""
+    site = {"builtUpAreaSqm": 2000.0, "plotAreaSqm": 4000.0,
+            "materials": [{"name": "cement", "quantityKg": 100_000}]}
+    r = score_project(site, {}, REGION, MATERIALS, ledger=None)
+    assert r["evidence_status"] == "UNAVAILABLE"
+    assert r["climate_score"] is None
+    assert r["impact_score"] is None
+    assert r["risk_band"] is None
+    assert r["recommendation"] != "APPROVE"
+    assert r["recommendation"]["recommendation"] == "REVIEW"
+    assert "unavailable" in r["headline"].lower()
+    # The carbon sub-score is still visible as evidence, but not as a verdict.
+    assert r["sub_scores"]["carbon"] is not None
+    block = score_block(r, REGION)
+    assert "CLIMATE SCORE: NOT ISSUED" in block
+    assert "RISK BAND: NOT ISSUED" in block
+    assert "Low" not in block.split("  Carbon")[0]
+
+
+def test_recommendations_with_none_landcover_do_not_crash_or_invent():
+    ind = {"impervious_pct": None, "vegetation_pct": None, "water_pct": None}
+    out = RecommendationEngine().build_recommendations(
+        _tier_site(), ind, REGION, MATERIALS, _tier_ledger()
+    )
+    ids = [c["id"] for c in out["recommendations"]]
+    assert "impervious_reduction" not in ids
+    skipped = {s["id"]: s["reason"] for s in out["skipped_actions"]}
+    assert "impervious_reduction" in skipped
+    assert "unavailable" in skipped["impervious_reduction"].lower()
+    # The unavailable flood factor must never be reported as improved.
+    assert all(c.get("affected") != "flood" for c in out["recommendations"])
+
+
+def test_recommendations_with_missing_landcover_keys_do_not_use_60_30():
+    out = RecommendationEngine().build_recommendations(
+        _tier_site(), {}, REGION, MATERIALS, _tier_ledger()
+    )
+    ids = [c["id"] for c in out["recommendations"]]
+    assert "impervious_reduction" not in ids
+    skipped = {s["id"]: s["reason"] for s in out["skipped_actions"]}
+    assert "impervious_reduction" in skipped
+    # No action may quote a shift derived from invented 60/30 land cover.
+    assert not any("shift_pct_points" in (c.get("params") or {})
+                   for c in out["recommendations"])
+
+
+def test_partial_recommendations_verify_against_the_actual_baseline():
+    site = {"builtUpAreaSqm": 2000.0, "plotAreaSqm": 4000.0,
+            "materials": [{"name": "cement_opc", "quantityKg": 100_000}]}
+    out = RecommendationEngine().build_recommendations(
+        site, _tier_indicators_three(), REGION, MATERIALS, _tier_ledger()
+    )
+    assert out["baseline_evidence_status"] == "PARTIAL"
+    assert out["baseline_decision_grade"] is False
+    recs = {c["id"]: c for c in out["recommendations"]}
+    assert "material_substitution" in recs, out["skipped_actions"]
+    assert recs["material_substitution"]["verified"] is True
+    carbon_delta = recs["material_substitution"]["delta"]["factors"]["carbon"]
+    assert carbon_delta["after"] < carbon_delta["before"]
+    assert "preserve_mature_trees" in recs, out["skipped_actions"]
+    assert recs["preserve_mature_trees"]["verified"] is True
+    green_delta = recs["preserve_mature_trees"]["delta"]["factors"]["green"]
+    assert green_delta["after"] < green_delta["before"]
+
+
+def test_material_substitution_works_without_landcover_inputs():
+    """Carbon is independent of land cover; the action must still be modelled.
+
+    The public ranking may drop it later because the composite is withheld at
+    this evidence tier, but it must not be skipped for want of land cover, and
+    its rescore must use the real BOQ.
+    """
+    site = {"builtUpAreaSqm": 2000.0, "plotAreaSqm": 4000.0,
+            "materials": [{"name": "cement_opc", "quantityKg": 100_000}]}
+    engine = RecommendationEngine()
+    base = score_project(site, {}, REGION, MATERIALS, ledger=None)
+    assert base["sub_scores"]["carbon"] is not None
+    skipped: list = []
+    acts = engine._material_substitutions(
+        site, {}, REGION, MATERIALS, base, None, skipped=skipped
+    )
+    assert skipped == []
+    assert acts and acts[0]["id"] == "material_substitution"
+    carbon = acts[0]["delta"]["factors"]["carbon"]
+    assert carbon["after"] < carbon["before"]
+
+
+def test_recommendation_targeting_unavailable_factor_is_skipped_with_reason():
+    site = dict(_tier_site())
+    site["materials"] = []  # carbon unavailable
+    out = RecommendationEngine().build_recommendations(
+        site, _tier_indicators_three(), REGION, MATERIALS, _tier_ledger()
+    )
+    assert out["baseline_evidence_status"] == "INSUFFICIENT"
+    assert all(c.get("affected") != "carbon" for c in out["recommendations"])
+    reasons = {s["id"]: s["reason"] for s in out["skipped_actions"]}
+    assert "material_substitution" in reasons
+    assert "carbon" in reasons["material_substitution"].lower()
 
 
 def _run() -> int:

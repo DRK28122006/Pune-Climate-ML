@@ -58,12 +58,16 @@ def main() -> int:
                  "water_pct": 0.0, "bare_pct": 0.05,
                  "tree_canopy_pct": 0.02, "lst_mean_c": 40.0,
                  "lst_reference_c": 38.0, "lst_max_c": 42.0,
-                 "lst_night_mean_c": 22.0, "elevation_m": 500.0}
+                 "lst_night_mean_c": 22.0,
+                 "lst_night_reference_c": 19.0,
+                 "elevation_m": 500.0}
         green = {"built_pct": 0.1, "vegetation_pct": 0.7,
                  "water_pct": 0.05, "bare_pct": 0.05,
                  "tree_canopy_pct": 0.4, "lst_mean_c": 33.0,
                  "lst_reference_c": 32.5, "lst_max_c": 34.0,
-                 "lst_night_mean_c": 19.0, "elevation_m": 510.0}
+                 "lst_night_mean_c": 19.0,
+                 "lst_night_reference_c": 17.0,
+                 "elevation_m": 510.0}
         cube = {"cells": {grid[0]["id"]: dense, grid[1]["id"]: green,
                           grid[2]["id"]: green, grid[3]["id"]: green}}
         ring = [[grid[0]["bounds"][0], grid[0]["bounds"][1]],
@@ -120,6 +124,15 @@ def main() -> int:
         sc = out["score"]
         check("score completes", sc.get("complete") is True,
               str(sc.get("missing_factors")))
+        check("complete result is decision-grade",
+              sc.get("evidence_status") == "COMPLETE"
+              and sc.get("decision_grade") is True
+              and sc.get("available_factor_count") == 4,
+              f"({sc.get('evidence_status')}, "
+              f"{sc.get('decision_grade')}, "
+              f"{sc.get('available_factor_count')})")
+        check("complete result carries weight contributions",
+              bool(sc.get("weight_contributions")))
         check("flood responds to density",
               sc["factors"]["flood"]["score"] > 50,
               str(sc["factors"]["flood"]["score"]))

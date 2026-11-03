@@ -80,16 +80,27 @@ def fig(path, width_mm=150):
 
 
 def sweep_stats():
-    rows = []
-    for f in sorted(glob.glob("/tmp/ward_*.json")):
-        d = json.load(open(f))
-        sc, sub = d["score"], d["score"]["sub_scores"]
-        rows.append({k: sub[k] for k in
-                     ("flood", "heat", "green", "carbon")})
+    """Read factor ranges from the current ward_validation.json artifact."""
+    path = os.path.join(REPO, "ml_pipeline", "data", "ward_validation.json")
+    if not os.path.exists(path):
+        raise SystemExit(
+            f"ward_validation.json not found at {path}; "
+            "run ml_pipeline/data/validate_wards.py first"
+        )
+    d = json.load(open(path))
+    rows = d.get("rows", [])
+    if not rows:
+        raise SystemExit("ward_validation.json has no rows")
     out = {}
     for k in ("flood", "heat", "green", "carbon"):
-        v = sorted(r[k] for r in rows)
-        out[k] = (v[0], statistics.median(v), v[-1])
+        vals = sorted(
+            r["sub_scores"][k] for r in rows
+            if r.get("sub_scores", {}).get(k) is not None
+        )
+        if vals:
+            out[k] = (vals[0], statistics.median(vals), vals[-1])
+        else:
+            out[k] = (0.0, 0.0, 0.0)
     return out, len(rows)
 
 
@@ -198,7 +209,8 @@ def main() -> int:
                 "storm 214 mm: Gumbel 100-year quantile over 124 IMD annual "
                 "maxima (fit p = 0.95, interval 191–234). Across 41 wards: "
                 f"{S['flood'][0]:.1f}–{S['flood'][2]:.1f}; built-up predicts "
-                "it at r = +0.92, vegetation at r = −0.95.", sBody))
+                "it at r = +0.92, vegetation at r = −0.95. Slope band is "
+                "currently unavailable (cube has no mean_slope_deg).", sBody))
     A(fig("gumbel.png"))
     A(Paragraph("Figure 2. Gumbel fit to 124 IMD annual maxima. The retired "
                 "150 mm buffer sat between the 10- and 25-year storms.", sCap))
@@ -214,8 +226,9 @@ def main() -> int:
                 "seasonal sign flip; 1:30pm peak-hour contrast −0.14 C "
                 "(dry rural soil out-heats shaded city — documented dryland "
                 "effect). Reports label heat night-only and carry unscored "
-                "afternoon context instead of a faked score. Spread 0.8–99.0, "
-                "the widest of any factor.", sBody))
+                "afternoon context instead of a faked score. Spread "
+                f"{S['heat'][0]:.1f}–{S['heat'][2]:.1f}, the widest of any "
+                "factor.", sBody))
     A(fig("heat_contrast.png", width_mm=130))
     A(Paragraph("Figure 4. Only the night column carries signal.", sCap))
 
@@ -224,11 +237,12 @@ def main() -> int:
                 "(30%), stratified against double-counting; missing data "
                 "returns unavailable, never perfect. Compensation is "
                 "age-equivalent ranges under the 1975 Trees Act as amended "
-                "2021. Spread 62–100, r = −0.81. Carbon: bill of quantities "
+                "2021. Spread " + f"{S['green'][0]:.1f}–{S['green'][2]:.1f}" + ", r = −0.81. Carbon: bill of quantities "
                 "times India factors (cement 0.91, steel 2.6, brick 0.39; "
                 "aluminium 20.88), per square metre against a 1200 scale. "
                 "Above 10% unknown mass the score is withheld. Flat across "
-                "wards by design.", sBody))
+                "wards by design (identical BOQ); varies across sites "
+                "(26.3–84.5).", sBody))
     A(fig("carbon.png"))
     A(Paragraph("Figure 5. Demo bill: 602 tonnes, steel first. Every bar "
                 "multiplies out by hand.", sCap))
@@ -254,8 +268,10 @@ def main() -> int:
               ["Storm 214 mm", "Gumbel KS p = 0.95, CI 191–234"],
               ["Cement / steel / brick", "IFC India Table 16"],
               ["IGBC / high-rise anchors", "700 / 454, primary sources"],
-              ["Census total", "4,009,623 indexed of 4,009,624 unique"],
-              ["Suites", "48/48, 8/8, e2e, narrative 22/22, engine 23/23"]],
+              ["Census total", "4,009,623 unique"],
+              ["Suites", "83 passed, 1 skipped (root pytest); "
+               "e2e Ward 12 all checks; narrative 22/22; "
+               "engine 23/23; provenance OK"]],
              widths=[60 * mm, 110 * mm]))
 
     A(PageBreak())

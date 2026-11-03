@@ -63,6 +63,12 @@ SITES: List[Dict[str, Any]] = [
         "lon": 73.8936, "lat": 18.5362,
         "built_fraction": 0.35, "storeys": 4,
         "expect": "best",
+        # Low-carbon BOQ: PPC cement + recycled-content steel, to show carbon
+        # moves materially across sites rather than being constant.
+        "materials": [
+            {"name": "cement_ppc", "quantityKg": 896_000},
+            {"name": "steel_rebar_recycled", "quantityKg": 560_000},
+        ],
     },
     {
         # NOTE ON SITE CHOICES: two earlier coordinates were outside PMC and
@@ -163,6 +169,12 @@ def _provenance() -> dict:
     cfg = json.loads((REPO / "ml_pipeline" / "config" / "regions" / "pune.json").read_text())
     cube_path = REPO / "ml_pipeline" / "data" / "epoch_cube.json"
     tree_path = REPO / "ml_pipeline" / "data" / "tree_index.sqlite"
+    ref_path = REPO / "ml_pipeline" / "data" / "reference_layers.sqlite"
+    cube = json.loads(cube_path.read_text())
+    slope_present = any(
+        c.get("mean_slope_deg") is not None
+        for c in cube.get("cells", {}).values()
+    )
     def sha256_file(p):
         h = hashlib.sha256()
         with open(p, "rb") as f:
@@ -177,6 +189,9 @@ def _provenance() -> dict:
         "epoch_cube_sha256": sha256_file(cube_path),
         "tree_index_sha256": (sha256_file(tree_path) if tree_path.exists() else None),
         "tree_index_status": ("PRESENT" if tree_path.exists() else "MISSING"),
+        "reference_layers_sha256": (sha256_file(ref_path) if ref_path.exists() else None),
+        "reference_layers_status": ("PRESENT" if ref_path.exists() else "MISSING"),
+        "slope_status": ("PRESENT" if slope_present else "MISSING"),
         "heat_mode": "NIGHT_MODIS_LST",
         "design_storm_mm": cfg.get("hydrology", {}).get("design_storm_mm"),
         "hsg": "B",
@@ -219,13 +234,18 @@ def main() -> int:
         ]
 
         built = PLOT_SQM * spec["built_fraction"]
+        # Per-site BOQ override (for carbon discrimination) or standard RC frame.
+        if spec.get("materials"):
+            site_materials = spec["materials"]
+        else:
+            site_materials = [
+                {"name": "steel_reinforcement", "quantityKg": round(built * STEEL_KG_PER_M2)},
+                {"name": "cement", "quantityKg": round(built * CEMENT_KG_PER_M2)},
+            ]
         site = {
             "builtUpAreaSqm": round(built, 1),
             "plotAreaSqm": PLOT_SQM,
-            "materials": [
-                {"name": "steel_reinforcement", "quantityKg": round(built * STEEL_KG_PER_M2)},
-                {"name": "cement", "quantityKg": round(built * CEMENT_KG_PER_M2)},
-            ],
+            "materials": site_materials,
         }
 
         # Real drainage context for this point.
@@ -268,7 +288,7 @@ def main() -> int:
         # With partial coverage, zero means "not loaded", so the green factor
         # must be withheld rather than scored as a treeless site.
         coverage = G.census_coverage()
-        census_reliable = coverage.get("coverage_complete", False) or bool(inside)
+        census_reliable = bool(coverage.get("coverage_complete", False))
 
         ledger = None
         if inside:
@@ -305,10 +325,10 @@ def main() -> int:
             except Exception as exc:  # noqa: BLE001
                 print(f"  {name}: canopy ledger failed: {exc}")
 
-        if ledger is None and not inside:
-            # A measured zero, only valid when the census coverage check below
-            # marks this site reliable. If coverage is incomplete the false
-            # reliability flag makes score_project withhold green instead.
+        # Only create a zero ledger when coverage is complete and the site
+        # genuinely contains zero trees. Otherwise leave ledger None so the
+        # scorer withholds green (UNAVAILABLE) instead of scoring a false zero.
+        if ledger is None and not inside and census_reliable:
             ledger = {
                 "total_trees": 0,
                 "tree_canopy_m2_before": 0.0,
@@ -334,8 +354,9 @@ def main() -> int:
             "expect": spec["expect"],
             "lon": lon, "lat": lat,
             "built_sqm": round(built),
-            "trees": len(inside),
-            "canopy_pct": (ledger or {}).get("canopy_cover_pct"),
+            "trees": (len(inside) if census_reliable else None),
+            "canopy_pct": (ledger or {}).get("canopy_cover_pct") if ledger is not None else None,
+            "census_reliable": census_reliable,
             "score": res.get("climate_score"),
             "impact": res.get("impact_score"),
             "band": res.get("risk_band"),
@@ -344,11 +365,23 @@ def main() -> int:
             "subs": res.get("sub_scores"),
             "built_pct": indicators["impervious_pct"],
             "veg_pct": indicators["vegetation_pct"],
-            "lst": indicators["lst_mean_c"],
-            "ref": indicators["lst_reference_c"],
-            "uhi": (indicators["lst_mean_c"] - indicators["lst_reference_c"])
-                   if (indicators["lst_mean_c"] is not None
-                       and indicators["lst_reference_c"] is not None) else None,
+            # Night LST (MODIS Terra+Aqua) is the heat basis used by the scorer.
+            "lst_night_mean_c": indicators["lst_night_mean_c"],
+            "lst_night_reference_c": indicators["lst_night_reference_c"],
+            "night_uhi_delta_c": (
+                (indicators["lst_night_mean_c"] - indicators["lst_night_reference_c"])
+                if (indicators["lst_night_mean_c"] is not None
+                    and indicators["lst_night_reference_c"] is not None)
+                else None
+            ),
+            "legacy_day_lst_c": indicators["lst_mean_c"],
+            "legacy_day_reference_c": indicators["lst_reference_c"],
+            "legacy_day_uhi_c": (
+                (indicators["lst_mean_c"] - indicators["lst_reference_c"])
+                if (indicators["lst_mean_c"] is not None
+                    and indicators["lst_reference_c"] is not None)
+                else None
+            ),
             "drain_m": indicators["dist_to_storm_drain_m"],
         })
 
@@ -364,7 +397,7 @@ def main() -> int:
     print("=" * 122)
     print(f"{'site':<20} {'score':>6} {'band':>9} | "
           + " ".join(f"{f:>6}" for f in FACTORS)
-          + f" | {'built%':>6} {'veg%':>5} {'LST':>6} {'ref':>6} {'UHI':>5} "
+          + f" | {'built%':>6} {'veg%':>5} {'nightLST':>6} {'nightRef':>6} {'nightUHI':>5} "
             f"{'trees':>6} {'canopy%':>7} {'drain':>6} {'ok':>4}")
     print("-" * 122)
     for r in rows:
@@ -382,14 +415,15 @@ def main() -> int:
                 return format("-" if v is None else str(v)[:6], ">6")
             return format(v, spec)
 
-        lst = f"{r['lst']:.2f}" if r["lst"] is not None else "   -  "
-        ref = f"{r['ref']:.2f}" if r["ref"] is not None else "   -  "
-        uhi = f"{r['uhi']:+.2f}" if r["uhi"] is not None else "  -  "
+        lst = f"{r['lst_night_mean_c']:.2f}" if r["lst_night_mean_c"] is not None else "   -  "
+        ref = f"{r['lst_night_reference_c']:.2f}" if r["lst_night_reference_c"] is not None else "   -  "
+        uhi = f"{r['night_uhi_delta_c']:+.2f}" if r["night_uhi_delta_c"] is not None else "  -  "
         can = f"{r['canopy_pct']:.1f}" if r["canopy_pct"] is not None else "  -  "
+        tr = f"{r['trees']:,}" if r['trees'] is not None else "   -  "
         print(f"{r['name']:<20} {fmt(r['score'])} {str(r['band']):>9} | "
               + " ".join(fmt(s.get(f)) for f in FACTORS)
               + f" | {r['built_pct']:>6.1f} {r['veg_pct']:>5.1f} {lst:>6} {ref:>6} "
-                f"{uhi:>5} {r['trees']:>6,} {can:>7} "
+                f"{uhi:>5} {tr:>6} {can:>7} "
                 f"{(format(r['drain_m'], '>6.0f') if r['drain_m'] is not None else '     -'):>6} "
                 f"{'Y' if r['complete'] else 'PART':>4}")
 

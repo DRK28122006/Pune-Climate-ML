@@ -110,30 +110,36 @@ def main() -> int:
           f"got {total:.1f} km2")
 
     print("\n== park ward attribution ==")
-    ward_rings = {
-        r[0]: json.loads(r[1]) for r in ref.execute("SELECT ward_no, ring_json FROM wards")
-    }
-    db = {
-        r[0]: (r[1], r[2], r[3], r[4])
-        for r in ref.execute(
-            "SELECT park_id, name, ward_no, centroid_lon, centroid_lat FROM parks"
-        )
-    }
-    misattributed = []
-    unresolved = 0
-    for park_id, name, ring in park_polygons():
-        rec = db.get(park_id)
-        if rec is None:
-            continue
-        _, ward_no, clon, clat = rec
-        if ward_no is None:
-            unresolved += 1
-            continue
-        if not point_in_ring(clon, clat, ward_rings[ward_no]):
-            misattributed.append((name, ward_no))
-    check(unresolved == 0, "every park resolved to a ward", f"{unresolved} unresolved")
-    check(not misattributed, "every park centroid lies inside its attributed ward",
-          f"{len(misattributed)} bad: {misattributed[:3]}")
+    if not PARK_KML.exists():
+        print("  SKIP  parks KML missing; park attribution checks skipped")
+    else:
+        ward_rings = {
+            r[0]: json.loads(r[1]) for r in ref.execute("SELECT ward_no, ring_json FROM wards")
+        }
+        db = {
+            r[0]: (r[1], r[2], r[3], r[4])
+            for r in ref.execute(
+                "SELECT park_id, name, ward_no, centroid_lon, centroid_lat FROM parks"
+            )
+        }
+    if PARK_KML.exists():
+        misattributed = []
+        unresolved = 0
+        for park_id, name, ring in park_polygons():
+            rec = db.get(park_id)
+            if rec is None:
+                continue
+            _, ward_no, clon, clat = rec
+            if ward_no is None:
+                unresolved += 1
+                continue
+            if not point_in_ring(clon, clat, ward_rings[ward_no]):
+                misattributed.append((name, ward_no))
+        check(unresolved == 0, "every park resolved to a ward", f"{unresolved} unresolved")
+        check(not misattributed, "every park centroid lies inside its attributed ward",
+              f"{len(misattributed)} bad: {misattributed[:3]}")
+    else:
+        print("  SKIP  park attribution (parks KML missing)")
 
     print("\n== tree index ==")
     if TREE_DB.exists():

@@ -105,9 +105,10 @@ so in words instead of faking a score.
 *Takeaway: only the night column carries signal. The factor scores stored
 heat release, labelled as such on every report.*
 
-**Measured state.** 0.8–99.0 across wards — the widest spread of any
-factor, driven by real night contrast. Night mode only; day fallback is
-LEGACY_DAY/UNAVAILABLE. Ranges from ward_validation.json provenance.
+**Measured state.** 32.8–98.1 across wards (night LST only) — the widest
+spread of any factor, driven by real night contrast. Night mode only; day
+fallback is LEGACY_DAY/UNAVAILABLE. Ranges from ward_validation.json
+provenance.
 
 ## Green cover: trees kept versus trees lost
 
@@ -118,11 +119,12 @@ age-equivalent compensation as a range (162–441 saplings for a typical
 assessment), never a single number, under the 1975 Trees Act as amended
 in 2021. The 90 cm preservation rule is stated as house policy, not law.
 
-**Measured state.** 62–100 across wards, r = −0.81 against vegetation.
-Green is a loss factor with a floor of 30 on effective green; the
-attainable range is documented, not 0–100. The census total (4,009,623
-indexed) matches the measured 4,009,623 exactly. Independent satellite
-cross-check (GEDI LiDAR heights) found no ward-level contradiction; one
+**Measured state.** 73.2–93.0 across wards (now scored with real census),
+r = −0.81 against vegetation. Green is a loss factor with a floor of 30
+on effective green; the attainable range is documented, not 0–100. The
+census total (4,009,623 indexed) matches the measured 4,009,623 exactly.
+Independent satellite cross-check (GEDI LiDAR heights) found no ward-level
+contradiction; one
 ward's overlapping crowns summing past 100% is labelled as a density index
 rather than a fraction. Ranges from ward_validation.json provenance.
 
@@ -159,8 +161,8 @@ A 120-tonne-cement, 45-tonne-steel assessment hand-checks exactly to
 
 <img src="docs/assets/dispersion.png" width="680" alt="Factor dispersion across wards">
 *Takeaway: flood and green spread on real gradients, heat spreads widest
-on night contrast, carbon is flat by design. Nothing is compressed into a
-meaningless band.*
+on night contrast, carbon is flat across wards (identical BOQ) but varies
+26.3–84.5 across sites. Nothing is compressed into a meaningless band.*
 
 ## What the system refuses to do
 

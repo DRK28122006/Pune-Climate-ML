@@ -10,6 +10,13 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from ml_pipeline.report import narrative as N  # noqa: E402
+from ml_pipeline.core.scoring import score_project  # noqa: E402
+
+_CFG = os.path.join(os.path.dirname(__file__), "..", "config")
+with open(os.path.join(_CFG, "regions", "pune.json")) as _f:
+    REGION = json.load(_f)
+with open(os.path.join(_CFG, "materials.json")) as _f:
+    MATERIALS = json.load(_f)
 
 FAKE = {
     "validation": {"site": {"ward_no": 12, "builtUpAreaSqm": 3000.0,
@@ -75,6 +82,77 @@ def main() -> int:
                                               "reason": "no satellite"}}},
                "recommendations": {}, "canopy": {}, "validation": {},
                "indicators": {}}))
+
+    # ---------------------------------------------------------------
+    # Session 9: partial-evidence contract in the narrator payload.
+    # ---------------------------------------------------------------
+    partial = dict(FAKE)
+    partial["score"] = dict(FAKE["score"])
+    partial["score"].update({
+        "evidence_status": "PARTIAL",
+        "decision_grade": False,
+        "available_factor_count": 3,
+        "missing_factors": ["heat"],
+        "partial_notice": "3 of 4 factors. DIAGNOSTIC ONLY.",
+        "factors": dict(FAKE["score"]["factors"],
+                        heat={"score": None, "reason": "night LST unavailable"}),
+    })
+    pp = N.build_prompt(partial)
+    check("partial prompt carries evidence status",
+          "EVIDENCE_STATUS: PARTIAL" in pp)
+    check("partial prompt marks non-decision-grade",
+          "DECISION_GRADE: false" in pp)
+    check("partial prompt labels the diagnostic",
+          "DIAGNOSTIC ONLY" in pp)
+    check("partial prompt iron rule",
+          "must never be narrated as an approval or as a normal score" in pp)
+    check("partial prompt states missing factor",
+          "MISSING_FACTORS: heat" in pp)
+
+    insufficient = {
+        "score": {
+            "evidence_status": "INSUFFICIENT", "decision_grade": False,
+            "available_factor_count": 2,
+            "missing_factors": ["heat", "carbon"],
+            "climate_score": None, "impact_score": None, "risk_band": None,
+            "recommendation": "REVIEW",
+            "partial_notice": "2 of 4 factors. NOT ISSUED.",
+            "factors": {
+                "flood": {"score": 48.5}, "heat": {"score": None,
+                                                  "reason": "night LST unavailable"},
+                "green": {"score": 95.5},
+                "carbon": {"score": None, "reason": "no BOQ"},
+            },
+        },
+        "recommendations": {}, "canopy": {}, "validation": {},
+        "indicators": {},
+    }
+    pi = N.build_prompt(insufficient)
+    check("insufficient prompt carries status",
+          "EVIDENCE_STATUS: INSUFFICIENT" in pi)
+    check("insufficient withholds the composite",
+          "impact: NOT ISSUED" in pi and "risk band: NOT ISSUED" in pi)
+    check("insufficient does not print a normal score line",
+          "impact: None/100" not in pi and "band: None" not in pi)
+    check("insufficient rule names the tier", "assessment is INSUFFICIENT" in pi)
+    check("insufficient REVIEW stays REVIEW",
+          "VERBATIM_VERDICT: REVIEW" in pi)
+
+    carbon_only = score_project(
+        {"builtUpAreaSqm": 2000.0, "plotAreaSqm": 4000.0,
+         "materials": [{"name": "cement", "quantityKg": 100_000}]},
+        {}, REGION, MATERIALS, ledger=None,
+    )
+    pc = N.build_prompt({"score": carbon_only, "recommendations": {},
+                         "canopy": {}, "validation": {}, "indicators": {}})
+    check("carbon-only prompt is UNAVAILABLE",
+          "EVIDENCE_STATUS: UNAVAILABLE" in pc)
+    check("carbon-only prompt withholds composite",
+          "impact: NOT ISSUED" in pc and "band: Low" not in pc)
+    check("carbon-only prompt says assessment unavailable",
+          "assessment is UNAVAILABLE" in pc)
+    check("carbon-only prompt cannot approve",
+          "VERBATIM_VERDICT: REVIEW" in pc)
 
     seen = {}
 

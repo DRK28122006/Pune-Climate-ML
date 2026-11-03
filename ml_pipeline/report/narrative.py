@@ -112,9 +112,67 @@ def build_prompt(assessment: Dict[str, Any], role: str = "urban_planner") -> str
     site = validation.get("site", {}) or {}
     ind = assessment.get("indicators", {}) or {}
 
+    evidence_status = score.get("evidence_status") or (
+        "COMPLETE" if score.get("complete", True) else "PARTIAL"
+    )
+    decision_grade = score.get("decision_grade")
+    if decision_grade is None:
+        decision_grade = evidence_status == "COMPLETE"
+    available_factors = score.get("available_factor_count")
+    missing_factors = list(score.get("missing_factors") or [])
+    if available_factors is None:
+        available_factors = (4 - len(missing_factors)) if missing_factors else (
+            4 if decision_grade else None
+        )
+
     site_bits = [f"ward {site.get('ward_no')}",
                  f"built-up {_r1(site.get('builtUpAreaSqm'))} m2",
                  f"plot {_r1(site.get('plotAreaSqm'))} m2"]
+
+    if decision_grade:
+        score_line = (
+            f"impact: {score.get('impact_score')}/100 "
+            f"(high=worse), climate: {score.get('climate_score')}/100, "
+            f"band: {score.get('risk_band')}, "
+            f"recommendation: {score.get('recommendation')}"
+        )
+    elif evidence_status == "PARTIAL":
+        score_line = (
+            f"DIAGNOSTIC impact: {score.get('impact_score')}/100, "
+            f"diagnostic climate: {score.get('climate_score')}/100, "
+            f"diagnostic band: {score.get('risk_band')} — "
+            f"DIAGNOSTIC ONLY — NOT COMPARABLE TO A COMPLETE SCORE. "
+            f"No decision-grade score or band was issued. "
+            f"recommendation: {score.get('recommendation')}"
+        )
+    else:
+        score_line = (
+            "impact: NOT ISSUED; climate score: NOT ISSUED; "
+            "risk band: NOT ISSUED "
+            f"(evidence {evidence_status.lower()}). "
+            f"recommendation: {score.get('recommendation')}"
+        )
+
+    evidence_rules = [
+        f"7. EVIDENCE_STATUS is {evidence_status} and DECISION_GRADE is "
+        f"{str(bool(decision_grade)).lower()}. A non-decision-grade result "
+        "must never be narrated as an approval or as a normal score.",
+    ]
+    if not decision_grade:
+        if evidence_status in ("INSUFFICIENT", "UNAVAILABLE"):
+            evidence_rules.append(
+                f"8. The assessment is {evidence_status}. Say plainly that the "
+                "assessment is insufficient/unavailable, that no climate score "
+                "or risk band was issued, and do not call the site low risk. "
+                "Do not present a composite or band."
+            )
+        else:
+            evidence_rules.append(
+                "8. The assessment is PARTIAL. Any number you quote is a "
+                "diagnostic only and must be labelled as such; the risk band "
+                "is not decision-grade."
+            )
+
     parts = [
         "You are a municipal climate-permit explainer. An officer will "
         "decide APPROVE / CONDITION / REJECT on a building proposal from "
@@ -134,14 +192,17 @@ def build_prompt(assessment: Dict[str, Any], role: str = "urban_planner") -> str
         "REJECT_OR_REDESIGN. Never translate it into approval language "
         "('approved with conditions', 'conditional approval'). A softened "
         "verdict is a failed task.",
+        *evidence_rules,
         "",
         "ASSESSMENT (computed, read-only):",
         f"VERBATIM_VERDICT: {score.get('recommendation')}",
         f"site: {', '.join(str(b) for b in site_bits)}",
-        f"impact: {score.get('impact_score')}/100 "
-        f"(high=worse), climate: {score.get('climate_score')}/100, "
-        f"band: {score.get('risk_band')}, "
-        f"recommendation: {score.get('recommendation')}",
+        f"EVIDENCE_STATUS: {evidence_status}",
+        f"DECISION_GRADE: {str(bool(decision_grade)).lower()}",
+        f"AVAILABLE_FACTORS: {available_factors}/4",
+        f"MISSING_FACTORS: {', '.join(missing_factors) if missing_factors else 'none'}",
+        score_line,
+        f"partial notice: {score.get('partial_notice')}",
         "factors (0-100, high=worse):",
         *_fmt_factors(score),
         "verified conditions:",

@@ -91,22 +91,81 @@ def score_block(result: Dict[str, Any],
         weights = {k: float(cfg_w.get(k, weights[k])) for k in weights}
     except (TypeError, ValueError):
         pass
-    lines = [
-        f"CLIMATE SCORE   {result.get('climate_score')} / 100   (higher = better)",
-        f"IMPACT SCORE    {result.get('impact_score')} / 100   (higher = worse)",
-        f"RISK BAND       {result.get('risk_band')}",
-        "",
-    ]
-    if not result.get("complete", True):
-        lines.append(f"PARTIAL SCORE — missing factors: {', '.join(result.get('missing_factors') or [])}")
+
+    # Newer results carry the explicit evidence contract. Older artifacts only
+    # have `complete`; treat those as decision-grade only when complete.
+    decision_grade = result.get("decision_grade")
+    if decision_grade is None:
+        decision_grade = bool(result.get("complete", True))
+    evidence_status = result.get("evidence_status") or (
+        "COMPLETE" if decision_grade else "PARTIAL"
+    )
+    missing = list(result.get("missing_factors") or [])
+    factors = result.get("factors") or {}
+    available_factors = result.get("available_factor_count")
+    if available_factors is None:
+        available_factors = (4 - len(missing)) if missing else (
+            4 if decision_grade else None
+        )
+
+    lines: List[str] = []
+    if decision_grade:
+        lines += [
+            f"CLIMATE SCORE   {result.get('climate_score')} / 100   (higher = better)",
+            f"IMPACT SCORE    {result.get('impact_score')} / 100   (higher = worse)",
+            f"RISK BAND       {result.get('risk_band')}",
+            "",
+        ]
+    else:
+        # A non-decision-grade result must never be printed as if it were a
+        # normal score. The tier, the missing factors and what was withheld
+        # come first; a 3/4 diagnostic is labelled as such on every line.
+        lines.append(f"EVIDENCE STATUS: {evidence_status}")
+        lines.append(
+            f"FACTORS AVAILABLE: {available_factors} of 4"
+        )
+        if missing:
+            lines.append(f"MISSING FACTORS: {', '.join(missing)}")
+        lines.append("")
+        if evidence_status == "PARTIAL":
+            lines += [
+                "DIAGNOSTIC ONLY — NOT COMPARABLE TO A COMPLETE SCORE",
+                f"  climate {result.get('climate_score')} / 100 (higher = better)",
+                f"  impact  {result.get('impact_score')} / 100 (higher = worse)",
+                f"  risk band {result.get('risk_band')} (diagnostic only — "
+                f"not decision-grade)",
+                "  No approval may be based on a partial assessment.",
+            ]
+        else:
+            sentence = (
+                "  Insufficient evidence for a composite score or risk band."
+                if evidence_status == "INSUFFICIENT"
+                else "  Assessment unavailable: no composite score or risk "
+                     "band is issued."
+            )
+            lines += [
+                "CLIMATE SCORE: NOT ISSUED",
+                "IMPACT SCORE: NOT ISSUED",
+                "RISK BAND: NOT ISSUED",
+                sentence,
+            ]
         if result.get("partial_notice"):
             lines.append(f"  {result['partial_notice']}")
         lines.append("")
+
     for key in ("flood", "heat", "green", "carbon"):
         v = subs.get(key)
         lines.append(
             f"  {FACTOR_LABELS[key]:<12} {str(v):>5}  {_bar(v)}  weight {weights[key]:.2f}"
         )
+
+    # Keep the reason each missing factor was withheld visible; a bare "None"
+    # row is not an explanation an approver can act on.
+    if not decision_grade:
+        for key in missing:
+            reason = (factors.get(key) or {}).get("reason")
+            if reason:
+                lines.append(f"  {FACTOR_LABELS.get(key, key)} not scored: {reason}")
     return "\n".join(lines)
 
 
@@ -138,13 +197,18 @@ def canopy_block(ledger: Optional[Dict[str, Any]]) -> str:
     counts = ledger.get("action_counts", {}) or {}
     comp = ledger.get("compensatory_required", {}) or {}
     mix = ledger.get("compensatory_species_mix", []) or []
+    proposed_cover = ledger.get("canopy_cover_pct_proposed")
+    proposed_label = (
+        f"{proposed_cover}%" if proposed_cover is not None else "not available"
+    )
     lines += [
         "CANOPY LEDGER",
         f"  trees on site                {ledger.get('total_trees')}",
         f"  canopy before                {ledger.get('tree_canopy_m2_before')} m2",
         f"  canopy after                 {ledger.get('tree_canopy_m2_after')} m2",
         f"  canopy lost                  {ledger.get('tree_canopy_m2_lost')} m2",
-        f"  canopy cover                 {ledger.get('canopy_cover_pct')}%",
+        f"  canopy cover (existing)      {ledger.get('canopy_cover_pct')}%",
+        f"  canopy cover (proposed)      {proposed_label}",
         "",
         "  DECISIONS",
     ]
@@ -189,6 +253,13 @@ def decision_block(result: Dict[str, Any], recs: Dict[str, Any]) -> str:
     lines = [f"RECOMMENDATION: {rec or 'NOT ISSUED'}"]
     if result.get("headline"):
         lines.append(f"  {result['headline']}")
+    decision_grade = result.get("decision_grade")
+    if decision_grade is False:
+        status = result.get("evidence_status") or "NOT DECISION-GRADE"
+        lines.append(
+            f"  EVIDENCE: {status} — not decision-grade. No approval follows "
+            f"from this assessment; resolve the missing factors and rescore."
+        )
 
     blockers = result.get("blocking_issues") or []
     if blockers:
@@ -226,6 +297,11 @@ def decision_block(result: Dict[str, Any], recs: Dict[str, Any]) -> str:
         lines += ["", "  DROPPED (rescoring showed no measurable benefit)"]
         for d in dropped:
             lines.append(f"    - {d['id']}: {d['reason']}")
+    skipped = recs.get("skipped_actions") or []
+    if skipped:
+        lines += ["", "  NOT ASSESSED (required inputs unavailable)"]
+        for s in skipped:
+            lines.append(f"    - {s['id']}: {s['reason']}")
     return "\n".join(lines)
 
 
