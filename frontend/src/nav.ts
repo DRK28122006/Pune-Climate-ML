@@ -1,4 +1,4 @@
-import { CloudRain, LayoutDashboard, SlidersHorizontal, Thermometer, Trees, Wind, type LucideIcon } from 'lucide-react';
+import { CloudRain, Cpu, LayoutDashboard, Map, SlidersHorizontal, Thermometer, Trees, Wind, type LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   path: string;
@@ -13,4 +13,5 @@ export const NAV_ITEMS: NavItem[] = [
   { path: 'green-cover', label: 'Green Cover', icon: Trees },
   { path: 'flood-risk', label: 'Flood Risk', icon: CloudRain },
   { path: 'scenario-planner', label: 'Scenario Planner', icon: SlidersHorizontal },
+  { path: 'engine', label: 'Engine', icon: Map },
 ];

@@ -12,6 +12,7 @@ import AirQuality from './pages/dashboard/AirQuality';
 import GreenCover from './pages/dashboard/GreenCover';
 import FloodRisk from './pages/dashboard/FloodRisk';
 import ScenarioPlanner from './pages/dashboard/ScenarioPlanner';
+import Engine from './pages/dashboard/Engine';
 import { PageHeader } from './components/ui';
 import { useAtmosphere } from './scene/atmosphereStore';
 
@@ -55,6 +56,7 @@ export default function App() {
               <Route path="green-cover" element={<GreenCover />} />
               <Route path="flood-risk" element={<FloodRisk />} />
               <Route path="scenario-planner" element={<ScenarioPlanner />} />
+              <Route path="engine" element={<Engine />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
