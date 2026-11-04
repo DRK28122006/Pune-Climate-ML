@@ -24,6 +24,8 @@ if env_path.exists():
 
 from ml_pipeline.report.narrative import build_prompt, load_key
 
+from llm_client import call_llm
+
 
 def main():
     request = json.load(sys.stdin)
@@ -31,8 +33,10 @@ def main():
     question = request.get("question", "")
     role = request.get("role", "urban_planner")
 
-    key = load_key()
-    if not key:
+    # Any provider configured is enough to attempt the call — the chain falls
+    # back from Groq to Gemini internally. Only when neither exists do we use
+    # the rule-based summary.
+    if not (os.environ.get("GROQ_API_KEY") or load_key()):
         # Rule-based fallback
         score = assessment.get("score", {}) or {}
         impact = score.get("impact_score")
@@ -47,7 +51,7 @@ def main():
                 lines.append(f"  {k}: {s}/100")
             else:
                 lines.append(f"  {k}: UNAVAILABLE")
-        lines.append("Gemini API key not configured — showing computed values only.")
+        lines.append("No LLM configured (Groq or Gemini) — showing computed values only.")
         print(json.dumps({"text": "\n".join(lines), "source": "fallback"}))
         return
 
@@ -75,20 +79,9 @@ def main():
         else:
             prompt = base_prompt
 
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent"
-    body = json.dumps({
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 1024}
-    }).encode()
-    req = urllib.request.Request(url, data=body, headers={
-        "Content-Type": "application/json",
-        "x-goog-api-key": key,
-    })
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.load(resp)
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
-        print(json.dumps({"text": text, "source": "gemini"}))
+        text, provider = call_llm(prompt, json_mode=False, temperature=0.2, max_tokens=1024)
+        print(json.dumps({"text": text, "source": provider}))
     except Exception as e:
         # Gemini unavailable — fall back to rule-based summary
         score = assessment.get("score", {}) or {}

@@ -31,10 +31,10 @@ if env_path.exists():
             k, v = line.split("=", 1)
             os.environ.setdefault(k.strip(), v.strip())
 
-from ml_pipeline.report.narrative import load_key
+from llm_client import call_llm, extract_json
 
-MAX_MESSAGES = 30
-MAX_MESSAGE_CHARS = 2000
+MAX_MESSAGES = 8
+MAX_MESSAGE_CHARS = 1200
 VALID_PROJECT_TYPES = {"residential", "commercial", "institutional", "industrial"}
 VALID_GOALS = {"balanced", "cooling", "flood", "greening"}
 
@@ -226,20 +226,22 @@ def _compact_assessment(a: Any) -> Any:
 
 def _load_ward_table():
     try:
-        return json.loads((REPO / "frontend" / "public" / "ward_scores.json").read_text())
+        ws = json.loads((REPO / "frontend" / "public" / "ward_scores.json").read_text())
+        # Slim digest — one line per ward, free-tier tokens per minute are tight.
+        return {w: f"impact {v.get('impact')}, {v.get('evidence_status')}, {v.get('risk_band')}, built {v.get('built_pct')}%, veg {v.get('veg_pct')}%, LST {v.get('night_lst')}C" for w, v in ws.items()}
     except Exception:
         return None
 
 
 def build_prompt(messages, draft, phase, assessment, ward_table, material_ids):
     missing = _draft_problems(draft)
-    draft_json = json.dumps(draft, indent=1, default=str)
+    draft_json = json.dumps(draft, separators=(",", ":"), default=str)
     history = "\n".join(
         f"{'OFFICER' if m.get('role') == 'user' else 'DISHA'}: {str(m.get('text', ''))[:MAX_MESSAGE_CHARS]}"
         for m in messages[-MAX_MESSAGES:]
     )
-    assessment_json = json.dumps(assessment, indent=1, default=str) if assessment else "not scored yet"
-    ward_json = json.dumps(ward_table, indent=1) if ward_table else "not provided"
+    assessment_json = json.dumps(assessment, separators=(",", ":"), default=str) if assessment else "not scored yet"
+    ward_json = json.dumps(ward_table, separators=(",", ":")) if ward_table else "not provided"
 
     return f"""You are Disha, the intake and explainer assistant for a municipal building-climate scoring pilot in Pune, India. You speak with a municipal officer deciding a building permit. Your knowledge is ONLY what is provided below. You never invent numbers.
 
@@ -326,58 +328,15 @@ def main():
             "reason": reason,
         }
 
-    key = load_key()
-    if not key:
-        print(json.dumps(fallback("no GEMINI_API_KEY")))
-        return
-
-    def call_gemini():
-        last_error = None
-        for attempt in range(3):
-            body = json.dumps({
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"temperature": 0.2, "maxOutputTokens": 4096, "responseMimeType": "application/json"},
-            }).encode()
-            req = urllib.request.Request(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent",
-                data=body, headers={"Content-Type": "application/json", "x-goog-api-key": key},
-            )
-            try:
-                with urllib.request.urlopen(req, timeout=45) as resp:
-                    return json.load(resp)
-            except urllib.error.HTTPError as e:
-                last_error = e
-                if e.code in (429, 503) and attempt < 2:
-                    time.sleep(5 * (attempt + 1))  # 5s, 10s — back off for rate limit
-                    continue
-                raise
-            except Exception as e:
-                last_error = e
-                if attempt < 2:
-                    time.sleep(3)
-                    continue
-                raise
-        raise last_error  # unreachable, but keeps types happy
-
     try:
-        data = call_gemini()
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        text, provider = call_llm(prompt, json_mode=True, temperature=0.2, max_tokens=1536)
     except Exception as e:
         print(json.dumps(fallback(str(e))))
         return
 
-    raw = text.strip()
-    try:
-        parsed = json.loads(raw)
-    except json.JSONDecodeError:
-        m = re.search(r"\{.*\}", raw, re.S)
-        if m:
-            try:
-                parsed = json.loads(m.group(0))
-            except json.JSONDecodeError:
-                parsed = {"reply": raw, "draft": draft, "phase": prev_phase}
-        else:
-            parsed = {"reply": raw, "draft": draft, "phase": prev_phase}
+    parsed = extract_json(text)
+    if not isinstance(parsed, dict):
+        parsed = {"reply": text.strip(), "draft": draft, "phase": prev_phase}
 
     reply = parsed.get("reply")
     if not isinstance(reply, str) or not reply.strip():
@@ -423,7 +382,7 @@ def main():
         "phase": new_phase,
         "missing": missing,
         "unknownMaterials": unknown,
-        "source": "gemini",
+        "source": provider,
     }, default=str))
 
 
