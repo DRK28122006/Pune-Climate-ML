@@ -181,7 +181,7 @@ export type AssistantReply = {
   phase: 'collecting' | 'ready' | 'confirmed';
   missing?: string[];
   unknownMaterials?: string[];
-  source: 'gemini' | 'fallback' | 'error';
+  source: 'groq' | 'gemini' | 'fallback' | 'error';
   reason?: string;
 };
 

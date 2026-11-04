@@ -78,11 +78,12 @@ export default function AssistantChat({ assessment, onConfirm, maxHeight = 300 }
       });
       setInputs(pickDraft(res.draft) as AssessmentInputs);
       setPhase(res.phase);
+      const live = res.source === 'groq' || res.source === 'gemini';
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', text: res.reply, source: res.source === 'gemini' ? 'gemini' : 'fallback' },
+        { role: 'assistant', text: res.reply, source: live ? 'gemini' : 'fallback' },
       ]);
-      if (res.source !== 'gemini') {
+      if (!live) {
         setNotice('Assistant offline — the reply did not come from the model. The form and scorer still work.');
       } else if (res.unknownMaterials && res.unknownMaterials.length > 0) {
         setNotice(
