@@ -64,6 +64,20 @@ export default function Engine() {
       .sort((a, b) => (a.impact ?? 999) - (b.impact ?? 999));
   }, [scores]);
 
+  // Summary cards computed from the measured ward scores, never hardcoded.
+  const summary = useMemo(() => {
+    const wards = Object.entries(scores).map(([ward, s]) => ({ ward: Number(ward), ...s }));
+    if (wards.length === 0) return null;
+    const byImpact = [...wards].sort((a, b) => (a.impact ?? 999) - (b.impact ?? 999));
+    const complete = wards.filter((w) => w.evidence_status === 'COMPLETE').length;
+    return {
+      safest: byImpact[0],
+      worst: byImpact[byImpact.length - 1],
+      complete,
+      partial: wards.length - complete,
+    };
+  }, [scores]);
+
   const handleScore = async (e: React.FormEvent) => {
     e.preventDefault();
     setScoring(true);
@@ -185,10 +199,14 @@ export default function Engine() {
             </div>
 
             <div className="metrics" style={{ marginTop: '16px' }}>
-              <MetricCard label="Safest ward" value="33" unit="" note="Impact 26.5, Low risk, all 4 factors" />
-              <MetricCard label="Worst ward" value="23" unit="" note="Impact 70.0, High risk, 99.9% built" />
-              <MetricCard label="Complete data" value="15" unit="of 41" note="Wards with all 4 factors" />
-              <MetricCard label="Partial data" value="26" unit="of 41" note="Green unavailable" />
+              {summary && (
+                <>
+                  <MetricCard label="Safest ward" value={String(summary.safest.ward)} unit="" note={`Impact ${summary.safest.impact}, ${summary.safest.risk_band} risk, evidence ${summary.safest.evidence_status}`} />
+                  <MetricCard label="Worst ward" value={String(summary.worst.ward)} unit="" note={`Impact ${summary.worst.impact}, ${summary.worst.risk_band} risk, evidence ${summary.worst.evidence_status}`} />
+                  <MetricCard label="Complete data" value={String(summary.complete)} unit={`of ${Object.keys(scores).length}`} note="Wards with all 4 factors" />
+                  <MetricCard label="Partial data" value={String(summary.partial)} unit={`of ${Object.keys(scores).length}`} note="Green unavailable" />
+                </>
+              )}
             </div>
 
             {/* Scoring form */}

@@ -22,9 +22,9 @@ const DEFAULT_INPUTS: AssessmentInputs = {
   wardNo: 2,
   builtUpAreaSqm: 2000,
   plotAreaSqm: 4000,
-  builtUpPct: 58,
-  pavedPct: 24,
-  canopyPct: 9,
+  builtUpPct: 50,
+  pavedPct: 20,
+  canopyPct: 10,
   storeys: null,
   materials: [
     { materialId: 'cement_opc', quantityKg: 180_000 },
