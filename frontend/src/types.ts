@@ -15,7 +15,7 @@ export interface PlanInputs {
 
 export type PlanGoal = 'balanced' | 'cooling' | 'flood' | 'greening';
 
-export type FieldErrors = Partial<Record<keyof PlanInputs, string>>;
+export type FieldErrors = Partial<Record<keyof AssessmentInputs, string>>;
 
 /** Lever settings, each expressed as a percentage of what that lever can act on. */
 export interface Levers {
@@ -71,3 +71,38 @@ export interface OptimizationResult {
 }
 
 export type RunStatus = 'idle' | 'loading' | 'success' | 'error';
+
+/** BOQ line — one construction material line-item. */
+export interface MaterialLine {
+  /** Key from pune materials table (materials.json) e.g. cement_opc */
+  materialId: string;
+  quantityKg: number;
+}
+
+/** Form inputs for a real ML assessment. */
+export interface AssessmentInputs {
+  planName: string;
+  /** Ward number 1–41 */
+  wardNo: number;
+  builtUpAreaSqm: number;
+  plotAreaSqm: number;
+  /** Satellite-measured share of the plot that is built (satellite or user input). */
+  builtUpPct: number | null;
+  pavedPct: number | null;
+  canopyPct: number | null;
+  storeys: number | null;
+  materials: MaterialLine[];
+  goal: AssessmentGoal;
+  projectType: string;
+}
+
+export type AssessmentGoal = 'balanced' | 'cooling' | 'flood' | 'greening';
+
+export type MaterialErrors = Record<string, string>;
+
+export interface Step {
+  id: string;
+  label: string;
+  done: boolean;
+  now: boolean;
+}

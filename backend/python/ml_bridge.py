@@ -446,6 +446,19 @@ def _run_scoring(request: Dict[str, Any]) -> Dict[str, Any]:
         v.site, indicators, region, materials_table, ledger
     )
 
+    # The per-tree decision list can hold tens of thousands of entries (the 2019
+    # census covers the whole ward ring — ward 12 alone yields ~70k). Summarize it
+    # for the API response; the full list remains available through the CLI and
+    # report paths. Scoring and recommendations above already consumed it.
+    if isinstance(ledger, dict) and isinstance(ledger.get("decisions"), list):
+        decisions = ledger.pop("decisions")
+        ledger["decisions_count"] = len(decisions)
+        ledger["decisions_sample"] = decisions[:25]
+        ledger["decisions_note"] = (
+            "per-tree decisions summarized for the API response; "
+            f"{len(decisions)} total, first 25 kept as a deterministic sample"
+        )
+
     return {
         "source": "ml-pipeline-scorer",
         "mode": "score",

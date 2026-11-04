@@ -99,10 +99,59 @@ export type ScoreResult = {
     evidence_status: string;
     decision_grade: boolean;
     factors: Record<string, { score: number | null; status?: string; reason?: string }>;
-    recommendations: Array<{ title?: string; impact?: number; target?: string; description?: string }>;
+    recommendations: Array<{
+      title?: string;
+      impact?: number;
+      target?: string;
+      description?: string;
+      id?: string;
+      action?: string;
+      delta?: {
+        impact_before?: number;
+        impact_after?: number;
+        impact_delta?: number;
+        climate_before?: number;
+        climate_after?: number;
+        factors?: Record<string, { before?: number; after?: number; delta?: number }>;
+      };
+    }>;
   };
-  recommendations: Array<{ title?: string; impact?: number; target?: string; description?: string }>;
-  canopy: { canopy_cover_pct?: number; census_reliable_for_this_site?: boolean; total_trees?: number } | null;
+  recommendations: Array<{
+      title?: string;
+      impact?: number;
+      target?: string;
+      description?: string;
+      id?: string;
+      action?: string;
+      delta?: {
+        impact_before?: number;
+        impact_after?: number;
+        impact_delta?: number;
+        climate_before?: number;
+        climate_after?: number;
+        factors?: Record<string, { before?: number; after?: number; delta?: number }>;
+      };
+    }>;
+  canopy: {
+    canopy_cover_pct?: number;
+    canopy_cover_pct_proposed?: number;
+    census_reliable_for_this_site?: boolean;
+    total_trees?: number;
+    tree_canopy_m2_before?: number;
+    tree_canopy_m2_after?: number;
+    tree_canopy_m2_lost?: number;
+    action_counts?: Record<string, number>;
+    rare_trees_in_site?: number;
+    rare_trees_at_risk?: number;
+    dead_trees_removed?: number;
+    compensatory_required?: { low?: number; high?: number };
+    compensatory_basis?: string;
+    always_preserve_count?: number;
+    always_preserve_canopy_m2?: number;
+    compensatory_species_mix?: Record<string, number> | string[];
+    decisions?: unknown[];
+    census_coverage?: string;
+  } | null;
   indicators: Record<string, unknown>;
   satellite_cube_available: boolean;
 };

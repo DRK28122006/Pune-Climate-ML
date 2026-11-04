@@ -1,79 +1,85 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowRight, Send, Sparkles } from 'lucide-react';
 import Logo from '../components/Logo';
-import { NumberField, SelectField, TextField } from '../components/Field';
-import { Button, DemoBadge, EmptyState, ErrorState, Panel, SectionBand, Segmented } from '../components/ui';
-import LineChart from '../components/charts/LineChart';
-import { BarRow, StreetScene } from '../components/charts/Visuals';
-import { FOCUS_AREAS, GOAL_LABELS } from '../config';
-import { clamp } from '../lib/math';
-import { useReducedMotion } from '../lib/useAsync';
-import { atmosphere } from '../scene/atmosphereStore';
+import { NumberField, TextField, SelectField } from '../components/Field';
+import { Button, Panel, SectionBand, EmptyState, ErrorState, Pill } from '../components/ui';
+import { MATERIALS, WARDS } from '../config';
+import { narrateAssessment, type ScoreResult } from '../services/climateApi';
 import { usePlan } from '../state/PlanContext';
-import type { Metrics, OptimizationResult, PlanGoal } from '../types';
-
-const STEPS = ['Checking the inputs', 'Evaluating the baseline', 'Allocating the budget across interventions', 'Projecting the outcome'];
+import type { AssessmentInputs, MaterialLine } from '../types';
 
 export default function Assessment() {
   const { inputs, setInput, resetInputs, errors, status, errorMessage, result, stale, submit, dismissError } = usePlan();
-  const reduce = useReducedMotion();
-  const formRef = useRef<HTMLDivElement>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
-  const submitRef = useRef<HTMLButtonElement>(null);
-  const [step, setStep] = useState(0);
-
   const loading = status === 'loading';
   const showResults = !!result && !loading;
-  const errorCount = Object.keys(errors).length;
 
-  // Cycle the loading messages.
-  useEffect(() => {
-    if (!loading) return;
-    setStep(0);
-    const t = window.setInterval(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)), 550);
-    return () => window.clearInterval(t);
-  }, [loading]);
+  // Optional AI input review (Step 2). Skippable — scoring never depends on it.
+  const [aiCheck, setAiCheck] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [aiCheckText, setAiCheckText] = useState<string | null>(null);
+  const [aiDismissed, setAiDismissed] = useState(false);
 
-  // Background: always polluted until results exist. After that, scrolling through
-  // the results section moves the scene toward green.
-  useEffect(() => {
-    atmosphere.setWide(false);
-    if (!showResults) {
-      atmosphere.setTarget(0);
-      return;
+  const runAiCheck = async () => {
+    setAiCheck('loading');
+    setAiDismissed(false);
+    try {
+      const summary = {
+        ward: inputs.wardNo,
+        builtUpAreaSqm: inputs.builtUpAreaSqm,
+        plotAreaSqm: inputs.plotAreaSqm,
+        storeys: inputs.storeys,
+        builtUpPct: inputs.builtUpPct,
+        pavedPct: inputs.pavedPct,
+        canopyPct: inputs.canopyPct,
+        materials: inputs.materials.filter((m) => m.materialId && m.quantityKg > 0),
+        projectType: inputs.projectType,
+      };
+      const res = await narrateAssessment(
+        { inputs: summary },
+        'Review these building-proposal inputs for internal plausibility before scoring. ' +
+          'This is an input review, not a scored assessment: ignore any EVIDENCE_STATUS, VERBATIM_VERDICT or ' +
+          'factor lines in the template — they do not apply here. Do not state any score or verdict. ' +
+          'Flag only real inconsistencies in the inputs (for example: footprint vs plot area, storeys vs footprint, ' +
+          'material quantities wildly out of scale with the built-up area, land-cover shares not summing near 100). ' +
+          'Reply with a short list; if nothing is wrong, say the inputs look consistent. Do not invent numbers.\n' +
+          JSON.stringify(summary),
+      );
+      setAiCheckText(res.text);
+      setAiCheck('done');
+    } catch {
+      setAiCheckText('The AI review is unavailable right now. You can skip it and score anyway — scoring does not depend on it.');
+      setAiCheck('error');
     }
-    const onScroll = () => {
-      const el = resultsRef.current;
-      if (!el) return;
-      const start = el.offsetTop - window.innerHeight * 0.6;
-      const end = Math.max(start + 1, document.documentElement.scrollHeight - window.innerHeight);
-      atmosphere.setTarget(clamp((window.scrollY - start) / (end - start), 0, 1));
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      atmosphere.setTarget(0);
-    };
-  }, [showResults]);
+  };
 
-  const scrollTo = (el: HTMLElement | null) => el?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+
+  // Add/remove material lines.
+  const addMaterial = () => {
+    if (inputs.materials.length < 30)
+      setInput('materials', [...inputs.materials, { materialId: '', quantityKg: 0 }]);
+  };
+  const setMaterialLine = (idx: number, patch: Partial<MaterialLine>) => {
+    const next = inputs.materials.map((m, i) => (i === idx ? { ...m, ...patch } : m));
+    setInput('materials', next);
+  };
+  const removeMaterial = (idx: number) => {
+    setInput('materials', inputs.materials.filter((_, i) => i !== idx));
+  };
+
+  const scrollTo = (el: HTMLElement | null) => el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showResults) {
+      window.setTimeout(() => scrollTo(resultsRef.current), 150);
+    }
+  }, [showResults]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const ok = await submit();
-    if (ok) window.setTimeout(() => scrollTo(resultsRef.current), 120);
-  };
-
-  const onCue = () => {
-    if (showResults) scrollTo(resultsRef.current);
-    else {
-      scrollTo(formRef.current);
-      submitRef.current?.focus({ preventScroll: true });
-    }
+    if (!ok && formRef.current) scrollTo(formRef.current);
   };
 
   return (
@@ -84,271 +90,347 @@ export default function Assessment() {
       </header>
 
       <main id="main">
-        {/* ---------------- Inputs ---------------- */}
         <section className="assess__form" aria-labelledby="assess-title">
           <div className="assess__wrap" ref={formRef}>
             <p className="eyebrow halo">Step 1 of 2 · Evaluate</p>
-            <h1 id="assess-title" className="halo">Evaluate an urban plan</h1>
+            <h1 id="assess-title" className="halo">Evaluate a building proposal</h1>
             <p className="lede lede--card">
-              Describe the area and the budget. The optimizer sends the plan to the climate backend, which evaluates the
-              baseline and an optimized scenario. Results are illustrative and are not validated predictions.
+              Enter the building's real inputs — footprint, plot, materials — and the ML pipeline
+              computes flood, heat, green and carbon from satellite data and the 2019 tree census.
             </p>
 
             <form onSubmit={onSubmit} noValidate className="assess__panels" aria-describedby="run-status">
-              <Panel title="1. The plan">
+              <Panel title="1. The proposal">
                 <div className="grid2">
                   <TextField id="planName" label="Plan name" value={inputs.planName} maxLength={70} error={errors.planName} onChange={(v) => setInput('planName', v)} />
                   <SelectField
-                    id="focusArea"
-                    label="Focus area"
-                    hint="Ward names are placeholders taken from the prototype."
-                    value={inputs.focusArea}
-                    error={errors.focusArea}
-                    options={FOCUS_AREAS.map((a) => ({ value: a, label: a }))}
-                    onChange={(v) => setInput('focusArea', v)}
+                    id="wardNo"
+                    label="Ward"
+                    hint="Pune Municipal Corporation ward (1–41)"
+                    value={String(inputs.wardNo)}
+                    error={errors.wardNo}
+                    options={WARDS.map((w) => ({ value: w.value, label: w.label }))}
+                    onChange={(v) => setInput('wardNo', Number(v))}
                   />
-                  <NumberField id="areaHa" label="Plan area" unit="ha" min={5} max={5000} hint="5 to 5,000 hectares." value={inputs.areaHa} error={errors.areaHa} onChange={(v) => setInput('areaHa', v)} />
+                  <NumberField id="builtUpAreaSqm" label="Built-up area" unit="m²" min={1} step={1} hint="Floor space — the actual area the building occupies." value={inputs.builtUpAreaSqm} error={errors.builtUpAreaSqm} onChange={(v) => setInput('builtUpAreaSqm', v)} />
+                  <NumberField id="plotAreaSqm" label="Plot area" unit="m²" min={1} step={1} hint="Total plot including open space and garden." value={inputs.plotAreaSqm} error={errors.plotAreaSqm} onChange={(v) => setInput('plotAreaSqm', v)} />
+                  <NumberField id="storeys" label="Storeys" unit="" min={1} step={1} hint="Optional. Planning-design floor count." value={inputs.storeys ?? 0} error={errors.storeys} onChange={(v) => setInput('storeys', v > 0 ? v : null)} />
                 </div>
               </Panel>
 
               <Panel title="2. Current land cover">
                 <div className="grid3">
-                  <NumberField id="builtUpPct" label="Built-up" unit="%" min={0} max={100} hint="Share of area covered by buildings." value={inputs.builtUpPct} error={errors.builtUpPct} onChange={(v) => setInput('builtUpPct', v)} />
-                  <NumberField id="pavedPct" label="Paved" unit="%" min={0} max={100} hint="Roads, yards and other sealed surface." value={inputs.pavedPct} error={errors.pavedPct} onChange={(v) => setInput('pavedPct', v)} />
-                  <NumberField id="canopyPct" label="Tree canopy" unit="%" min={0} max={100} hint="Share shaded by tree crowns." value={inputs.canopyPct} error={errors.canopyPct} onChange={(v) => setInput('canopyPct', v)} />
+                  <NumberField id="builtUpPct" label="Built-up" unit="%" min={0} max={100} hint="Share of plot covered by buildings. Defaults from satellite." value={inputs.builtUpPct ?? 0} error={errors.builtUpPct} onChange={(v) => setInput('builtUpPct', v)} />
+                  <NumberField id="pavedPct" label="Paved" unit="%" min={0} max={100} hint="Roads, yards and other sealed surface." value={inputs.pavedPct ?? 0} error={errors.pavedPct} onChange={(v) => setInput('pavedPct', v)} />
+                  <NumberField id="canopyPct" label="Tree canopy" unit="%" min={0} max={100} hint="Share of plot shaded by tree crowns." value={inputs.canopyPct ?? 0} error={errors.canopyPct} onChange={(v) => setInput('canopyPct', v)} />
                 </div>
-                <p className="note">Built-up, paved and canopy shares together cannot exceed 100%. What remains is treated as open land.</p>
+                <p className="note">Values from the satellite cube (2024 flight) or enter your own — leave as 0 and the pipeline uses its cube measurement.</p>
               </Panel>
 
-              <Panel title="3. Budget and goal">
-                <div className="grid3">
-                  <NumberField id="budgetCrore" label="Budget" unit="₹ crore" min={1} max={2000} hint="Demo units, not a cost estimate." value={inputs.budgetCrore} error={errors.budgetCrore} onChange={(v) => setInput('budgetCrore', v)} />
-                  <NumberField id="horizonYears" label="Planning horizon" unit="years" min={10} max={50} hint="10 to 50 years." value={inputs.horizonYears} error={errors.horizonYears} onChange={(v) => setInput('horizonYears', v)} />
-                  <SelectField
-                    id="goal"
-                    label="Priority"
-                    hint="Which outcome the optimizer favours."
-                    value={inputs.goal}
-                    options={(Object.keys(GOAL_LABELS) as PlanGoal[]).map((g) => ({ value: g, label: GOAL_LABELS[g] }))}
-                    onChange={(v) => setInput('goal', v as PlanGoal)}
-                  />
-                </div>
+              <Panel title="3. Materials (BOQ)">
+                <p className="note" style={{ marginBottom: '12px' }}>
+                  List the materials and quantities for this building. Cement, steel and brick are the biggest drivers.
+                  Carbon is UNAVAILABLE without a BOQ.
+                </p>
+                {inputs.materials.map((m, i) => (
+                  <div key={i} className="grid3" style={{ marginBottom: '6px' }}>
+                    <SelectField
+                      id={`material-${i}`}
+                      label="Material"
+                      value={m.materialId}
+                      options={[{ value: '', label: 'Pick a material…' }, ...MATERIALS.map((x) => ({ value: x.value, label: x.label }))]}
+                      onChange={(v) => setMaterialLine(i, { materialId: v })}
+                    />
+                    <NumberField
+                      id={`qty-${i}`}
+                      label="Quantity"
+                      unit="kg"
+                      min={0}
+                      step={1}
+                      value={m.quantityKg}
+                      onChange={(v) => setMaterialLine(i, { quantityKg: v })}
+                    />
+                    <Button type="button" variant="ghost" onClick={() => removeMaterial(i)} style={{ marginBottom: '6px' }}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button type="button" variant="ghost" onClick={addMaterial} style={{ fontSize: '13px', color: '#1f5a8c' }}>
+                  + Add material line
+                </Button>
+                <p className="note" style={{ marginTop: '12px' }}>
+                  {inputs.materials.filter((m) => m.materialId && m.quantityKg > 0).length} valid material lines.
+                  Carbon will be <b>UNAVAILABLE</b> if this is 0 or quantities are 0.
+                </p>
+              </Panel>
+
+              <Panel title="4. Optional AI input check">
+                <p className="note" style={{ marginBottom: '12px' }}>
+                  Gemini reviews the form for internal inconsistencies before scoring. This step is optional — skip it
+                  and score directly. The ML score never depends on this review.
+                </p>
+                {aiCheck === 'idle' && !aiDismissed && (
+                  <div className="row-actions">
+                    <Button type="button" variant="secondary" onClick={() => void runAiCheck()}>
+                      Check inputs with AI
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={() => setAiDismissed(true)}>
+                      Skip
+                    </Button>
+                  </div>
+                )}
+                {aiCheck === 'loading' && <p className="status">Reviewing inputs…</p>}
+                {(aiCheck === 'done' || aiCheck === 'error') && aiCheckText && (
+                  <div className="ai-check-result">
+                    <p className="note" style={{ whiteSpace: 'pre-wrap' }}>{aiCheckText}</p>
+                    <div className="row-actions">
+                      <Button type="button" variant="ghost" onClick={() => { setAiCheck('idle'); setAiCheckText(null); }}>
+                        Run again
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                {aiDismissed && aiCheck === 'idle' && (
+                  <p className="note">Input check skipped. <Button type="button" variant="ghost" onClick={() => setAiDismissed(false)}>Show it</Button></p>
+                )}
               </Panel>
 
               <div className="assess__actions">
-                <Button ref={submitRef} type="submit" variant="primary" size="lg" busy={loading} id="optimize">
+                <Button ref={null} type="submit" variant="primary" size="lg" busy={loading} id="score">
                   <Sparkles size={20} aria-hidden="true" />
-                  {loading ? 'Optimizing…' : 'Optimize Plan'}
+                  {loading ? 'Scoring…' : 'Score proposal'}
                 </Button>
                 <Button type="button" variant="ghost" onClick={resetInputs} disabled={loading}>
-                  <RotateCcw size={16} aria-hidden="true" />
-                  Reset example values
+                  Reset
                 </Button>
               </div>
 
               <div id="run-status" aria-live="polite" className="assess__status">
-                {errorCount > 0 && <p className="status status--warn">Fix {errorCount} {errorCount === 1 ? 'field' : 'fields'} above, then optimize again.</p>}
-                {loading && <p className="status">{STEPS[step]}…</p>}
-                {status === 'success' && !loading && !stale && <p className="status status--ok">Optimization complete. Results are below.</p>}
+                {Object.keys(errors).length > 0 && (
+                  <p className="status status--warn">Fix the fields above, then score again.</p>
+                )}
+                {loading && <p className="status">Running the ML pipeline…</p>}
+                {status === 'success' && !stale && <p className="status status--ok">Scored. Results are below.</p>}
+                {status === 'success' && stale && <p className="status status--warn">Inputs changed — score again to refresh.</p>}
               </div>
 
               {status === 'error' && errorMessage && (
                 <ErrorState message={errorMessage} onRetry={() => { dismissError(); void submit(); }} />
               )}
             </form>
-
-            <button type="button" className="cue" onClick={onCue}>
-              <span>{showResults ? 'See the optimized outcome' : 'Results appear below once optimization completes'}</span>
-              <ArrowDown size={22} aria-hidden="true" className="cue__arrow" />
-            </button>
           </div>
 
-          {loading && (
-            <div className="busy" role="status" aria-label="Optimization in progress">
-              <div className="busy__card">
-                <div className="busy__bar"><i /></div>
-                <strong>Running the climate optimizer</strong>
-                <ol>
-                  {STEPS.map((s, i) => (
-                    <li key={s} className={i < step ? 'done' : i === step ? 'now' : ''}>{s}</li>
-                  ))}
-                </ol>
-              </div>
+          {showResults && result && (
+            <div ref={resultsRef} className="results" aria-labelledby="results-title">
+              <Results result={result} inputs={inputs} onEdit={() => scrollTo(formRef.current)} />
+            </div>
+          )}
+          {!showResults && !loading && (
+            <div className="assess__locked">
+              <EmptyState
+                title="No scored proposal yet"
+                text="Fill in the proposal and materials above to unlock the ML score."
+              />
             </div>
           )}
         </section>
-
-        {/* ---------------- Results ---------------- */}
-        {showResults && result && (
-          <div ref={resultsRef} className="results" aria-labelledby="results-title">
-            <Results result={result} stale={stale} onEdit={() => scrollTo(formRef.current)} />
-          </div>
-        )}
-        {!showResults && !loading && (
-          <div className="assess__locked">
-            <EmptyState
-              title="No optimized outcome yet"
-              text="Scrolling does not run anything. Enter your inputs and choose Optimize Plan to unlock the results."
-            />
-          </div>
-        )}
       </main>
     </div>
   );
 }
 
-/* ====================================================================== */
+// ─────────────────────────────────────────────────────────────────
+// Results sub-component
+// ─────────────────────────────────────────────────────────────────
 
-const METRIC_ROWS: { key: keyof Metrics; label: string; unit: string; digits: number; upIsGood: boolean }[] = [
-  { key: 'canopyPct', label: 'Tree canopy', unit: '%', digits: 1, upIsGood: true },
-  { key: 'surfaceTempC', label: 'Surface temperature (demo)', unit: '°C', digits: 1, upIsGood: false },
-  { key: 'runoffIndex', label: 'Runoff index (demo)', unit: '', digits: 1, upIsGood: false },
-  { key: 'airIndex', label: 'Air index (demo, 0–300)', unit: '', digits: 0, upIsGood: false },
-];
+function Results({
+  result,
+  inputs,
+  onEdit,
+}: {
+  result: ScoreResult;
+  inputs: AssessmentInputs;
+  onEdit: () => void;
+}) {
+  const score = result?.score || {};
+  const factors = score.factors || {};
+  const evidence = score.evidence_status || 'UNAVAILABLE';
+  const recs = result.recommendations || [];
+  const canopy = result.canopy || {};
 
-function Results({ result, stale, onEdit }: { result: OptimizationResult; stale: boolean; onEdit: () => void }) {
-  const [view, setView] = useState<'canopy' | 'temp'>('canopy');
-  const { before, after, allocation, trajectory, inputs } = result;
-  const years = trajectory.map((t) => `Y${t.year}`);
+  // Officer decision chat (Step 4): Gemini answers from the scored assessment only.
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([
+    {
+      role: 'assistant',
+      text: 'This score is computed, not asserted. Ask me anything about it — "is this approvable?", "why is carbon what it is?", "what would moving the footprint do?". I quote only the values in this assessment.',
+    },
+  ]);
+  const [chatBusy, setChatBusy] = useState(false);
+
+  const askChat = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = chatInput.trim();
+    if (!q || chatBusy) return;
+    setChatMessages((prev) => [...prev, { role: 'user', text: q }]);
+    setChatInput('');
+    setChatBusy(true);
+    try {
+      const res = await narrateAssessment(result, q);
+      setChatMessages((prev) => [...prev, { role: 'assistant', text: res.text }]);
+    } catch {
+      setChatMessages((prev) => [
+        ...prev,
+        { role: 'assistant', text: 'The narrator is unavailable right now. The computed values above are still valid — try again shortly.' },
+      ]);
+    } finally {
+      setChatBusy(false);
+    }
+  };
+
+  const factorOrder = ['flood', 'heat', 'green', 'carbon'];
+  const factorLabels: Record<string, string> = { flood: 'Flood', heat: 'Heat', green: 'Green cover', carbon: 'Carbon' };
+  const factorTone = (f: string, v: number | null): 'high' | 'med' | 'low' => {
+    if (v == null) return 'med';
+    if (f === 'flood') return v >= 50 ? 'high' : v >= 30 ? 'med' : 'low';
+    if (f === 'heat') return v >= 80 ? 'high' : v >= 50 ? 'med' : 'low';
+    if (f === 'green') return v >= 80 ? 'high' : v >= 60 ? 'med' : 'low';
+    return v >= 80 ? 'high' : v >= 50 ? 'med' : 'low';
+  };
 
   return (
     <div className="assess__wrap results__wrap">
-      <p className="eyebrow">Step 2 of 2 · Outcome</p>
+      <p className="eyebrow">Step 2 of 2 · ML Score</p>
       <div className="page-head__row">
-        <h2 id="results-title">Optimized outcome for “{inputs.planName}”</h2>
-        <DemoBadge label="Backend result" />
+        <h2 id="results-title">“{inputs.planName}”</h2>
+        <Pill tone={evidence === 'COMPLETE' ? 'low' : 'med'}>
+          {evidence}
+        </Pill>
       </div>
       <p className="lede lede--card">
-        Generated by the climate backend (model {result.modelVersion}). These numbers compare options; they are
-        illustrative and are not measurements, forecasts or validated predictions.
+        Computed by the ML pipeline from the satellite cube, the 2019 tree census and measured IMD rainfall — not from sliders.
+        Ward {inputs.wardNo}.
       </p>
 
-      {stale && (
-        <div className="status status--warn banner" role="status">
-          You changed the inputs after this run. Optimize again to refresh the results.
-          <Button variant="ghost" onClick={onEdit}>Go to inputs</Button>
+      <div className="metrics">
+        <div className="metric">
+          <span className="metric__label">Impact score</span>
+          <div className="metric__value">{score.impact_score ?? '—'}<small>/100 (higher = worse)</small></div>
         </div>
+        <div className="metric">
+          <span className="metric__label">Climate score</span>
+          <div className="metric__value">{score.climate_score ?? '—'}<small>/100</small></div>
+        </div>
+        <div className="metric">
+          <span className="metric__label">Risk band</span>
+          <div className="metric__value">{score.risk_band || '—'}</div>
+        </div>
+        <div className="metric">
+          <span className="metric__label">Evidence</span>
+          <div className="metric__value">{evidence}<small>{score.decision_grade ? 'Decision-grade' : 'Diagnostic only'}</small></div>
+        </div>
+      </div>
+
+      <Panel title="Four factors">
+        <div className="grid4">
+          {factorOrder.map((k) => {
+            const f = (factors as any)[k];
+            const v = f ? (f.score as number | null) : null;
+            const tone = factorTone(k, v);
+            const reason = f?.reason || f?.status || (v == null ? 'Unavailable' : 'OK');
+            return (
+              <div key={k} className="metric" style={{ textAlign: 'center' }}>
+                <span className="metric__label">{factorLabels[k] || k}</span>
+                <div className="metric__value">{v ?? '—'}</div>
+                <Pill tone={tone}>{tone}</Pill>
+                <p className="metric__note" style={{ fontSize: '11px', color: '#4a5a55' }}>{reason}</p>
+              </div>
+            );
+          })}
+        </div>
+      </Panel>
+
+      {recs.length > 0 && (
+        <>
+          <SectionBand>Recommendations (verified)</SectionBand>
+          <Panel title={`${recs.length} recommendation${recs.length === 1 ? '' : 's'} for this building`} note="Each delta is verified by recomputing the factor on the proposed change.">
+            <ul className="plain-list">
+              {recs.map((r: any, i: number) => (
+                <li key={i}>
+                  <b>{r.action || r.title || `Recommendation ${i + 1}`}</b>
+                  {r.delta?.impact_delta != null && (
+                    <> <span className="delta delta--good">Impact {r.delta.impact_delta > 0 ? '+' : ''}{r.delta.impact_delta.toFixed(1)}</span></>
+                  )}
+                  {r.delta?.climate_after != null && (
+                    <> <span className="note">climate score {r.delta.climate_before?.toFixed(1)} → {r.delta.climate_after?.toFixed(1)}</span></>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        </>
       )}
 
-      <div className="split">
-        <article className="split__side">
-          <h3>Original plan</h3>
-          <StreetScene greenness={0} label="Illustration of the original plan: dusty air, bare streets, dark roofs" />
-          <dl className="mlist">
-            {METRIC_ROWS.map((m) => (
-              <div key={m.key}><dt>{m.label}</dt><dd>{before[m.key].toFixed(m.digits)}{m.unit}</dd></div>
-            ))}
-          </dl>
-        </article>
+      {canopy && Object.keys(canopy).length > 0 && (
+        <>
+          <SectionBand>Tree canopy ledger</SectionBand>
+          <Panel title="Ward tree census ledger" note="Trees come from the 2019 census for the ward. Without a drawn site geometry the scorer treats every census tree as obstructed — its conservative default.">
+            <dl className="mlist">
+              <div><dt>Census trees in ward</dt><dd>{canopy.total_trees?.toLocaleString('en-IN') ?? '—'}</dd></div>
+              <div><dt>Canopy cover (existing)</dt><dd>{canopy.canopy_cover_pct?.toFixed?.(1) ?? '—'}%</dd></div>
+              <div><dt>Canopy cover (proposed)</dt><dd>{canopy.canopy_cover_pct_proposed?.toFixed?.(1) ?? '—'}%</dd></div>
+              <div><dt>Fell with compensation</dt><dd>{canopy.action_counts?.FELL_AND_COMPENSATE ?? '—'}</dd></div>
+              <div><dt>Must preserve (no felling)</dt><dd>{canopy.action_counts?.MUST_PRESERVE ?? canopy.always_preserve_count ?? '—'}</dd></div>
+              <div><dt>Relocate</dt><dd>{canopy.action_counts?.RELOCATE ?? '—'}</dd></div>
+              {canopy.compensatory_required && <div><dt>Compensatory saplings required</dt><dd>{canopy.compensatory_required.low?.toLocaleString('en-IN')}–{canopy.compensatory_required.high?.toLocaleString('en-IN')}</dd></div>}
+            </dl>
+          </Panel>
+        </>
+      )}
 
-        <div className="split__mid" aria-hidden="false">
-          <span className="split__line" />
-          <p>Building Earth in a better direction</p>
-          <span className="split__line" />
-        </div>
-
-        <article className="split__side split__side--after">
-          <h3>Optimized outcome</h3>
-          <StreetScene greenness={1} label="Illustration of the optimized outcome: clear air, street trees, white roofs" />
-          <dl className="mlist">
-            {METRIC_ROWS.map((m) => {
-              const d = after[m.key] - before[m.key];
-              const good = m.upIsGood ? d >= 0 : d <= 0;
-              return (
-                <div key={m.key}>
-                  <dt>{m.label}</dt>
-                  <dd>
-                    {after[m.key].toFixed(m.digits)}{m.unit}
-                    <span className={`delta ${good ? 'delta--good' : 'delta--bad'}`}>
-                      {d > 0 ? '+' : '−'}{Math.abs(d).toFixed(m.digits)}{m.unit}
-                    </span>
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </article>
-      </div>
-      <p className="note">Illustrations are schematic and do not depict the real site.</p>
-
-      <SectionBand>How the budget is used</SectionBand>
-      <Panel title={`Allocation of ₹${inputs.budgetCrore} crore (demo units)`}>
-        <div className="bars">
-          {allocation.map((a) => (
-            <BarRow key={a.lever} label={a.label} value={a.sharePct} max={100} display={`${a.sharePct.toFixed(0)}%`} right={`₹${a.crore.toFixed(1)} cr`} />
+      <SectionBand>Officer decision support</SectionBand>
+      <Panel
+        title="Ask about this score"
+        note="Gemini answers from this assessment only — it quotes computed values and never invents numbers. The verdict wording is the scorer's, not the model's."
+      >
+        <div style={{ maxHeight: '260px', overflowY: 'auto', padding: '8px', marginBottom: '8px' }}>
+          {chatMessages.map((m, i) => (
+            <div key={i} style={{ textAlign: m.role === 'user' ? 'right' : 'left', marginBottom: '8px' }}>
+              <span
+                style={{
+                  display: 'inline-block', padding: '6px 12px', borderRadius: '10px',
+                  background: m.role === 'user' ? '#2e7d4f' : '#fffcf6',
+                  color: m.role === 'user' ? '#fff' : '#1b2a26',
+                  border: m.role === 'assistant' ? '1px solid rgba(40,34,26,0.18)' : 'none',
+                  maxWidth: '80%', fontSize: '13px', lineHeight: 1.5, whiteSpace: 'pre-wrap',
+                }}
+              >
+                {m.text}
+              </span>
+            </div>
           ))}
         </div>
-        <ul className="plain-list">
-          {allocation.map((a) => <li key={a.lever}>{a.detail}</li>)}
-        </ul>
-      </Panel>
-
-      <SectionBand>The path over {inputs.horizonYears} years</SectionBand>
-      <Panel
-        title="Projected trajectory"
-        actions={
-          <Segmented<'canopy' | 'temp'>
-            label="Trajectory measure"
-            value={view}
-            onChange={setView}
-            options={[{ value: 'canopy', label: 'Canopy' }, { value: 'temp', label: 'Surface temperature' }]}
+        <form onSubmit={askChat} style={{ display: 'flex', gap: '8px' }}>
+          <input
+            type="text"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            placeholder="e.g. Is this approvable? Why is carbon 205 kg/m²?"
+            style={{ flex: 1, padding: '8px 12px', border: '1px solid rgba(40,34,26,0.18)', borderRadius: '6px', fontSize: '13px', background: '#fffcf6', color: '#1b2a26' }}
           />
-        }
-        note="Demo projection. Trees mature slowly, so canopy benefits arrive late; roofs and paving act sooner."
-      >
-        {view === 'canopy' ? (
-          <LineChart
-            values={trajectory.map((t) => t.canopyPct)}
-            xLabels={years}
-            yMin={0}
-            yMax={Math.max(40, Math.ceil(after.canopyPct / 10) * 10 + 10)}
-            yTicks={[0, 10, 20, 30, 40].filter((t) => t <= Math.max(40, Math.ceil(after.canopyPct / 10) * 10 + 10))}
-            unit="%"
-            decimals={1}
-            yLabel="Tree canopy (%)"
-            xLabel="Years from now"
-            ariaLabel={`Projected tree canopy rising from ${before.canopyPct.toFixed(1)}% to ${after.canopyPct.toFixed(1)}% over ${inputs.horizonYears} years (demo)`}
-          />
-        ) : (
-          (() => {
-            const lo = Math.floor(Math.min(...trajectory.map((t) => t.surfaceTempC)) - 1);
-            const hi = Math.ceil(before.surfaceTempC + 1);
-            const ticks: number[] = [];
-            for (let t = lo; t <= hi; t++) ticks.push(t);
-            return (
-              <LineChart
-                values={trajectory.map((t) => t.surfaceTempC)}
-                compare={{ values: trajectory.map((t) => t.baselineTempC), label: 'original' }}
-                xLabels={years}
-                yMin={lo}
-                yMax={hi}
-                yTicks={ticks}
-                unit="°C"
-                decimals={1}
-                yLabel="Surface temperature (°C, demo)"
-                xLabel="Years from now"
-                ariaLabel={`Modelled surface temperature falling from ${before.surfaceTempC.toFixed(1)}°C to ${after.surfaceTempC.toFixed(1)}°C over ${inputs.horizonYears} years (demo)`}
-              />
-            );
-          })()
-        )}
-      </Panel>
-
-      <SectionBand>What it means</SectionBand>
-      <Panel title="Implications in the demo model">
-        <ul className="plain-list plain-list--roomy">
-          {result.implications.map((t) => <li key={t}>{t}</li>)}
-        </ul>
+          <button type="submit" className="btn btn--primary btn--md" disabled={chatBusy} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Send size={16} /> {chatBusy ? 'Thinking…' : 'Send'}
+          </button>
+        </form>
       </Panel>
 
       <div className="next">
         <Link to="/dashboard/scenario-planner" className="btn btn--primary btn--lg">
-          Explore in the Scenario Planner <ArrowRight size={18} aria-hidden="true" />
+          Rescore in the Scenario Planner <ArrowRight size={18} aria-hidden="true" />
         </Link>
         <Link to="/dashboard/overview" className="btn btn--secondary btn--lg">Open the dashboard</Link>
         <Button variant="ghost" onClick={onEdit}>Edit inputs</Button>
       </div>
-      <p className="final">Greener. Cooler. Planned.</p>
     </div>
   );
 }

@@ -107,6 +107,10 @@ def build_prompt(assessment: Dict[str, Any], role: str = "urban_planner") -> str
         raise ValueError("assessment must be a dict")
     score = assessment.get("score", {}) or {}
     recs = assessment.get("recommendations", {}) or {}
+    if isinstance(recs, list):
+        # The bridge emits a plain list of recommendation objects; normalize to
+        # the dict shape _fmt_conditions expects.
+        recs = {"recommendations": recs}
     ledger = assessment.get("canopy", {}) or {}
     validation = assessment.get("validation", {}) or {}
     site = validation.get("site", {}) or {}

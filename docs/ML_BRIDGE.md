@@ -67,13 +67,28 @@ plus recommendations and the canopy ledger.
     "recommendations": { ... },
     "contributions": { "flood": ..., "heat": ..., "green": ..., "carbon": ... }
   },
-  "recommendations": [ { "title": ..., "impact": ..., "target": ... } ],
+  "recommendations": [ { "id": ..., "action": ..., "delta": { "impact_before": ..., "impact_after": ..., "impact_delta": ... } } ],
   "canopy": { "canopy_cover_pct": 24.0, "census_reliable_for_this_site": true, ... } | null,
   "indicators": { "impervious_pct": ..., "lst_night_mean_c": ..., ... },
   "satellite_cube_available": true,
   "epoch": 2024
 }
 ```
+
+### Response size: per-tree decisions are summarized
+
+The canopy ledger's `decisions` array holds one record per census tree in the
+ward ring — tens of thousands of entries (ward 12: ~70k, ~105 MB of JSON).
+The bridge replaces it in the API response with:
+
+- `decisions_count` — total per-tree decisions computed,
+- `decisions_sample` — the first 25, deterministic,
+- `decisions_note` — explains the summarization.
+
+Scoring and recommendations are computed on the full list before trimming, so
+numbers are unchanged. The full list stays available through the CLI and
+report paths. Without this, `/api/v1/score` responses are too large for the
+browser.
 
 ### Partial-evidence contract (must be surfaced in the UI)
 

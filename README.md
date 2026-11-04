@@ -128,15 +128,19 @@ contradiction; one
 ward's overlapping crowns summing past 100% is labelled as a density index
 rather than a fraction. Ranges from ward_validation.json provenance.
 
-## Web demo and scientific pipeline
+## Web app and scientific pipeline
 
-The web app (`frontend/`, `backend/`) is a **prototype scenario calculator**.
-It uses a legacy JavaScript scorer with slider-derived inputs, fixed
-coordinates, and seeded fixtures; it is **not** wired to the Python scorer
-in `ml_pipeline/`. Results from the web demo are labelled `isDemo: true`,
-`source: "user-supplied scenario"` / `"illustrative-scenario"`, and must
-not be presented as measured assessments. The scientific system is the
-Python pipeline in `ml_pipeline/` and `engine/`.
+The web app (`frontend/`, `backend/`) is wired to the Python scorer.
+`POST /api/v1/score` runs `ml_pipeline/` through `backend/python/ml_bridge.py`
+(mode `score`), and the **Evaluate a plan** page and the **Scenario
+Planner** rescore both consume that endpoint — the same measured pipeline,
+not a browser-side approximation. A legacy JavaScript scorer
+(`frontend/src/lib/optimizer.ts`, `backend/src/domain/scoring.js`) remains
+in the tree for two clearly-labelled demo surfaces (the city-scale
+scenario sliders and parts of the Flood Risk page); anything produced by
+it is labelled demo/illustrative and must not be presented as a measured
+assessment. The scientific system is the Python pipeline in `ml_pipeline/`
+and `engine/`; the bridge contract is documented in `docs/ML_BRIDGE.md`.
 
 ## Carbon: the materials ledger
 
@@ -184,11 +188,7 @@ These are enforced in code and tests, not intentions:
   --materials '[{"name":"cement_opc","quantityKg":120000}]' \
   --role municipal_authority --json-out /tmp/out.json
 
-.venv/bin/python ml_pipeline/tests/test_scoring.py        # 48/48
-.venv/bin/python ml_pipeline/tests/test_data_integrity.py # 8/8
-.venv/bin/python ml_pipeline/tests/test_e2e_ward12.py
-.venv/bin/python ml_pipeline/tests/test_narrative.py     # 22/22
-.venv/bin/python engine/tests/test_engine.py             # 23/23
+.venv/bin/python -m pytest ml_pipeline/tests -q        # 98 passed
 PYTHONPATH=. .venv/bin/python ml_pipeline/data/ward_sweep.py
 ```
 
@@ -203,7 +203,7 @@ Chatbot narration (key in `.env`, never in chat or git):
 
 `engine/` scores any region supplying four things: a config file, a
 satellite cube, a census index, ward polygons. The scorer holds no city
-knowledge; a 23-test synthetic region proves the path. The contract is
+knowledge; a 25-test synthetic region proves the path. The contract is
 documented in code (`engine/region.py`, `validate_config`).
 
 ## Known limits

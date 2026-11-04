@@ -29,8 +29,11 @@ export const MODEL_VERSION = 'demo-0.1';
 
 const isNum = (v: number) => typeof v === 'number' && Number.isFinite(v);
 
-export function validateInputs(i: PlanInputs): FieldErrors {
-  const e: FieldErrors = {};
+/** Legacy demo-model error map, keyed by the old PlanInputs shape. */
+export type PlanFieldErrors = Partial<Record<keyof PlanInputs, string>>;
+
+export function validateInputs(i: PlanInputs): PlanFieldErrors {
+  const e: PlanFieldErrors = {};
   if (!i.planName.trim()) e.planName = 'Give the plan a name.';
   else if (i.planName.trim().length > 60) e.planName = 'Keep the name under 60 characters.';
   if (!i.focusArea) e.focusArea = 'Choose a focus area.';

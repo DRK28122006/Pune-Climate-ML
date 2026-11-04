@@ -51,12 +51,29 @@ def main():
         print(json.dumps({"text": "\n".join(lines), "source": "fallback"}))
         return
 
-    # Build prompt
-    base_prompt = build_prompt(assessment, role)
-    if question:
-        prompt = base_prompt + "\n\nUSER QUESTION: " + question + "\n\nAnswer concisely (3-5 sentences) using only the computed values above."
+    # Input-review mode: the assessment carries form inputs but no score yet.
+    # build_prompt would inject misleading boilerplate (EVIDENCE_STATUS COMPLETE
+    # with no site values), so use a plain review prompt instead.
+    if "score" not in assessment and isinstance(assessment.get("inputs"), dict):
+        inputs_json = json.dumps(assessment["inputs"], indent=1, default=str)
+        prompt = (
+            "You are reviewing building-proposal inputs on a municipal climate "
+            "scoring form before they are scored. Flag only real internal "
+            "inconsistencies: footprint vs plot area, storeys vs footprint, "
+            "material quantities wildly out of scale with the built-up area, "
+            "land-cover shares not summing near 100. Reply with a short list; "
+            "if nothing is wrong, say the inputs look consistent. Never invent "
+            "numbers or scores.\n\nINPUTS:\n" + inputs_json
+        )
+        if question:
+            prompt += "\n\nOFFICER NOTE: " + question
     else:
-        prompt = base_prompt
+        # Build prompt
+        base_prompt = build_prompt(assessment, role)
+        if question:
+            prompt = base_prompt + "\n\nUSER QUESTION: " + question + "\n\nAnswer concisely (3-5 sentences) using only the computed values above."
+        else:
+            prompt = base_prompt
 
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent"
     body = json.dumps({

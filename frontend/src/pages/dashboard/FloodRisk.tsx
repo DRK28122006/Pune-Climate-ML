@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import DataGate from '../../components/DataGate';
 import { ConceptMap, waterColor } from '../../components/charts/Visuals';
 import { DemoBadge, EmptyState, MetricCard, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
@@ -20,13 +21,10 @@ export default function FloodRisk() {
   const [rain, setRain] = useState(60);
   const [filter, setFilter] = useState<'all' | Priority>('all');
   const [selected, setSelected] = useState<string | null>('riverside');
-  const [applyPlan, setApplyPlan] = useState(false);
-
-  const reduction = result ? clamp((result.before.runoffIndex - result.after.runoffIndex) / result.before.runoffIndex, 0, 1) : 0;
-  const exposed = (a: FloodArea) => {
-    const base = a.households * exposureShare(a, rain);
-    return applyPlan && result && a.wardId && result.inputs.focusArea.toLowerCase() === a.wardId ? base * (1 - reduction) : base;
-  };
+  // The ML scorer reports a flood factor for the scored ward; it does not produce a
+  // before/after runoff reduction, so the demo rule below stays independent of it.
+  const floodFactor = result?.score.factors?.flood?.score ?? null;
+  const exposed = (a: FloodArea) => a.households * exposureShare(a, rain);
 
   const areas = state.data ?? [];
   const rows = useMemo(() => areas.filter((a) => filter === 'all' || a.risk === filter), [areas, filter]);
@@ -48,18 +46,23 @@ export default function FloodRisk() {
               <Panel title="Rainfall scenario (demo)">
                 <RangeField id="rain" label="Rainfall intensity" unit=" mm/hour" min={20} max={120} value={rain} onChange={setRain} />
                 <div className="toolbar toolbar--tight">
-                  <label className="check">
-                    <input type="checkbox" checked={applyPlan} disabled={!result} onChange={(e) => setApplyPlan(e.target.checked)} />
-                    Apply my plan's runoff reduction to the {result ? result.inputs.focusArea : 'focus'} area
-                  </label>
-                  {!result && <span className="note">Unlocks after you optimize a plan.</span>}
+                  {result ? (
+                    <span className="note">
+                      ML flood factor for ward {result.ward ?? '—'}: <b>{floodFactor != null ? `${floodFactor}/100` : 'UNAVAILABLE'}</b>
+                      {' '}· evidence {result.score.evidence_status ?? '—'} (scored in <Link to="/assess">Evaluate a plan</Link>)
+                    </span>
+                  ) : (
+                    <span className="note">No plan scored yet — <Link to="/assess">evaluate a plan</Link> to see its ML flood factor here.</span>
+                  )}
                 </div>
               </Panel>
 
               <div className="metrics">
                 <MetricCard label="Households flagged" value={Math.round(total).toLocaleString('en-IN')} note={`At ${rain} mm/hour, demo rule`} />
                 <MetricCard label="Areas affected" value={String(list.filter((a) => exposed(a) > 0).length)} unit={`of ${list.length}`} />
-                {applyPlan && result && <MetricCard label="Plan runoff reduction" value={(reduction * 100).toFixed(0)} unit="%" note="Demo model, plan area only" delta={{ text: 'applied', good: true }} />}
+                {result && floodFactor != null && (
+                  <MetricCard label={`ML flood factor · ward ${result.ward ?? '—'}`} value={String(floodFactor)} unit="/100" note={floodFactor >= 50 ? 'Higher score = higher flood factor contribution' : 'Lower contribution to impact'} />
+                )}
               </div>
 
               <div className="two-col two-col--map">

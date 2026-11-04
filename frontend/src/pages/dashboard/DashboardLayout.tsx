@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { DemoBadge } from '../../components/ui';
 import { usePlan } from '../../state/PlanContext';
 import { atmosphere } from '../../scene/atmosphereStore';
 import { PAGE_INTENSITY } from '../../config';
@@ -12,7 +11,7 @@ import { PAGE_INTENSITY } from '../../config';
  */
 export default function DashboardLayout() {
   const { pathname } = useLocation();
-  const { result } = usePlan();
+  const { result, inputs } = usePlan();
 
   const slug = pathname.split('/')[2] ?? 'overview';
   const intensity = result ? PAGE_INTENSITY[slug] ?? 0.5 : 0;
@@ -28,7 +27,7 @@ export default function DashboardLayout() {
         <span className="topbar__plan">
           {result ? (
             <>
-              Plan: <b>{result.inputs.planName}</b> <DemoBadge label="Demo result" />
+              Plan: <b>{inputs.planName}</b> · {inputs.wardNo ? `Ward ${inputs.wardNo}` : ''}
             </>
           ) : (
             <>

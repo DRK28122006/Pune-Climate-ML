@@ -194,6 +194,6 @@ export async function narrateAssessment(assessment, question, config) {
       try { resolve(JSON.parse(stdout)); }
       catch { reject(new Error("narrate returned invalid JSON")); }
     });
-    child.stdin.end(JSON.stringify({ assessment, question, role: "urban_planner" }));
+    child.stdin.end(JSON.stringify({ assessment, question, role: "municipal_authority" }));
   });
 }

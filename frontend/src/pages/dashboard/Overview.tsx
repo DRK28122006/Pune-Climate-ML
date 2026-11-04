@@ -53,15 +53,16 @@ export default function Overview() {
               <Panel title="Your evaluated plan">
                 {result ? (
                   <div className="plansum">
-                    <p><b>{result.inputs.planName}</b> · {result.inputs.focusArea}</p>
+                    <p><b>Plan scored by ML pipeline</b> · {result.ward ? `Ward ${result.ward}` : 'site'}</p>
                     <dl className="mlist">
-                      <div><dt>Canopy</dt><dd>{result.before.canopyPct.toFixed(1)}% → {result.after.canopyPct.toFixed(1)}%</dd></div>
-                      <div><dt>Surface temperature</dt><dd>{result.before.surfaceTempC.toFixed(1)} → {result.after.surfaceTempC.toFixed(1)}°C</dd></div>
-                      <div><dt>Runoff index</dt><dd>{result.before.runoffIndex.toFixed(1)} → {result.after.runoffIndex.toFixed(1)}</dd></div>
+                      <div><dt>Impact score</dt><dd>{result.score.impact_score ?? '—'}/100</dd></div>
+                      <div><dt>Climate score</dt><dd>{result.score.climate_score ?? '—'}/100</dd></div>
+                      <div><dt>Evidence</dt><dd>{result.score.evidence_status ?? '—'}</dd></div>
                     </dl>
-                    <p className="note">Demonstration result for the plan area only. It does not change the city figures on this page.</p>
+                    <p className="note">Computed by the ML pipeline (satellite cube + census tree data). Ward figures on this page come from the same cube.</p>
                     <div className="row-actions">
-                      <Link to="/assess" className="btn btn--secondary">Review or re-run</Link>
+                      <Link to="/assess" className="btn btn--secondary">Re-run evaluation</Link>
+                      <Link to="/dashboard/engine" className="btn btn--secondary">Open Engine</Link>
                       <Link to="/dashboard/scenario-planner" className="btn btn--ghost">Scenario Planner</Link>
                     </div>
                   </div>

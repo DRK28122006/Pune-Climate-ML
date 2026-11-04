@@ -44,7 +44,7 @@ export default function Engine() {
   const [selectedWard, setSelectedWard] = useState<number | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([
-    { role: 'assistant', text: 'I can help you understand climate impact scores. Ask about a ward ("ward 33"), safest/worst wards, or missing data.' },
+    { role: 'assistant', text: 'Ask about a ward ("ward 33"), safest/worst wards, or missing data. Score a proposal first and I can explain its result — approvability, factor breakdown, canopy ledger — from the actual ML output.' },
   ]);
 
   // Scoring form state
@@ -260,7 +260,7 @@ export default function Engine() {
 
             {/* AI Assistant */}
             <div style={{ marginTop: '16px' }}>
-              <Panel title="Climate Assistant" note="Powered by Gemini 2.5 Flash. Scores a proposal first, then ask questions about it.">
+              <Panel title="Climate Assistant" note="Gemini answers from the scored assessment only — it quotes computed values, never invents numbers. Without a score, ward lookups come from the ward score table.">
                 <div style={{ maxHeight: '240px', overflowY: 'auto', padding: '8px', marginBottom: '8px' }}>
                   {chatMessages.map((m, i) => (
                     <div key={i} style={{ textAlign: m.role === 'user' ? 'right' : 'left', marginBottom: '8px' }}>
@@ -278,7 +278,7 @@ export default function Engine() {
                 </div>
                 <form onSubmit={handleChat} style={{ display: 'flex', gap: '8px' }}>
                   <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask about a ward, e.g. 'ward 33' or 'safest wards'"
+                    placeholder={scoreResult ? "Ask about this score, e.g. 'is this approvable?'" : "Ask about a ward, e.g. 'ward 33'"}
                     style={{ flex: 1, padding: '8px 12px', border: '1px solid rgba(40,34,26,0.18)', borderRadius: '6px', fontSize: '13px', background: '#fffcf6', color: '#1b2a26' }} />
                   <button type="submit" className="btn btn--primary btn--md" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Send size={16} /> Send

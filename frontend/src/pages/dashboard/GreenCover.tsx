@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import DataGate from '../../components/DataGate';
 import { BarRow, Ring } from '../../components/charts/Visuals';
 import { DemoBadge, MetricCard, PageHeader, Panel, Segmented } from '../../components/ui';
@@ -26,11 +27,11 @@ export default function GreenCover() {
       />
       <DataGate state={state}>
         {(wards) => {
+          // The ML result is site-level for one ward, not a ward-wide canopy
+          // projection, so rows always show measured canopy. The scored plan's
+          // green factor is reported in the metric card below.
           const rows = wards
-            .map((w) => {
-              const planned = result && effective === 'plan' && result.inputs.focusArea === w.name ? result.after.canopyPct : w.canopyPct;
-              return { ...w, shown: planned, changed: planned !== w.canopyPct };
-            })
+            .map((w) => ({ ...w, shown: w.canopyPct, changed: false }))
             .sort((a, b) => a.shown - b.shown);
           const cityNow = cityState.data?.canopyPct ?? 0;
           const belowTarget = rows.filter((r) => r.shown < target).length;
@@ -50,13 +51,13 @@ export default function GreenCover() {
                   <input id="f-target" type="range" min={20} max={45} value={target} onChange={(e) => setTarget(Number(e.target.value))} />
                 </div>
               </div>
-              {!result && <p className="note">“With my plan” unlocks after you evaluate and optimize a plan.</p>}
+              {!result && <p className="note">“With my plan” unlocks after you score a proposal in Evaluate a plan.</p>}
 
               <div className="metrics">
                 <MetricCard label="City canopy" value={cityNow.toFixed(1)} unit="%" note="City average, sample" pill={{ tone: cityNow < target ? 'med' : 'low', text: cityNow < target ? `${(target - cityNow).toFixed(1)} points below target` : 'At or above target' }} />
                 <MetricCard label="Wards below target" value={String(belowTarget)} unit={`of ${rows.length}`} note="Sample wards listed here" />
                 {result && effective === 'plan' && (
-                  <MetricCard label={`${result.inputs.focusArea} with plan`} value={result.after.canopyPct.toFixed(1)} unit="%" delta={{ text: `+${(result.after.canopyPct - result.before.canopyPct).toFixed(1)} pts (demo)`, good: true }} note={`By year ${result.inputs.horizonYears}`} />
+                  <MetricCard label={`ML score: green ${result.score.factors?.green?.score ?? 'UNAVAILABLE'}`} value={result.score.climate_score != null ? String(result.score.climate_score) : '—'} unit="/100" note={`Ward ${result.ward ?? '—'} · evidence ${result.score.evidence_status ?? '—'}`} />
                 )}
               </div>
 
