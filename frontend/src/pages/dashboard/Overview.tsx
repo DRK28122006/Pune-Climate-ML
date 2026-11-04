@@ -1,23 +1,26 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, CloudRain, Thermometer, Trees, Wind, SlidersHorizontal } from 'lucide-react';
 import DataGate from '../../components/DataGate';
-import { DemoBadge, EmptyState, MetricCard, PageHeader, Panel, Pill } from '../../components/ui';
+import { EmptyState, MetricCard, PageHeader, Panel, Pill } from '../../components/ui';
 import { getCityOverview } from '../../data/api';
+import { getAirQuality } from '../../services/climateApi';
 import { CANOPY_TARGET_PCT } from '../../config';
 import { useAsync } from '../../lib/useAsync';
 import { usePlan } from '../../state/PlanContext';
 
 const LINKS = [
   { to: '/dashboard/heat', icon: Thermometer, title: 'Heat', text: 'Rank wards by surface temperature and tree cover.' },
-  { to: '/dashboard/air-quality', icon: Wind, title: 'Air Quality', text: 'Hourly and weekly air index with station readings.' },
-  { to: '/dashboard/green-cover', icon: Trees, title: 'Green Cover', text: 'Canopy against the target, ward by ward.' },
-  { to: '/dashboard/flood-risk', icon: CloudRain, title: 'Flood Risk', text: 'Exposed households under a chosen rainfall.' },
-  { to: '/dashboard/scenario-planner', icon: SlidersHorizontal, title: 'Scenario Planner', text: 'Compare planting and cool-roof scenarios.' },
+  { to: '/dashboard/air-quality', icon: Wind, title: 'Air Quality', text: 'Live AQI and 2025–2026 PM2.5 comparison from Open-Meteo.' },
+  { to: '/dashboard/green-cover', icon: Trees, title: 'Green Cover', text: 'Satellite-measured vegetation against the target, ward by ward.' },
+  { to: '/dashboard/flood-risk', icon: CloudRain, title: 'Flood Risk', text: 'Ward exposure under a chosen rainfall, ranked by measured flood factor.' },
+  { to: '/dashboard/scenario-planner', icon: SlidersHorizontal, title: 'Scenario Planner', text: 'Rescore the evaluated proposal with material swaps and ward relocation.' },
 ];
 
 export default function Overview() {
   const state = useAsync(getCityOverview);
+  const aq = useAsync(getAirQuality);
   const { result } = usePlan();
+  const aqi = aq.status === 'ready' && !aq.data.unavailable ? aq.data.aqi : null;
 
   return (
     <>
@@ -25,21 +28,21 @@ export default function Overview() {
         eyebrow="Pune · prototype city"
         title="Overview"
         lede="A single view of heat, air, green cover and flood exposure, with the places that need attention first."
-        badge={<DemoBadge />}
+        badge={<Pill tone="low">Satellite cube</Pill>}
       />
 
       <DataGate state={state}>
         {(o) => (
           <>
             <div className="metrics">
-              <MetricCard label="Surface temperature" value={o.surfaceTempC.toFixed(1)} unit="°C" pill={{ tone: 'high', text: 'Above 36°C threshold' }} note="City average, afternoon" />
-              <MetricCard label="Air quality index" value={String(o.airIndex)} unit="AQI" pill={{ tone: 'med', text: 'Moderate' }} note="City average, CPCB-style scale" />
-              <MetricCard label="Tree canopy" value={o.canopyPct.toFixed(1)} unit="%" pill={{ tone: 'med', text: `${(CANOPY_TARGET_PCT - o.canopyPct).toFixed(1)} points below target` }} note={`Target is ${CANOPY_TARGET_PCT}%`} />
-              <MetricCard label="Flood-prone wards" value={String(o.floodWards)} unit={`of ${o.totalWards}`} pill={{ tone: 'high', text: `${o.highRiskWards} high risk` }} note="Flagged in the sample season" />
+              <MetricCard label="Night surface temp" value={o.surfaceTempC.toFixed(1)} unit="°C" note="Night LST, city average (satellite cube)" />
+              <MetricCard label="Air quality index" value={aqi != null ? String(aqi) : aq.status === 'loading' ? '…' : 'UNAVAILABLE'} unit={aqi != null ? 'AQI' : ''} note="Open-Meteo, Pune grid point" />
+              <MetricCard label="Vegetation cover" value={o.canopyPct.toFixed(1)} unit="%" pill={{ tone: 'med', text: `${(CANOPY_TARGET_PCT - o.canopyPct).toFixed(1)} pts below target` }} note={`Satellite-measured city average. Target is ${CANOPY_TARGET_PCT}%`} />
+              <MetricCard label="Flood-prone wards" value={String(o.floodWards)} unit={`of ${o.totalWards}`} pill={{ tone: 'high', text: `${o.highRiskWards} high risk` }} note="Flood factor ≥ 50 (satellite cube)" />
             </div>
 
             <div className="two-col">
-              <Panel title="Priorities this season" note="Sample content from the prototype. Replace with ranked output from real data.">
+              <Panel title="Priorities" note="Computed from the measured ward scores (satellite cube). Highest/lowest impact wards and data coverage.">
                 <ul className="prio">
                   {o.priorities.map((p) => (
                     <li key={p.area}>

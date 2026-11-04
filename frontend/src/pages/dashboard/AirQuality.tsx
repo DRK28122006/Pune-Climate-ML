@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DataGate from '../../components/DataGate';
-import { DemoBadge, MetricCard, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
+import { MetricCard, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
 import { getAirQuality } from '../../services/climateApi';
 import { useAsync } from '../../lib/useAsync';
 
@@ -44,7 +44,7 @@ export default function AirQuality() {
       <PageHeader
         eyebrow="Air quality"
         title="Air Quality"
-        badge={<DemoBadge label="Open-Meteo real data" />}
+        badge={<Pill tone="low">Open-Meteo real data</Pill>}
       />
 
       <DataGate state={state}>
@@ -67,17 +67,16 @@ export default function AirQuality() {
 
           const monthsOrder = ['01','02','03','04','05','06','07','08','09','10','11','12'];
           const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          const compare2025 = monthsOrder.map(m => monthly2025[`${m}-2025`] ?? 0);
-          const compare2026 = monthsOrder.map(m => monthly2026[`${m}-2026`] ?? 0);
-
-          // Regions ranked by 2026 year-to-date average (estimated from central grid point)
+          // Only one Open-Meteo grid point is queried; per-region values are
+          // not available and must not be estimated. The central reading is
+          // shown; the other regions are explicitly UNAVAILABLE.
           const regionData = [
-            { name: 'Shivajinagar (central)', aqi2025: Math.round(yearly2025), aqi2026: Math.round(yearly2026), trend: 'current' },
-            { name: 'Nigdi (west)', aqi2025: Math.round(yearly2025 * 1.2), aqi2026: Math.round(yearly2026 * 1.2), trend: 'higher' },
-            { name: 'Lohegaon (east)', aqi2025: Math.round(yearly2025 * 0.9), aqi2026: Math.round(yearly2026 * 0.9), trend: 'lower' },
-            { name: 'Katraj (south)', aqi2025: Math.round(yearly2025 * 0.95), aqi2026: Math.round(yearly2026 * 0.95), trend: 'lower' },
-            { name: 'Pashan (west)', aqi2025: Math.round(yearly2025 * 0.85), aqi2026: Math.round(yearly2026 * 0.85), trend: 'lower' },
-          ].sort((a, b) => b.aqi2026 - a.aqi2026);
+            { name: 'Shivajinagar (central) — measured grid point', aqi2025: yearly2025, aqi2026: yearly2026, available: true },
+            { name: 'Nigdi (west)', aqi2025: null, aqi2026: null, available: false },
+            { name: 'Lohegaon (east)', aqi2025: null, aqi2026: null, available: false },
+            { name: 'Katraj (south)', aqi2025: null, aqi2026: null, available: false },
+            { name: 'Pashan (west)', aqi2025: null, aqi2026: null, available: false },
+          ];
 
           return (
             <>
@@ -94,8 +93,8 @@ export default function AirQuality() {
               >
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px', marginBottom: '16px' }}>
                   {monthsOrder.map((m, i) => {
-                    const v2025 = monthly2025[`${m}-2025`];
-                    const v2026 = monthly2026[`${m}-2026`];
+                    const v2025 = monthly2025[`2025-${m}`];
+                    const v2026 = monthly2026[`2026-${m}`];
                     const diff = v2026 != null && v2025 != null ? v2026 - v2025 : null;
                     return (
                       <div key={m} style={{ textAlign: 'center', padding: '6px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.12)', borderRadius: '6px' }}>
@@ -113,21 +112,25 @@ export default function AirQuality() {
                 </div>
               </Panel>
 
-              <Panel title="Regions ranked by 2026 year-to-date AQI" note="Estimated from Open-Meteo grid + distance weighting. Real stations: Shivajinagar only.">
+              <Panel title="Regions" note="Open-Meteo serves one grid point for Pune (Shivajinagar). No per-region measurements are available; values must not be estimated, so other regions are UNAVAILABLE.">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
                   {regionData.map((r) => (
                     <div key={r.name} style={{ padding: '10px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.12)', borderRadius: '6px' }}>
                       <div style={{ fontSize: '12px', fontWeight: 600, color: '#1b2a26', marginBottom: '6px' }}>{r.name}</div>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <div>
-                          <div style={{ fontSize: '11px', color: '#4a5a55' }}>2025</div>
-                          <div style={{ fontSize: '18px', fontWeight: 700, color: '#a8371f' }}>{r.aqi2025}</div>
+                      {r.available ? (
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          <div>
+                            <div style={{ fontSize: '11px', color: '#4a5a55' }}>2025</div>
+                            <div style={{ fontSize: '18px', fontWeight: 700, color: '#a8371f' }}>{r.aqi2025?.toFixed(1)}</div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '11px', color: '#4a5a55' }}>2026 YTD</div>
+                            <div style={{ fontSize: '18px', fontWeight: 700, color: '#2e7d4f' }}>{r.aqi2026?.toFixed(1)}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div style={{ fontSize: '11px', color: '#4a5a55' }}>2026 YTD</div>
-                          <div style={{ fontSize: '18px', fontWeight: 700, color: '#2e7d4f' }}>{r.aqi2026}</div>
-                        </div>
-                      </div>
+                      ) : (
+                        <div style={{ fontSize: '11px', color: '#7d5400', fontWeight: 600, letterSpacing: '0.04em' }}>UNAVAILABLE</div>
+                      )}
                     </div>
                   ))}
                 </div>

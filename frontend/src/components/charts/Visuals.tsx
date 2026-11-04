@@ -103,7 +103,7 @@ export function ConceptMap({
         ))}
       </div>
       <figcaption className="note">
-        Conceptual tile layout. Tile positions are illustrative and do not show real geography. Sample data.
+        Conceptual tile layout. Tile positions are illustrative and do not show real geography; values are the measured ward figures listed below.
       </figcaption>
     </figure>
   );

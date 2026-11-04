@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import DataGate from '../../components/DataGate';
 import { ConceptMap, BarRow, heatColor, greenColor } from '../../components/charts/Visuals';
-import { DemoBadge, EmptyState, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
+import { EmptyState, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
 import { getWards } from '../../data/api';
-import { CITY_AVG_TEMP } from '../../data/sample';
 import { useAsync } from '../../lib/useAsync';
 import type { Priority } from '../../types';
 
@@ -86,14 +85,16 @@ export default function Heat() {
       <PageHeader
         eyebrow="Urban heat"
         title="Heat"
-        lede="Wards ranked by afternoon surface temperature, with the gap to the city average and the tree cover that could bring it down."
-        badge={<DemoBadge />}
+        lede="Wards ranked by night surface temperature (the pipeline's only heat input), with the gap to the city average and satellite-measured vegetation share."
+        badge={<Pill tone="low">Satellite cube</Pill>}
       />
       <DataGate state={state}>
         {(wards) => {
           const safeWards = wards as Ward[];
           const sel = selectedWard;
-          const maxT = Math.max(...safeWards.map((w) => safeTemp(w.tempC)).filter((t) => t > 0), 42);
+          const lsts = safeWards.map((w) => safeTemp(w.tempC)).filter((t) => t > 0);
+          const CITY_AVG_TEMP = lsts.length ? lsts.reduce((a, b) => a + b, 0) / lsts.length : 0;
+          const maxT = Math.max(...lsts, 1);
 
           return (
             <>
@@ -102,7 +103,7 @@ export default function Heat() {
                   label="Map measure"
                   value={measure}
                   onChange={setMeasure}
-                  options={[{ value: 'temp', label: 'Surface temperature' }, { value: 'canopy', label: 'Tree cover' }]}
+                  options={[{ value: 'temp', label: 'Night LST' }, { value: 'canopy', label: 'Tree cover' }]}
                 />
                 <Segmented<'all' | Priority>
                   label="Filter by priority"
@@ -113,7 +114,7 @@ export default function Heat() {
               </div>
 
               <div className="two-col two-col--map">
-                <Panel title={measure === 'temp' ? 'Heat by ward (°C)' : 'Tree cover by ward (%)'}>
+                <Panel title={measure === 'temp' ? 'Night LST by ward (°C)' : 'Vegetation share by ward (%)'}>
                   <ConceptMap
                     ariaLabel="Ward tiles. Select a ward to see details."
                     selectedId={selected}
@@ -123,15 +124,15 @@ export default function Heat() {
                       label: w.name,
                       display: measure === 'temp' ? `${safeTemp(w.tempC).toFixed(1)}°C` : `${safeCanopy(w.canopyPct)}%`,
                       color: measure === 'temp'
-                        ? heatColor(safeTemp(w.tempC), 36, 42)
-                        : greenColor(safeCanopy(w.canopyPct), 5, 30),
+                        ? heatColor(safeTemp(w.tempC), 15, 25)
+                        : greenColor(safeCanopy(w.canopyPct), 0, 60),
                       col: safeNum(w.col),
                       row: safeNum(w.row),
                       dimmed: !rows.some((r) => r.id === w.id),
                       darkText: measure === 'temp' ? safeTemp(w.tempC) < 39 : safeCanopy(w.canopyPct) < 18,
                     }))}
                   />
-                  <p className="legend"><span className="legend__ramp" data-measure={measure} />{measure === 'temp' ? 'Cooler (36°C) to hotter (42°C)' : 'Less cover (5%) to more cover (30%)'}</p>
+                  <p className="legend"><span className="legend__ramp" data-measure={measure} />{measure === 'temp' ? 'Cooler (15°C) to hotter (25°C), night LST' : 'Less cover (0%) to more cover (60%), satellite'}</p>
                 </Panel>
 
                 <Panel title={sel ? sel.name : 'Ward details'}>
@@ -139,11 +140,11 @@ export default function Heat() {
                     <div className="detail">
                       <Pill tone={safePriority(sel.priority)} />
                       <dl className="mlist">
-                        <div><dt>Surface temperature</dt><dd>{safeTemp(sel.tempC).toFixed(1)}°C</dd></div>
-                        <div><dt>Against city average ({CITY_AVG_TEMP}°C)</dt><dd>{safeTemp(sel.tempC) - CITY_AVG_TEMP >= 0 ? '+' : '−'}{Math.abs(safeTemp(sel.tempC) - CITY_AVG_TEMP).toFixed(1)}°C</dd></div>
-                        <div><dt>Tree cover</dt><dd>{safeCanopy(sel.canopyPct)}%</dd></div>
+                        <div><dt>Night LST</dt><dd>{safeTemp(sel.tempC).toFixed(1)}°C</dd></div>
+                        <div><dt>Against city average ({CITY_AVG_TEMP.toFixed(1)}°C)</dt><dd>{safeTemp(sel.tempC) - CITY_AVG_TEMP >= 0 ? '+' : '−'}{Math.abs(safeTemp(sel.tempC) - CITY_AVG_TEMP).toFixed(1)}°C</dd></div>
+                        <div><dt>Vegetation</dt><dd>{safeCanopy(sel.canopyPct)}%</dd></div>
                       </dl>
-                      <p className="note">Hotter wards with low tree cover are usually the strongest candidates for planting and cool roofs.</p>
+                      <p className="note">Hotter wards with low vegetation are usually the strongest candidates for planting and cool roofs.</p>
                     </div>
                   ) : (
                     <EmptyState title="Select a ward" text="Choose a tile on the map to see its figures." />
@@ -161,7 +162,7 @@ export default function Heat() {
                     options={[{ value: 'hottest', label: 'Hottest first' }, { value: 'canopy', label: 'Least cover first' }]}
                   />
                 }
-                note={`Sample data. City average ${CITY_AVG_TEMP}°C.`}
+                note={`Night LST (satellite cube). City average ${CITY_AVG_TEMP.toFixed(1)}°C.`}
               >
                 {rows.length === 0 ? (
                   <EmptyState title="No wards match this filter" text="Choose a different priority level." />
@@ -169,7 +170,7 @@ export default function Heat() {
                   <div className="table-wrap">
                     <table>
                       <thead>
-                        <tr><th>Ward</th><th>Surface temperature</th><th className="n">vs city average</th><th className="n">Tree cover</th><th>Priority</th></tr>
+                        <tr><th>Ward</th><th>Night LST</th><th className="n">vs city average</th><th className="n">Vegetation</th><th>Priority</th></tr>
                       </thead>
                       <tbody>
                         {rows.map((w) => (
@@ -178,10 +179,10 @@ export default function Heat() {
                             <td>
                               <BarRow
                                 label={w.name}
-                                value={safeTemp(w.tempC) - 30}
-                                max={Math.max(maxT - 30, 1)}
+                                value={Math.max(0, safeTemp(w.tempC) - 14)}
+                                max={Math.max(maxT - 14, 1)}
                                 display={`${safeTemp(w.tempC).toFixed(1)}°`}
-                                color={heatColor(safeTemp(w.tempC), 36, 42)}
+                                color={heatColor(safeTemp(w.tempC), 15, 25)}
                               />
                             </td>
                             <td className="n">{safeTemp(w.tempC) - CITY_AVG_TEMP >= 0 ? '+' : '−'}{Math.abs(safeTemp(w.tempC) - CITY_AVG_TEMP).toFixed(1)}°</td>

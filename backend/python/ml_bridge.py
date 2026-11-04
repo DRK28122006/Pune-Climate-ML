@@ -22,6 +22,7 @@ can use the same spawn plumbing for both.
 import json
 import os
 import sys
+import time
 import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -55,9 +56,28 @@ def _run_extraction(request: Dict[str, Any]) -> Dict[str, Any]:
     return {**result, "source": "gee-segformer"}
 
 
+_AQ_CACHE_PATH = Path(__file__).resolve().parents[2] / "ml_pipeline" / "data" / "air_quality_cache.json"
+_AQ_CACHE_TTL_S = 3600  # 1 hour — Open-Meteo forecast updates hourly
+
 def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
-    """Fetch real air quality data for Pune from Open-Meteo (current + historical)."""
+    """Fetch real air quality data for Pune from Open-Meteo (current + historical).
+
+    Cached on disk for 1 hour: each call pulls ~2 years of hourly PM2.5 (several
+    MB) and the backend spawns a fresh Python process per request, so without a
+    disk cache every page load pays the full fetch. Failures serve the stale
+    cache when available rather than going UNAVAILABLE.
+    """
     try:
+        if _AQ_CACHE_PATH.exists():
+            try:
+                cached = json.loads(_AQ_CACHE_PATH.read_text())
+                fetched_at = cached.get("_fetched_at", 0)
+                if time.time() - fetched_at < _AQ_CACHE_TTL_S:
+                    cached.pop("_fetched_at", None)
+                    cached["cache"] = {"hit": True, "age_s": int(time.time() - fetched_at)}
+                    return cached
+            except Exception:
+                pass  # corrupt cache — refetch
         # Fetch 2 years of hourly data for monthly comparison
         hist_url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
                     "?latitude=18.5204&longitude=73.8567"
@@ -170,7 +190,7 @@ def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
 
         aqi = pm25_aqi(current["pm25"]) or 0
 
-        return {
+        result = {
             "source": "open-meteo-air-quality",
             "city": "Pune",
             "geo": [18.5204, 73.8567],
@@ -200,8 +220,25 @@ def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
                 "current_month_daily": current_month,
                 "prev_month_daily": prev_month,
             },
+            "cache": {"hit": False, "age_s": 0},
         }
+        try:
+            to_cache = dict(result)
+            to_cache["_fetched_at"] = time.time()
+            _AQ_CACHE_PATH.write_text(json.dumps(to_cache))
+        except Exception:
+            pass  # cache write failure is non-fatal
+        return result
     except Exception as e:
+        # Open-Meteo unreachable: serve stale cache rather than nothing
+        try:
+            if _AQ_CACHE_PATH.exists():
+                cached = json.loads(_AQ_CACHE_PATH.read_text())
+                fetched_at = cached.pop("_fetched_at", 0)
+                cached["cache"] = {"hit": True, "stale": True, "age_s": int(time.time() - fetched_at)}
+                return cached
+        except Exception:
+            pass
         return {"unavailable": True, "reason": str(e)}
 
 

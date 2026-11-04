@@ -50,3 +50,13 @@ dist/
 # Research vault (Session 1): small KMLs and documents are tracked.
 !ml_pipeline/research/
 !ml_pipeline/research/05_sources/kml/*.kml
+
+# Generated API cache (Open-Meteo, 1h TTL; re-fetched on demand)
+ml_pipeline/data/air_quality_cache.json
+
+# Frontend source data layer (realApi/api barrel) is code, not data
+!frontend/src/data/
+!frontend/src/data/**
+
+# Engine map artefact (derived from research vault KML; needed at runtime)
+!frontend/public/wards.geojson

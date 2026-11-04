@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DataGate from '../../components/DataGate';
 import { BarRow, Ring } from '../../components/charts/Visuals';
-import { DemoBadge, MetricCard, PageHeader, Panel, Segmented } from '../../components/ui';
+import { MetricCard, PageHeader, Panel, Pill, Segmented } from '../../components/ui';
 import { getWards } from '../../data/api';
 import { getCityOverview } from '../../data/api';
 import { CANOPY_TARGET_PCT } from '../../config';
@@ -22,8 +22,8 @@ export default function GreenCover() {
       <PageHeader
         eyebrow="Green cover"
         title="Green Cover"
-        lede="Tree canopy as a share of ward area, and how many points each ward is from the target."
-        badge={<DemoBadge />}
+        lede="Vegetation share of ward area measured by the satellite cube, and how many points each ward is from the target."
+        badge={<Pill tone="low">Satellite cube</Pill>}
       />
       <DataGate state={state}>
         {(wards) => {
@@ -46,7 +46,7 @@ export default function GreenCover() {
                 />
                 <div className="range range--inline">
                   <label htmlFor="f-target">
-                    Canopy target <output htmlFor="f-target">{target}%</output>
+                    Vegetation target <output htmlFor="f-target">{target}%</output>
                   </label>
                   <input id="f-target" type="range" min={20} max={45} value={target} onChange={(e) => setTarget(Number(e.target.value))} />
                 </div>
@@ -54,14 +54,14 @@ export default function GreenCover() {
               {!result && <p className="note">“With my plan” unlocks after you score a proposal in Evaluate a plan.</p>}
 
               <div className="metrics">
-                <MetricCard label="City canopy" value={cityNow.toFixed(1)} unit="%" note="City average, sample" pill={{ tone: cityNow < target ? 'med' : 'low', text: cityNow < target ? `${(target - cityNow).toFixed(1)} points below target` : 'At or above target' }} />
-                <MetricCard label="Wards below target" value={String(belowTarget)} unit={`of ${rows.length}`} note="Sample wards listed here" />
+                <MetricCard label="City vegetation cover" value={cityNow.toFixed(1)} unit="%" note="Satellite cube, city average" pill={{ tone: cityNow < target ? 'med' : 'low', text: cityNow < target ? `${(target - cityNow).toFixed(1)} points below target` : 'At or above target' }} />
+                <MetricCard label="Wards below target" value={String(belowTarget)} unit={`of ${rows.length}`} note="Satellite cube, all wards" />
                 {result && effective === 'plan' && (
                   <MetricCard label={`ML score: green ${result.score.factors?.green?.score ?? 'UNAVAILABLE'}`} value={result.score.climate_score != null ? String(result.score.climate_score) : '—'} unit="/100" note={`Ward ${result.ward ?? '—'} · evidence ${result.score.evidence_status ?? '—'}`} />
                 )}
               </div>
 
-              <Panel title="Canopy against target" note="Sample data. The vertical mark on each bar is the target.">
+              <Panel title="Vegetation share against target" note="Satellite cube measurement. The vertical mark on each bar is the target.">
                 <div className="greenwrap">
                   <Ring value={cityNow} target={target} caption={`of ${target}% target`} />
                   <div className="bars">

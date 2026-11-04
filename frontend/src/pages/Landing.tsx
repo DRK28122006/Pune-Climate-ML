@@ -36,7 +36,7 @@ export default function Landing() {
             DishaDharti helps planners evaluate an urban plan, optimize it against heat, air quality, green cover and
             flood risk, and see the greener outcome. Prototype city: Pune.
           </p>
-          <p className="note">Prototype. All figures shown in this app are simulated demonstration data.</p>
+          <p className="note">Prototype. The Evaluate flow, Engine scores and Scenario Planner run the real ML pipeline (satellite cube + 2019 tree census). Tab metrics are satellite-measured; the flood-risk threshold is an illustrative heuristic and estimates are marked as such.</p>
         </div>
       </div>
 

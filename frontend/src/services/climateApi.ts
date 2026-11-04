@@ -250,46 +250,23 @@ export async function getAirQuality(): Promise<AirQualityData> {
   }
 
   const stations = (data.stations || []) as WaqiStation[];
-  // Use first station with data as primary
+  // Backend mirrors the primary reading at the top level — use it.
   const primary = stations.length > 0 ? stations[0] : null;
 
-  const aqi = primary?.aqi ?? 0;
-  const city = primary?.city ?? 'Pune';
-  const dominant = primary?.dominant ?? '';
-  const iaqi = primary?.iaqi ?? {};
-  const time = primary?.time ?? null;
-  const iso = primary?.iso ?? null;
-  const attributions = primary?.attributions ?? [];
-  const forecast = primary?.forecast ?? {};
-
-  // Build an hourly series from current AQI
-  const hourly: number[] = [];
-  for (let i = 23; i >= 0; i--) {
-    hourly.push(aqi);
-  }
-
-  // Daily forecast from WAQI pm25 series
-  const daily: number[] = [];
-  const pm25Series = forecast?.pm25;
-  if (pm25Series && Array.isArray(pm25Series)) {
-    daily.push(...pm25Series.map((p: any) => p.avg));
-  } else {
-    daily.push(aqi);
-  }
-
   return {
-    source: 'waqi',
+    source: data.source ?? 'open-meteo-air-quality',
     stations,
-    hourly,
-    daily,
-    aqi,
-    city,
-    dominant,
-    iaqi,
-    time,
-    iso,
-    attributions,
-    forecast,
+    hourly: data.hourly ?? [],
+    daily: data.daily ?? [],
+    aqi: data.aqi ?? primary?.aqi ?? 0,
+    city: data.city ?? primary?.city ?? 'Pune',
+    dominant: data.dominant ?? primary?.dominant ?? null,
+    iaqi: data.iaqi ?? primary?.iaqi ?? {},
+    time: data.time ?? primary?.time ?? null,
+    iso: data.iso ?? primary?.iso ?? null,
+    attributions: data.attributions ?? primary?.attributions ?? [],
+    forecast: primary?.forecast ?? {},
+    historical: data.historical,
     unavailable: false,
   };
 }
