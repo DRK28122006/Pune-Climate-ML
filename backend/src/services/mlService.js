@@ -197,3 +197,27 @@ export async function narrateAssessment(assessment, question, config) {
     child.stdin.end(JSON.stringify({ assessment, question, role: "municipal_authority" }));
   });
 }
+
+export async function assistantChat({ messages, draft, phase, assessment }, config) {
+  const child = spawn(config.pythonCommand, [path.join(config.backendRoot, "python", "assistant_bridge.py")], {
+    cwd: config.repositoryRoot,
+    env: process.env,
+    shell: false,
+    windowsHide: true,
+  });
+  return new Promise((resolve, reject) => {
+    let stdout = "";
+    let stderr = "";
+    const timeout = setTimeout(() => child.kill(), 90 * 1000);
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      clearTimeout(timeout);
+      if (code !== 0) return reject(new Error(stderr.trim() || `assistant exited with code ${code}`));
+      try { resolve(JSON.parse(stdout)); }
+      catch { reject(new Error("assistant returned invalid JSON")); }
+    });
+    child.stdin.end(JSON.stringify({ messages: messages || [], draft: draft || {}, phase: phase || "collecting", assessment: assessment || null }));
+  });
+}

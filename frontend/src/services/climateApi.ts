@@ -175,6 +175,28 @@ export async function scoreProposal(payload: {
   });
 }
 
+export type AssistantReply = {
+  reply: string;
+  draft: Record<string, unknown>;
+  phase: 'collecting' | 'ready' | 'confirmed';
+  missing?: string[];
+  unknownMaterials?: string[];
+  source: 'gemini' | 'fallback' | 'error';
+  reason?: string;
+};
+
+export async function assistantReply(payload: {
+  messages: { role: 'user' | 'assistant'; text: string }[];
+  draft: unknown;
+  phase: string;
+  assessment: unknown | null;
+}): Promise<AssistantReply> {
+  return request('/assistant', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function narrateAssessment(assessment: unknown, question: string): Promise<{ text: string; source: string }> {
   return request('/narrate', {
     method: 'POST',

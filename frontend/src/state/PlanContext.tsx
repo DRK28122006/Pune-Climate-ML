@@ -5,6 +5,7 @@ import type { AssessmentInputs, FieldErrors, RunStatus } from '../types';
 interface PlanContextValue {
   inputs: AssessmentInputs;
   setInput: <K extends keyof AssessmentInputs>(key: K, value: AssessmentInputs[K]) => void;
+  setInputs: (partial: AssessmentInputs) => void;
   resetInputs: () => void;
   errors: FieldErrors;
   status: RunStatus;
@@ -79,6 +80,10 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     setInputsState((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  const setInputs = useCallback((partial: AssessmentInputs) => {
+    setInputsState((prev) => ({ ...prev, ...partial }));
+  }, []);
+
   const resetInputs = useCallback(() => {
     setInputsState(DEFAULT_INPUTS);
     setAttempted(false);
@@ -143,8 +148,8 @@ export function PlanProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<PlanContextValue>(
-    () => ({ inputs, setInput, resetInputs, errors, status, errorMessage, result, stale, submit, dismissError }),
-    [inputs, setInput, resetInputs, errors, status, errorMessage, result, stale, submit, dismissError],
+    () => ({ inputs, setInput, setInputs, resetInputs, errors, status, errorMessage, result, stale, submit, dismissError }),
+    [inputs, setInput, setInputs, resetInputs, errors, status, errorMessage, result, stale, submit, dismissError],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

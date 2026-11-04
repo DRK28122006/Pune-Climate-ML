@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cpu, MapPin, MessageCircle, Send, SlidersHorizontal } from 'lucide-react';
+import { Cpu, MapPin, SlidersHorizontal } from 'lucide-react';
 import DataGate from '../../components/DataGate';
 import { DemoBadge, EmptyState, MetricCard, PageHeader, Panel, Pill } from '../../components/ui';
 import { useAsync } from '../../lib/useAsync';
 import { usePlan } from '../../state/PlanContext';
-import { scoreProposal, narrateAssessment, type ScoreResult } from '../../services/climateApi';
+import { scoreProposal, type ScoreResult } from '../../services/climateApi';
+import AssistantChat from '../../components/AssistantChat';
 import EngineMap from '../../components/EngineMap';
 import type { Priority } from '../../types';
 
@@ -42,11 +43,6 @@ export default function Engine() {
   const state = useAsync(fetchWardScores);
   const { result } = usePlan();
   const [selectedWard, setSelectedWard] = useState<number | null>(null);
-  const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([
-    { role: 'assistant', text: 'Ask about a ward ("ward 33"), safest/worst wards, or missing data. Score a proposal first and I can explain its result — approvability, factor breakdown, canopy ledger — from the actual ML output.' },
-  ]);
-
   // Scoring form state
   const [scoreWard, setScoreWard] = useState<number>(12);
   const [builtUp, setBuiltUp] = useState<number>(2000);
@@ -56,6 +52,8 @@ export default function Engine() {
   const [scoreError, setScoreError] = useState<string | null>(null);
 
   const scores = state.data ?? {};
+  // Local manual scoring wins; otherwise the shared (assistant) scored result.
+  const effectiveResult = scoreResult ?? result;
   const selected = selectedWard ? scores[String(selectedWard)] : null;
 
   const sortedWards = useMemo(() => {
@@ -99,51 +97,6 @@ export default function Engine() {
     } finally {
       setScoring(false);
     }
-  };
-
-  const handleChat = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    const userMsg = chatInput.trim();
-    setChatMessages((prev) => [...prev, { role: 'user', text: userMsg }]);
-    setChatInput('');
-
-    // If we have a scored result, use the Gemini narrator; otherwise rule-based
-    if (scoreResult) {
-      try {
-        const res = await narrateAssessment(scoreResult, userMsg);
-        setChatMessages((prev) => [...prev, { role: 'assistant', text: res.text }]);
-        return;
-      } catch {
-        // fall through to rule-based
-      }
-    }
-
-    const lower = userMsg.toLowerCase();
-    let response = '';
-    const wardMatch = lower.match(/ward\s*(\d+)/);
-    if (wardMatch) {
-      const w = Number(wardMatch[1]);
-      const s = scores[String(w)];
-      if (s) {
-        response = `Ward ${w}: Impact ${s.impact ?? 'N/A'}, Risk ${s.risk_band}, Evidence ${s.evidence_status}. ` +
-          `Flood ${s.flood ?? 'N/A'}, Heat ${s.heat ?? 'N/A'}, Green ${s.green ?? 'UNAVAILABLE'}, Carbon ${s.carbon ?? 'N/A'}. ` +
-          (s.green_verified ? 'All 4 factors available (decision-grade).' : 'Green unavailable — census block not loaded (diagnostic only).');
-      } else {
-        response = `Ward ${w} not found.`;
-      }
-    } else if (lower.includes('safest') || lower.includes('best')) {
-      const safest = sortedWards.slice(0, 3);
-      response = 'Safest wards: ' + safest.map((w) => `Ward ${w.ward} (impact ${w.impact})`).join(', ') + '. Ward 33 is the only Low-risk ward with complete data.';
-    } else if (lower.includes('worst') || lower.includes('avoid')) {
-      const worst = [...sortedWards].reverse().slice(0, 3);
-      response = 'Worst wards: ' + worst.map((w) => `Ward ${w.ward} (impact ${w.impact})`).join(', ') + '. 94-99.9% built-up, near-zero vegetation.';
-    } else if (lower.includes('missing') || lower.includes('unavailable')) {
-      response = '26/41 wards: green UNAVAILABLE (census not loaded). Slope: unavailable everywhere. Fluvial flood: NOT_MODELLED. Storm drain distance: None (all wards). Heat corroboration: INCONCLUSIVE. Carbon bands (400/800/1200): UNSOURCED.';
-    } else {
-      response = 'Try: "ward 33", "safest wards", "worst wards", or "what data is missing?" Score a proposal first for AI-powered analysis.';
-    }
-    setChatMessages((prev) => [...prev, { role: 'assistant', text: response }]);
   };
 
   return (
@@ -236,16 +189,16 @@ export default function Engine() {
                   <p style={{ color: '#a8371f', marginTop: '8px', fontSize: '13px' }}>{scoreError}</p>
                 )}
 
-                {scoreResult && (
+                {effectiveResult && (
                   <div style={{ marginTop: '16px' }}>
                     <div className="metrics">
-                      <MetricCard label="Impact score" value={String(scoreResult.score.impact_score ?? '—')} unit="/100" note={scoreResult.score.risk_band ?? ''} />
-                      <MetricCard label="Climate score" value={String(scoreResult.score.climate_score ?? '—')} unit="/100" />
-                      <MetricCard label="Evidence" value={scoreResult.score.evidence_status} note={scoreResult.score.decision_grade ? 'Decision-grade' : 'Diagnostic only'} />
-                      <MetricCard label="Recommendations" value={String(scoreResult.recommendations.length)} unit="" />
+                      <MetricCard label="Impact score" value={String(effectiveResult.score.impact_score ?? '—')} unit="/100" note={effectiveResult.score.risk_band ?? ''} />
+                      <MetricCard label="Climate score" value={String(effectiveResult.score.climate_score ?? '—')} unit="/100" />
+                      <MetricCard label="Evidence" value={effectiveResult.score.evidence_status} note={effectiveResult.score.decision_grade ? 'Decision-grade' : 'Diagnostic only'} />
+                      <MetricCard label="Recommendations" value={String(effectiveResult.recommendations.length)} unit="" />
                     </div>
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '12px' }}>
-                      {Object.entries(scoreResult.score.factors).map(([k, v]) => (
+                      {Object.entries(effectiveResult.score.factors).map(([k, v]) => (
                         <div key={k} style={{ padding: '8px 12px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.18)', borderRadius: '6px', minWidth: '100px' }}>
                           <div style={{ fontSize: '11px', color: '#4a5a55', textTransform: 'capitalize' }}>{k}</div>
                           <div style={{ fontSize: '18px', fontWeight: 700, color: '#1b2a26' }}>{v.score ?? 'N/A'}</div>
@@ -253,10 +206,10 @@ export default function Engine() {
                         </div>
                       ))}
                     </div>
-                    {scoreResult.recommendations.length > 0 && (
+                    {effectiveResult.recommendations.length > 0 && (
                       <div style={{ marginTop: '12px' }}>
                         <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#1c5535', marginBottom: '8px' }}>Recommendations</h4>
-                        {scoreResult.recommendations.map((rec, i) => (
+                        {effectiveResult.recommendations.map((rec, i) => (
                           <div key={i} style={{ padding: '8px 12px', marginBottom: '6px', background: '#fffcf6', border: '1px solid rgba(40,34,26,0.18)', borderRadius: '6px', fontSize: '13px' }}>
                             <b>{rec.title || `Recommendation ${i + 1}`}</b>
                             {rec.description && <p style={{ margin: '4px 0 0', color: '#4a5a55' }}>{rec.description}</p>}
@@ -265,10 +218,10 @@ export default function Engine() {
                         ))}
                       </div>
                     )}
-                    {scoreResult.score.evidence_status !== 'COMPLETE' && (
+                    {effectiveResult.score.evidence_status !== 'COMPLETE' && (
                       <p className="note" style={{ color: '#7d5400', marginTop: '8px' }}>
-                        {scoreResult.score.evidence_status}: {scoreResult.score.decision_grade ? '' : 'Diagnostic only — not decision-grade. '}
-                        {Object.entries(scoreResult.score.factors).filter(([, v]) => v.status === 'UNAVAILABLE').map(([k]) => k).join(', ')} unavailable.
+                        {effectiveResult.score.evidence_status}: {effectiveResult.score.decision_grade ? '' : 'Diagnostic only — not decision-grade. '}
+                        {Object.entries(effectiveResult.score.factors).filter(([, v]) => v.status === 'UNAVAILABLE').map(([k]) => k).join(', ')} unavailable.
                       </p>
                     )}
                   </div>
@@ -276,32 +229,10 @@ export default function Engine() {
               </Panel>
             </div>
 
-            {/* AI Assistant */}
+            {/* AI Assistant — same Disha conversation used on Evaluate a plan */}
             <div style={{ marginTop: '16px' }}>
-              <Panel title="Climate Assistant" note="Gemini answers from the scored assessment only — it quotes computed values, never invents numbers. Without a score, ward lookups come from the ward score table.">
-                <div style={{ maxHeight: '240px', overflowY: 'auto', padding: '8px', marginBottom: '8px' }}>
-                  {chatMessages.map((m, i) => (
-                    <div key={i} style={{ textAlign: m.role === 'user' ? 'right' : 'left', marginBottom: '8px' }}>
-                      <span style={{
-                        display: 'inline-block', padding: '6px 12px', borderRadius: '10px',
-                        background: m.role === 'user' ? '#2e7d4f' : '#fffcf6',
-                        color: m.role === 'user' ? '#fff' : '#1b2a26',
-                        border: m.role === 'assistant' ? '1px solid rgba(40,34,26,0.18)' : 'none',
-                        maxWidth: '80%', fontSize: '13px', lineHeight: 1.5,
-                      }}>
-                        {m.text}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <form onSubmit={handleChat} style={{ display: 'flex', gap: '8px' }}>
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
-                    placeholder={scoreResult ? "Ask about this score, e.g. 'is this approvable?'" : "Ask about a ward, e.g. 'ward 33'"}
-                    style={{ flex: 1, padding: '8px 12px', border: '1px solid rgba(40,34,26,0.18)', borderRadius: '6px', fontSize: '13px', background: '#fffcf6', color: '#1b2a26' }} />
-                  <button type="submit" className="btn btn--primary btn--md" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Send size={16} /> Send
-                  </button>
-                </form>
+              <Panel title="Climate Assistant" note="Free conversation. Disha knows the measured ward table and, once a proposal is scored, its computed assessment — nothing else. She never invents numbers.">
+                <AssistantChat assessment={effectiveResult} maxHeight={260} />
               </Panel>
             </div>
           </>

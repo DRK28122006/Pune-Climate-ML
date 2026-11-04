@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Send, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import Logo from '../components/Logo';
 import { NumberField, TextField, SelectField } from '../components/Field';
 import { Button, Panel, SectionBand, EmptyState, ErrorState, Pill } from '../components/ui';
 import { MATERIALS, WARDS } from '../config';
-import { narrateAssessment, type ScoreResult } from '../services/climateApi';
+import type { ScoreResult } from '../services/climateApi';
+import AssistantChat from '../components/AssistantChat';
 import { usePlan } from '../state/PlanContext';
 import type { AssessmentInputs, MaterialLine } from '../types';
 
@@ -14,43 +15,6 @@ export default function Assessment() {
   const loading = status === 'loading';
   const showResults = !!result && !loading;
 
-  // Optional AI input review (Step 2). Skippable — scoring never depends on it.
-  const [aiCheck, setAiCheck] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
-  const [aiCheckText, setAiCheckText] = useState<string | null>(null);
-  const [aiDismissed, setAiDismissed] = useState(false);
-
-  const runAiCheck = async () => {
-    setAiCheck('loading');
-    setAiDismissed(false);
-    try {
-      const summary = {
-        ward: inputs.wardNo,
-        builtUpAreaSqm: inputs.builtUpAreaSqm,
-        plotAreaSqm: inputs.plotAreaSqm,
-        storeys: inputs.storeys,
-        builtUpPct: inputs.builtUpPct,
-        pavedPct: inputs.pavedPct,
-        canopyPct: inputs.canopyPct,
-        materials: inputs.materials.filter((m) => m.materialId && m.quantityKg > 0),
-        projectType: inputs.projectType,
-      };
-      const res = await narrateAssessment(
-        { inputs: summary },
-        'Review these building-proposal inputs for internal plausibility before scoring. ' +
-          'This is an input review, not a scored assessment: ignore any EVIDENCE_STATUS, VERBATIM_VERDICT or ' +
-          'factor lines in the template — they do not apply here. Do not state any score or verdict. ' +
-          'Flag only real inconsistencies in the inputs (for example: footprint vs plot area, storeys vs footprint, ' +
-          'material quantities wildly out of scale with the built-up area, land-cover shares not summing near 100). ' +
-          'Reply with a short list; if nothing is wrong, say the inputs look consistent. Do not invent numbers.\n' +
-          JSON.stringify(summary),
-      );
-      setAiCheckText(res.text);
-      setAiCheck('done');
-    } catch {
-      setAiCheckText('The AI review is unavailable right now. You can skip it and score anyway — scoring does not depend on it.');
-      setAiCheck('error');
-    }
-  };
 
 
   // Add/remove material lines.
@@ -100,6 +64,10 @@ export default function Assessment() {
             </p>
 
             <form onSubmit={onSubmit} noValidate className="assess__panels" aria-describedby="run-status">
+              <Panel title="Talk to Disha (optional)" note="Free conversation — she collects the inputs, checks them with you, then scores on your confirmation. The form below shows the same inputs and stays editable. She only quotes measured data; she never invents numbers.">
+                <AssistantChat />
+              </Panel>
+
               <Panel title="1. The proposal">
                 <div className="grid2">
                   <TextField id="planName" label="Plan name" value={inputs.planName} maxLength={70} error={errors.planName} onChange={(v) => setInput('planName', v)} />
@@ -164,37 +132,6 @@ export default function Assessment() {
                 </p>
               </Panel>
 
-              <Panel title="4. Optional AI input check">
-                <p className="note" style={{ marginBottom: '12px' }}>
-                  Gemini reviews the form for internal inconsistencies before scoring. This step is optional — skip it
-                  and score directly. The ML score never depends on this review.
-                </p>
-                {aiCheck === 'idle' && !aiDismissed && (
-                  <div className="row-actions">
-                    <Button type="button" variant="secondary" onClick={() => void runAiCheck()}>
-                      Check inputs with AI
-                    </Button>
-                    <Button type="button" variant="ghost" onClick={() => setAiDismissed(true)}>
-                      Skip
-                    </Button>
-                  </div>
-                )}
-                {aiCheck === 'loading' && <p className="status">Reviewing inputs…</p>}
-                {(aiCheck === 'done' || aiCheck === 'error') && aiCheckText && (
-                  <div className="ai-check-result">
-                    <p className="note" style={{ whiteSpace: 'pre-wrap' }}>{aiCheckText}</p>
-                    <div className="row-actions">
-                      <Button type="button" variant="ghost" onClick={() => { setAiCheck('idle'); setAiCheckText(null); }}>
-                        Run again
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                {aiDismissed && aiCheck === 'idle' && (
-                  <p className="note">Input check skipped. <Button type="button" variant="ghost" onClick={() => setAiDismissed(false)}>Show it</Button></p>
-                )}
-              </Panel>
-
               <div className="assess__actions">
                 <Button ref={null} type="submit" variant="primary" size="lg" busy={loading} id="score">
                   <Sparkles size={20} aria-hidden="true" />
@@ -257,36 +194,6 @@ function Results({
   const evidence = score.evidence_status || 'UNAVAILABLE';
   const recs = result.recommendations || [];
   const canopy = result.canopy || {};
-
-  // Officer decision chat (Step 4): Gemini answers from the scored assessment only.
-  const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([
-    {
-      role: 'assistant',
-      text: 'This score is computed, not asserted. Ask me anything about it — "is this approvable?", "why is carbon what it is?", "what would moving the footprint do?". I quote only the values in this assessment.',
-    },
-  ]);
-  const [chatBusy, setChatBusy] = useState(false);
-
-  const askChat = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = chatInput.trim();
-    if (!q || chatBusy) return;
-    setChatMessages((prev) => [...prev, { role: 'user', text: q }]);
-    setChatInput('');
-    setChatBusy(true);
-    try {
-      const res = await narrateAssessment(result, q);
-      setChatMessages((prev) => [...prev, { role: 'assistant', text: res.text }]);
-    } catch {
-      setChatMessages((prev) => [
-        ...prev,
-        { role: 'assistant', text: 'The narrator is unavailable right now. The computed values above are still valid — try again shortly.' },
-      ]);
-    } finally {
-      setChatBusy(false);
-    }
-  };
 
   const factorOrder = ['flood', 'heat', 'green', 'carbon'];
   const factorLabels: Record<string, string> = { flood: 'Flood', heat: 'Heat', green: 'Green cover', carbon: 'Carbon' };
@@ -388,41 +295,9 @@ function Results({
         </>
       )}
 
-      <SectionBand>Officer decision support</SectionBand>
-      <Panel
-        title="Ask about this score"
-        note="Gemini answers from this assessment only — it quotes computed values and never invents numbers. The verdict wording is the scorer's, not the model's."
-      >
-        <div style={{ maxHeight: '260px', overflowY: 'auto', padding: '8px', marginBottom: '8px' }}>
-          {chatMessages.map((m, i) => (
-            <div key={i} style={{ textAlign: m.role === 'user' ? 'right' : 'left', marginBottom: '8px' }}>
-              <span
-                style={{
-                  display: 'inline-block', padding: '6px 12px', borderRadius: '10px',
-                  background: m.role === 'user' ? '#2e7d4f' : '#fffcf6',
-                  color: m.role === 'user' ? '#fff' : '#1b2a26',
-                  border: m.role === 'assistant' ? '1px solid rgba(40,34,26,0.18)' : 'none',
-                  maxWidth: '80%', fontSize: '13px', lineHeight: 1.5, whiteSpace: 'pre-wrap',
-                }}
-              >
-                {m.text}
-              </span>
-            </div>
-          ))}
-        </div>
-        <form onSubmit={askChat} style={{ display: 'flex', gap: '8px' }}>
-          <input
-            type="text"
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            placeholder="e.g. Is this approvable? Why is carbon 205 kg/m²?"
-            style={{ flex: 1, padding: '8px 12px', border: '1px solid rgba(40,34,26,0.18)', borderRadius: '6px', fontSize: '13px', background: '#fffcf6', color: '#1b2a26' }}
-          />
-          <button type="submit" className="btn btn--primary btn--md" disabled={chatBusy} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Send size={16} /> {chatBusy ? 'Thinking…' : 'Send'}
-          </button>
-        </form>
-      </Panel>
+      <p className="note" style={{ marginTop: '8px' }}>
+        Above, in “Talk to Disha”: ask “is this approvable?”, “why is carbon what it is?”, or “what should change?” — she answers from this score only.
+      </p>
 
       <div className="next">
         <Link to="/dashboard/scenario-planner" className="btn btn--primary btn--lg">

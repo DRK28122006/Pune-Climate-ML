@@ -9,7 +9,7 @@ import {
   assessmentInput, loginInput, notificationInput, refreshInput, registerInput, reassessmentInput,
 } from "./validation.js";
 import { buildProject, createAssessment } from "./services/assessmentService.js";
-import { getScore, narrateAssessment, getAirQuality } from "./services/mlService.js";
+import { getScore, narrateAssessment, getAirQuality, assistantChat } from "./services/mlService.js";
 import { optimizeProject, toApiAssessment } from "./services/recommendationService.js";
 import { streamAssessmentReport } from "./services/reportService.js";
 import { ADMIN_ROLES, WRITE_ROLES, authenticate, authorize, canAccessAssessment } from "./middleware/auth.js";
@@ -131,6 +131,15 @@ export function createApp({ config, store, authService, objectStorage, jobQueue 
   app.post("/api/v1/narrate", authorize(...WRITE_ROLES), asyncRoute(async (req, res) => {
     const { assessment, question } = req.body || {};
     const result = await narrateAssessment(assessment || {}, question || "", config);
+    res.json(result);
+  }));
+
+  app.post("/api/v1/assistant", authorize(...WRITE_ROLES), asyncRoute(async (req, res) => {
+    const { messages, draft, phase, assessment } = req.body || {};
+    const result = await assistantChat(
+      { messages: messages || [], draft: draft || {}, phase: phase || "collecting", assessment: assessment || null },
+      config,
+    );
     res.json(result);
   }));
 
