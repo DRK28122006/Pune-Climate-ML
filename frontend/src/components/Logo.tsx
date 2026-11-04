@@ -1,25 +1,36 @@
 import { Link } from 'react-router-dom';
 import { APP_NAME } from '../config';
+import logoImg from '../assets/logo.png';
 
-/** Temporary logo: city/canopy split disc plus a text wordmark. Not an official asset. */
-export function LogoMark({ size = 28 }: { size?: number }) {
+/** Emblem image. `tile` puts it on a white rounded tile (needed on dark backgrounds). */
+export function LogoMark({ size = 28, tile = false }: { size?: number; tile?: boolean }) {
   return (
-    <svg viewBox="0 0 200 200" width={size} height={size} aria-hidden="true" focusable="false">
-      <circle cx="100" cy="100" r="96" fill="#5b6b73" />
-      <path d="M100,4 A96,96 0 0 1 100,196 A48,48 0 0 1 100,100 A48,48 0 0 0 100,4 Z" fill="#2e7d4f" />
-      <circle cx="100" cy="52" r="13" fill="#2e7d4f" />
-      <circle cx="100" cy="148" r="13" fill="#5b6b73" />
-    </svg>
+    <img
+      src={logoImg}
+      alt=""
+      width={size}
+      height={size}
+      style={{
+        objectFit: 'contain',
+        flexShrink: 0,
+        ...(tile
+          ? { background: '#fff', borderRadius: 10, padding: 2 }
+          : { mixBlendMode: 'multiply' }),
+      }}
+    />
   );
 }
 
-export function Wordmark({ large = false }: { large?: boolean }) {
+export function Wordmark({ large = false, tagline = false }: { large?: boolean; tagline?: boolean }) {
   return (
     <span className={`wordmark${large ? ' wordmark--lg' : ''}`}>
-      <LogoMark size={large ? 56 : 28} />
-      <span>
-        {APP_NAME.slice(0, 5)}
-        <b>{APP_NAME.slice(5)}</b>
+      <LogoMark size={large ? 84 : 46} />
+      <span className="wordmark__text">
+        <span>
+          {APP_NAME.slice(0, 5)}
+          <b>{APP_NAME.slice(5)}</b>
+        </span>
+        {tagline && <small className="wordmark__tag">A Better Direction for a Better Earth</small>}
       </span>
     </span>
   );

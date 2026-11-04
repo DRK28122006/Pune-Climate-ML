@@ -27,7 +27,7 @@ export default function Sidebar({ collapsed, onToggle }: Props) {
   return (
     <aside className={`side${collapsed ? ' is-collapsed' : ''}`} id="sidebar">
       <div className="side__brand">
-        <LogoMark size={30} />
+        <LogoMark size={38} tile />
         <span className="side__text side__name">{APP_NAME}</span>
       </div>
 

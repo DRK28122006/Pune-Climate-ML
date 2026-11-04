@@ -23,7 +23,7 @@ export default function Landing() {
   return (
     <main id="main" className={`landing${leaving ? ' is-leaving' : ''}`}>
       <div className="landing__top">
-        <Wordmark large />
+        <Wordmark large tagline />
         <Link to="/dashboard/overview" className="landing__dash">
           Open dashboard
         </Link>

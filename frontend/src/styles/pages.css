@@ -23,9 +23,11 @@
 }
 .landing__hero .note { color: var(--ink); }
 .assess .eyebrow { color: var(--ink); }
-.wordmark { display: inline-flex; align-items: center; gap: 12px; font-family: var(--f-display); font-weight: 700; font-size: 1.35rem; color: var(--ink); }
+.wordmark { display: inline-flex; align-items: center; gap: 14px; font-family: var(--f-display); font-weight: 700; font-size: 1.75rem; color: var(--ink); }
 .wordmark b { color: var(--leaf-deep); }
-.wordmark--lg { font-size: clamp(1.7rem, 3.6vw, 2.4rem); }
+.wordmark--lg { font-size: clamp(2.2rem, 4.5vw, 3.2rem); }
+.wordmark__text { display: flex; flex-direction: column; line-height: 1.1; }
+.wordmark__tag { font-family: var(--f-body); font-weight: 500; font-size: 0.36em; color: var(--ink-soft); letter-spacing: 0.02em; margin-top: 6px; }
 .logo-link { text-decoration: none; }
 .wipe { position: fixed; inset: 0; background: var(--haze); opacity: 0; pointer-events: none; z-index: 50; }
 .landing.is-leaving .wipe { animation: wipe 0.55s ease forwards; }
