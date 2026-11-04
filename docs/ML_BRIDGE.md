@@ -90,6 +90,19 @@ numbers are unchanged. The full list stays available through the CLI and
 report paths. Without this, `/api/v1/score` responses are too large for the
 browser.
 
+### Caches (re-computation avoidance, not new data)
+
+Both caches reuse a prior full computation verbatim; numbers are identical
+to a cold run. Delete them to force re-computation.
+
+- `ml_pipeline/data/air_quality_cache.json` — 1 h TTL Open-Meteo response
+  for the air-quality mode (warm calls ~0.1 s vs ~5 s cold). Stale cache is
+  served when Open-Meteo is unreachable.
+- `ml_pipeline/data/canopy_ledger_cache.json` — per-ward tree-census
+  aggregates (counts, canopy m2). The census scan of ~100k trees per ward
+  takes ~13 s of CPU; warm calls ~0.3 s. Only the two canopy cover-% values
+  are recomputed per request, from the cached canopy m2 and the plot area.
+
 ### Partial-evidence contract (must be surfaced in the UI)
 
 - `evidence_status`: `COMPLETE` (4/4), `PARTIAL` (3/4), `INSUFFICIENT` (2/4),

@@ -332,12 +332,37 @@ def _indicators_from_cube(ring: List[Any], cube: Optional[Dict[str, Any]]) -> Di
     }
 
 
-def _canopy_ledger(ring: List[Any], plot_area_m2: float) -> Optional[Dict[str, Any]]:
-    """Build a canopy ledger if the tree index is available, else None."""
+_CANOPY_CACHE_PATH = Path(__file__).resolve().parents[2] / "ml_pipeline" / "data" / "canopy_ledger_cache.json"
+
+def _canopy_ledger(ring: List[Any], plot_area_m2: float, ward_no: Optional[int] = None) -> Optional[Dict[str, Any]]:
+    """Build a canopy ledger if the tree index is available, else None.
+
+    Per-ward aggregate cache (species counts, action counts, canopy m2): the
+    census scan of ~100k trees is identical for every request in the same
+    ward, and only the two cover-% values depend on the plot area. Cached
+    aggregates are exact re-uses of a prior full computation, written once
+    and reused after; decisions sample kept for the API trim.
+    """
     repository_root = _repository_root()
     sys.path.insert(0, str(repository_root))
     from ml_pipeline.core.canopy import CanopyLedger, TreeRecord
     from ml_pipeline.core import geometry as G
+
+    plot = max(1.0, float(plot_area_m2))
+    if ward_no is not None:
+        try:
+            if _CANOPY_CACHE_PATH.exists():
+                cache = json.loads(_CANOPY_CACHE_PATH.read_text())
+                agg = cache.get(str(int(ward_no)))
+                if agg:
+                    ledger = {k: v for k, v in agg.items() if not k.startswith("_")}
+                    before = agg.get("_canopy_before_m2") or 0.0
+                    after = agg.get("_canopy_after_m2") or 0.0
+                    ledger["canopy_cover_pct"] = round(min(100.0, before / plot * 100.0), 1)
+                    ledger["canopy_cover_pct_proposed"] = round(min(100.0, after / plot * 100.0), 1)
+                    return ledger
+        except Exception:
+            pass  # corrupt cache — recompute
 
     tree_db = repository_root / "ml_pipeline" / "data" / "tree_index.sqlite"
     if not tree_db.exists():
@@ -372,6 +397,32 @@ def _canopy_ledger(ring: List[Any], plot_area_m2: float) -> Optional[Dict[str, A
     except Exception:
         ledger["census_coverage"] = {"coverage_complete": False}
         ledger["census_reliable_for_this_site"] = len(trees_raw) > 0
+
+    if ward_no is not None:
+        try:
+            agg = {k: v for k, v in ledger.items() if k != "decisions"}
+            agg["_canopy_before_m2"] = ledger.get("tree_canopy_m2_before") or 0.0
+            agg["_canopy_after_m2"] = ledger.get("tree_canopy_m2_after") or 0.0
+            decisions = ledger.get("decisions") or []
+            agg["_decisions_count"] = len(decisions)
+            agg["_decisions_sample"] = decisions[:25]
+            # Do not store the full decisions in the cache either — re-attach sample.
+            agg["decisions_count"] = len(decisions)
+            agg["decisions_sample"] = decisions[:25]
+            agg["decisions_note"] = (
+                f"per-tree decisions summarized for the API response; "
+                f"{len(decisions)} total, first 25 kept as a deterministic sample (cached)"
+            )
+            cache: Dict[str, Any] = {}
+            if _CANOPY_CACHE_PATH.exists():
+                try:
+                    cache = json.loads(_CANOPY_CACHE_PATH.read_text())
+                except Exception:
+                    cache = {}
+            cache[str(int(ward_no))] = agg
+            _CANOPY_CACHE_PATH.write_text(json.dumps(cache))
+        except Exception:
+            pass  # cache write failure is non-fatal
     return ledger
 
 
@@ -476,7 +527,7 @@ def _run_scoring(request: Dict[str, Any]) -> Dict[str, Any]:
         "dist_to_storm_drain_m": None,
     }
 
-    ledger = _canopy_ledger(ring, geom.area_m2)
+    ledger = _canopy_ledger(ring, geom.area_m2, ward_no=ward_no if isinstance(ward_no, int) else (int(ward_no) if ward_no is not None else None))
 
     result = S.score_project(v.site, indicators, region, materials_table, ledger=ledger)
     recs = RecommendationEngine().build_recommendations(
