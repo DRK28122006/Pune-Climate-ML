@@ -61,3 +61,8 @@ ml_pipeline/data/air_quality_cache.json
 # Engine map artefact (derived from research vault KML; needed at runtime)
 !frontend/public/wards.geojson
 ml_pipeline/data/canopy_ledger_cache.json
+
+# Demo pack: 5-ward subset for hackathon deployment (small enough for GitHub)
+!ml_pipeline/data/demo/
+!ml_pipeline/data/demo/*.sqlite
+!ml_pipeline/data/demo/*.geojson
