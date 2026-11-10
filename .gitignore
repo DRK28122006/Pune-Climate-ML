@@ -66,3 +66,6 @@ ml_pipeline/data/canopy_ledger_cache.json
 !ml_pipeline/data/demo/
 !ml_pipeline/data/demo/*.sqlite
 !ml_pipeline/data/demo/*.geojson
+
+# Vercel CLI local metadata
+.vercel

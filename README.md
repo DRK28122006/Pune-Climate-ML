@@ -180,6 +180,15 @@ These are enforced in code and tests, not intentions:
 - Train a neural scorer. One candidate model was trained for heat, failed
   its own bars, and ships nothing. Permit arithmetic stays exact.
 
+## Deployed services
+
+The application is deployed as two Vercel projects:
+
+- **Frontend:** `pune-climate-ml` — the Vite web interface.
+- **Backend:** `pune-climate-backend` — the Express API exposed through a Vercel serverless function.
+
+The frontend is configured with `VITE_API_URL` pointing to the backend deployment. Keep this variable set in Vercel Preview and Production environments whenever the backend URL changes.
+
 ## Running it
 
 ```bash
