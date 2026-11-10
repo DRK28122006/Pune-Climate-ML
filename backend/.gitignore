@@ -6,3 +6,4 @@ uploads/*
 !data/.gitkeep
 *.log
 *service-account*.json
+.vercel

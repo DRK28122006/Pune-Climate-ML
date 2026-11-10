@@ -5,6 +5,7 @@
   "type": "module",
   "description": "MVP API for the Urban Climate Intelligence platform",
   "scripts": {
+    "build": "node --check src/server.js",
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "worker": "node src/workers.js",
@@ -14,7 +15,7 @@
     "check": "node --check src/server.js && node --test"
   },
   "engines": {
-    "node": "20.x"
+    "node": "26.x"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.888.0",
