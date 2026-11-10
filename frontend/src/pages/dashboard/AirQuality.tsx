@@ -150,7 +150,8 @@ export default function AirQuality() {
                 <p style={{ fontSize: '13px', color: '#4a5a55', lineHeight: 1.6 }}>
                   <b>Source:</b> Open-Meteo Air Quality API (open-meteo.com) — satellite-derived, no API key needed.<br />
                   <b>Location:</b> Pune grid point (18.52°N, 73.86°E).<br />
-                  <b>Current data:</b> {d.time} (today).<br />
+                  <b>Current data:</b> {d.time}
+                  {d.cache?.stale ? ' — live feed rate-limited; showing the last measured reading.' : ''}<br />
                   <b>Historical:</b> Jan 2025 – Nov 2026 monthly averages.<br />
                   <b>Limitation:</b> Modelled data, not ground station. No per-ward differentiation (grid resolution ~25km). WAQI free tier returns stale 2021 data.
                 </p>

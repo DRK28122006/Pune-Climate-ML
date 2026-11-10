@@ -230,6 +230,7 @@ export type AirQualityData = {
   stations: WaqiStation[];
   unavailable?: boolean;
   reason?: string;
+  cache?: { hit?: boolean; stale?: boolean; age_s?: number | null; reason?: string };
   hourly: number[];
   daily: number[];
   aqi: number;
@@ -278,6 +279,7 @@ export async function getAirQuality(): Promise<AirQualityData> {
   return {
     source: data.source ?? 'open-meteo-air-quality',
     stations,
+    cache: data.cache,
     hourly: data.hourly ?? [],
     daily: data.daily ?? [],
     aqi: data.aqi ?? primary?.aqi ?? 0,

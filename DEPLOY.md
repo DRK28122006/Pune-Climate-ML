@@ -92,7 +92,10 @@ Identical results for all five wards (default proposal, both stacks):
 First score on a freshly started container is 0.5–0.7 s, not 4–12 s: the canopy
 ledger for the five wards is precomputed into
 `ml_pipeline/data/demo/canopy_ledger_cache.json` and baked into the image, so a
-cold host never rebuilds it. Air quality is 4.7 s cold and cached for an hour.
+cold host never rebuilds it. Air quality is 4.7 s cold and cached for an hour. Some hosts are rate-limited
+by Open-Meteo (HTTP 429 from shared cloud IPs); the image ships the last
+measured reading so the tab shows real data with a timestamp instead of an empty
+screen when that happens.
 
 `PMC_CACHE_DIR` must point at the same directory as the pack
 (`/app/ml_pipeline/data/demo`) or the baked ledger is ignored and every first

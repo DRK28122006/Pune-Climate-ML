@@ -12,8 +12,9 @@ Three modes, selected by the request payload:
     tree index, materials/species config). Returns the full ``score_project``
     result plus recommendations and the canopy ledger.
 
-  * Air quality mode (when ``mode == "air_quality"``): fetches real WAQI
-    data for Pune via Python (Node HTTPS is unreliable in this env).
+  * Air quality mode (when ``mode == "air_quality"``): fetches real
+    Open-Meteo data for Pune via Python, cached on disk (Node HTTPS is
+    unreliable in this env).
 
 All modes read JSON from stdin and print JSON to stdout, so the Node side
 can use the same spawn plumbing for both.
@@ -61,188 +62,227 @@ def _run_extraction(request: Dict[str, Any]) -> Dict[str, Any]:
 
 _AQ_CACHE_PATH = cache_dir() / "air_quality_cache.json"
 _AQ_CACHE_TTL_S = 3600  # 1 hour — Open-Meteo forecast updates hourly
+_AQ_FAILURE_BACKOFF_S = 600  # after a failed fetch, serve the last reading for 10 min
+
+# Some hosts are rate-limited by Open-Meteo (HTTP 429 from shared cloud IPs).
+# The image therefore bakes the last measured reading into the demo pack, and a
+# failed fetch serves it -- with the timestamp it was taken -- instead of
+# blanking the tab. A stale measured reading is honest; an empty tab is not.
+
+
+def _aq_read_cache() -> Optional[Dict[str, Any]]:
+    try:
+        return json.loads(_AQ_CACHE_PATH.read_text())
+    except Exception:
+        return None
+
+
+def _aq_serve_cache(cached: Dict[str, Any], reason: Optional[str] = None) -> Dict[str, Any]:
+    """Return a stored reading, marked ``stale``, rather than going UNAVAILABLE."""
+    out = dict(cached)
+    fetched_at = out.pop("_fetched_at", None)
+    out.pop("_failed_at", None)
+    out["cache"] = {
+        "hit": True,
+        "stale": True,
+        "age_s": int(time.time() - fetched_at) if fetched_at else None,
+    }
+    if reason:
+        out["cache"]["reason"] = reason
+    out["unavailable"] = False
+    return out
+
 
 def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
-    """Fetch real air quality data for Pune from Open-Meteo (current + historical).
+    """Current + historical air quality for Pune, served through a 1-hour cache.
 
-    Cached on disk for 1 hour: each call pulls ~2 years of hourly PM2.5 (several
-    MB) and the backend spawns a fresh Python process per request, so without a
-    disk cache every page load pays the full fetch. Failures serve the stale
-    cache when available rather than going UNAVAILABLE.
+    Each call pulls ~2 years of hourly PM2.5 (several MB) and the backend spawns
+    a fresh Python process per request, so without a disk cache every page load
+    pays the full fetch. Fresh cache -> Open-Meteo -> last measured reading.
     """
+    cached = _aq_read_cache()
+    now = time.time()
+    if cached:
+        fetched_at = cached.get("_fetched_at") or 0
+        failed_at = cached.get("_failed_at") or 0
+        if now - fetched_at < _AQ_CACHE_TTL_S and not failed_at:
+            fresh = dict(cached)
+            fresh.pop("_fetched_at", None)
+            fresh.pop("_failed_at", None)
+            fresh["cache"] = {"hit": True, "age_s": int(now - fetched_at)}
+            return fresh
+        if failed_at and now - failed_at < _AQ_FAILURE_BACKOFF_S:
+            return _aq_serve_cache(
+                cached,
+                "Open-Meteo is rate-limiting this host; showing the last measured "
+                "reading.",
+            )
     try:
-        if _AQ_CACHE_PATH.exists():
-            try:
-                cached = json.loads(_AQ_CACHE_PATH.read_text())
-                fetched_at = cached.get("_fetched_at", 0)
-                if time.time() - fetched_at < _AQ_CACHE_TTL_S:
-                    cached.pop("_fetched_at", None)
-                    cached["cache"] = {"hit": True, "age_s": int(time.time() - fetched_at)}
-                    return cached
-            except Exception:
-                pass  # corrupt cache — refetch
-        # Fetch 2 years of hourly data for monthly comparison
-        hist_url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
-                    "?latitude=18.5204&longitude=73.8567"
-                    "&hourly=pm2_5,pm10"
-                    "&start_date=2025-01-01&end_date=2026-11-07&timezone=Asia/Kolkata")
-        with urllib.request.urlopen(hist_url, timeout=30) as resp:
-            hist_data = json.load(resp)
-
-        hourly = hist_data.get("hourly", {})
-        times = hourly.get("time", [])
-        pm25 = hourly.get("pm2_5", [])
-        pm10 = hourly.get("pm10", [])
-
-        # Monthly averages
-        months_pm25 = {}
-        months_pm10 = {}
-        for i, t in enumerate(times):
-            day = t[:7]  # YYYY-MM
-            if pm25[i] is not None:
-                months_pm25.setdefault(day, []).append(pm25[i])
-            if pm10[i] is not None:
-                months_pm10.setdefault(day, []).append(pm10[i])
-
-        monthly_2025 = {}
-        monthly_2026 = {}
-        for m in sorted(months_pm25):
-            avg = round(sum(months_pm25[m]) / len(months_pm25[m]), 1)
-            if m.startswith("2025"):
-                monthly_2025[m] = avg
-            else:
-                monthly_2026[m] = avg
-
-        # Current month (Nov 2026) daily averages
-        current_month_daily = {}
-        for i, t in enumerate(times):
-            if t.startswith("2026-11") and pm25[i] is not None:
-                day = t[:10]
-                current_month_daily.setdefault(day, []).append(pm25[i])
-        current_month = {d: round(sum(v)/len(v), 1) for d, v in sorted(current_month_daily.items())}
-
-        # Previous month (Oct 2026) daily averages
-        prev_month_daily = {}
-        for i, t in enumerate(times):
-            if t.startswith("2026-10") and pm25[i] is not None:
-                day = t[:10]
-                prev_month_daily.setdefault(day, []).append(pm25[i])
-        prev_month = {d: round(sum(v)/len(v), 1) for d, v in sorted(prev_month_daily.items())}
-
-        # Yearly averages
-        y2025_vals = [v for m, vs in months_pm25.items() if m.startswith("2025") for v in vs]
-        y2026_vals = [v for m, vs in months_pm25.items() if m.startswith("2026") for v in vs]
-        yearly_2025 = round(sum(y2025_vals) / len(y2025_vals), 1) if y2025_vals else None
-        yearly_2026 = round(sum(y2026_vals) / len(y2026_vals), 1) if y2026_vals else None
-
-        # Current (last 24h) - fetch forecast
-        forecast_url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
-                        "?latitude=18.5204&longitude=73.8567"
-                        "&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone"
-                        "&timezone=Asia/Kolkata&forecast_days=3")
-        with urllib.request.urlopen(forecast_url, timeout=15) as resp:
-            fdata = json.load(resp)
-        fh = fdata.get("hourly", {})
-        ftimes = fh.get("time", [])
-        fpm25 = fh.get("pm2_5", [])
-        fpm10 = fh.get("pm10", [])
-        fco = fh.get("carbon_monoxide", [])
-        fno2 = fh.get("nitrogen_dioxide", [])
-        fso2 = fh.get("sulphur_dioxide", [])
-        fo3 = fh.get("ozone", [])
-
-        # Current = last available non-None pm25
-        idx = len(ftimes) - 1
-        while idx >= 0 and (fpm25[idx] is None):
-            idx -= 1
-        if idx < 0:
-            idx = len(ftimes) - 1
-
-        current = {
-            "pm25": fpm25[idx] if idx < len(fpm25) else None,
-            "pm10": fpm10[idx] if idx < len(fpm10) else None,
-            "co": fco[idx] if idx < len(fco) else None,
-            "no2": fno2[idx] if idx < len(fno2) else None,
-            "so2": fso2[idx] if idx < len(fso2) else None,
-            "o3": fo3[idx] if idx < len(fo3) else None,
-            "time": ftimes[idx] if idx < len(ftimes) else None,
-        }
-
-        # Hourly series (last 24h)
-        hourly_series = fpm25[-24:] if len(fpm25) >= 24 else fpm25
-
-        # Daily forecast
-        daily_forecast = []
-        days = {}
-        for i, t in enumerate(ftimes):
-            day = t[:10]
-            if fpm25[i] is not None:
-                days.setdefault(day, []).append(fpm25[i])
-        for day in sorted(days.keys()):
-            daily_forecast.append({"day": day, "avg": round(sum(days[day]) / len(days[day]), 1)})
-
-        # AQI from PM2.5 (Indian standard)
-        def pm25_aqi(v):
-            if v is None: return None
-            if v <= 30: return round(v * 50 / 30)
-            if v <= 60: return round(50 + (v - 30) * 50 / 30)
-            if v <= 90: return round(100 + (v - 60) * 100 / 30)
-            if v <= 120: return round(200 + (v - 90) * 100 / 30)
-            if v <= 250: return round(300 + (v - 120) * 100 / 130)
-            return round(400 + (v - 250) * 100 / 130)
-
-        aqi = pm25_aqi(current["pm25"]) or 0
-
-        result = {
-            "source": "open-meteo-air-quality",
-            "city": "Pune",
-            "geo": [18.5204, 73.8567],
-            "aqi": aqi,
-            "dominant": "pm25",
-            "iaqi": {
-                "pm25": {"v": current["pm25"]},
-                "pm10": {"v": current["pm10"]},
-                "co": {"v": current["co"]},
-                "no2": {"v": current["no2"]},
-                "so2": {"v": current["so2"]},
-                "o3": {"v": current["o3"]},
-            },
-            "time": current["time"],
-            "iso": current["time"],
-            "attributions": [{"name": "Open-Meteo Air Quality API", "url": "https://open-meteo.com/en/docs/air-quality-api"}],
-            "hourly": hourly_series,
-            "daily": [d["avg"] for d in daily_forecast],
-            "daily_forecast": daily_forecast,
-            "stations": [{"station": "Pune (Open-Meteo)", "city": "Pune", "geo": [18.5204, 73.8567], "aqi": aqi, "dominant": "pm25", "iaqi": {"pm25": {"v": current["pm25"]}, "pm10": {"v": current["pm10"]}}, "time": current["time"], "iso": current["time"], "attributions": [], "forecast": {}}],
-            "unavailable": False,
-            "historical": {
-                "monthly_2025": monthly_2025,
-                "monthly_2026": monthly_2026,
-                "yearly_2025": yearly_2025,
-                "yearly_2026": yearly_2026,
-                "current_month_daily": current_month,
-                "prev_month_daily": prev_month,
-            },
-            "cache": {"hit": False, "age_s": 0},
-        }
-        try:
-            to_cache = dict(result)
-            to_cache["_fetched_at"] = time.time()
-            _AQ_CACHE_PATH.write_text(json.dumps(to_cache))
-        except Exception:
-            pass  # cache write failure is non-fatal
-        return result
+        return _aq_fetch()
     except Exception as e:
-        # Open-Meteo unreachable: serve stale cache rather than nothing
-        try:
-            if _AQ_CACHE_PATH.exists():
-                cached = json.loads(_AQ_CACHE_PATH.read_text())
-                fetched_at = cached.pop("_fetched_at", 0)
-                cached["cache"] = {"hit": True, "stale": True, "age_s": int(time.time() - fetched_at)}
-                return cached
-        except Exception:
-            pass
+        if cached:
+            cached["_failed_at"] = now
+            try:
+                _AQ_CACHE_PATH.write_text(json.dumps(cached))
+            except Exception:
+                pass  # cache write failure is non-fatal
+            return _aq_serve_cache(cached, str(e))
         return {"unavailable": True, "reason": str(e)}
+
+
+def _aq_fetch() -> Dict[str, Any]:
+    """Fetch current + 2 years of hourly PM2.5 from Open-Meteo."""
+    # Fetch 2 years of hourly data for monthly comparison
+    hist_url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
+                "?latitude=18.5204&longitude=73.8567"
+                "&hourly=pm2_5,pm10"
+                "&start_date=2025-01-01&end_date=2026-11-07&timezone=Asia/Kolkata")
+    with urllib.request.urlopen(hist_url, timeout=30) as resp:
+        hist_data = json.load(resp)
+
+    hourly = hist_data.get("hourly", {})
+    times = hourly.get("time", [])
+    pm25 = hourly.get("pm2_5", [])
+    pm10 = hourly.get("pm10", [])
+
+    # Monthly averages
+    months_pm25 = {}
+    months_pm10 = {}
+    for i, t in enumerate(times):
+        day = t[:7]  # YYYY-MM
+        if pm25[i] is not None:
+            months_pm25.setdefault(day, []).append(pm25[i])
+        if pm10[i] is not None:
+            months_pm10.setdefault(day, []).append(pm10[i])
+
+    monthly_2025 = {}
+    monthly_2026 = {}
+    for m in sorted(months_pm25):
+        avg = round(sum(months_pm25[m]) / len(months_pm25[m]), 1)
+        if m.startswith("2025"):
+            monthly_2025[m] = avg
+        else:
+            monthly_2026[m] = avg
+
+    # Current month (Nov 2026) daily averages
+    current_month_daily = {}
+    for i, t in enumerate(times):
+        if t.startswith("2026-11") and pm25[i] is not None:
+            day = t[:10]
+            current_month_daily.setdefault(day, []).append(pm25[i])
+    current_month = {d: round(sum(v)/len(v), 1) for d, v in sorted(current_month_daily.items())}
+
+    # Previous month (Oct 2026) daily averages
+    prev_month_daily = {}
+    for i, t in enumerate(times):
+        if t.startswith("2026-10") and pm25[i] is not None:
+            day = t[:10]
+            prev_month_daily.setdefault(day, []).append(pm25[i])
+    prev_month = {d: round(sum(v)/len(v), 1) for d, v in sorted(prev_month_daily.items())}
+
+    # Yearly averages
+    y2025_vals = [v for m, vs in months_pm25.items() if m.startswith("2025") for v in vs]
+    y2026_vals = [v for m, vs in months_pm25.items() if m.startswith("2026") for v in vs]
+    yearly_2025 = round(sum(y2025_vals) / len(y2025_vals), 1) if y2025_vals else None
+    yearly_2026 = round(sum(y2026_vals) / len(y2026_vals), 1) if y2026_vals else None
+
+    # Current (last 24h) - fetch forecast
+    forecast_url = ("https://air-quality-api.open-meteo.com/v1/air-quality"
+                    "?latitude=18.5204&longitude=73.8567"
+                    "&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone"
+                    "&timezone=Asia/Kolkata&forecast_days=3")
+    with urllib.request.urlopen(forecast_url, timeout=15) as resp:
+        fdata = json.load(resp)
+    fh = fdata.get("hourly", {})
+    ftimes = fh.get("time", [])
+    fpm25 = fh.get("pm2_5", [])
+    fpm10 = fh.get("pm10", [])
+    fco = fh.get("carbon_monoxide", [])
+    fno2 = fh.get("nitrogen_dioxide", [])
+    fso2 = fh.get("sulphur_dioxide", [])
+    fo3 = fh.get("ozone", [])
+
+    # Current = last available non-None pm25
+    idx = len(ftimes) - 1
+    while idx >= 0 and (fpm25[idx] is None):
+        idx -= 1
+    if idx < 0:
+        idx = len(ftimes) - 1
+
+    current = {
+        "pm25": fpm25[idx] if idx < len(fpm25) else None,
+        "pm10": fpm10[idx] if idx < len(fpm10) else None,
+        "co": fco[idx] if idx < len(fco) else None,
+        "no2": fno2[idx] if idx < len(fno2) else None,
+        "so2": fso2[idx] if idx < len(fso2) else None,
+        "o3": fo3[idx] if idx < len(fo3) else None,
+        "time": ftimes[idx] if idx < len(ftimes) else None,
+    }
+
+    # Hourly series (last 24h)
+    hourly_series = fpm25[-24:] if len(fpm25) >= 24 else fpm25
+
+    # Daily forecast
+    daily_forecast = []
+    days = {}
+    for i, t in enumerate(ftimes):
+        day = t[:10]
+        if fpm25[i] is not None:
+            days.setdefault(day, []).append(fpm25[i])
+    for day in sorted(days.keys()):
+        daily_forecast.append({"day": day, "avg": round(sum(days[day]) / len(days[day]), 1)})
+
+    # AQI from PM2.5 (Indian standard)
+    def pm25_aqi(v):
+        if v is None: return None
+        if v <= 30: return round(v * 50 / 30)
+        if v <= 60: return round(50 + (v - 30) * 50 / 30)
+        if v <= 90: return round(100 + (v - 60) * 100 / 30)
+        if v <= 120: return round(200 + (v - 90) * 100 / 30)
+        if v <= 250: return round(300 + (v - 120) * 100 / 130)
+        return round(400 + (v - 250) * 100 / 130)
+
+    aqi = pm25_aqi(current["pm25"]) or 0
+
+    result = {
+        "source": "open-meteo-air-quality",
+        "city": "Pune",
+        "geo": [18.5204, 73.8567],
+        "aqi": aqi,
+        "dominant": "pm25",
+        "iaqi": {
+            "pm25": {"v": current["pm25"]},
+            "pm10": {"v": current["pm10"]},
+            "co": {"v": current["co"]},
+            "no2": {"v": current["no2"]},
+            "so2": {"v": current["so2"]},
+            "o3": {"v": current["o3"]},
+        },
+        "time": current["time"],
+        "iso": current["time"],
+        "attributions": [{"name": "Open-Meteo Air Quality API", "url": "https://open-meteo.com/en/docs/air-quality-api"}],
+        "hourly": hourly_series,
+        "daily": [d["avg"] for d in daily_forecast],
+        "daily_forecast": daily_forecast,
+        "stations": [{"station": "Pune (Open-Meteo)", "city": "Pune", "geo": [18.5204, 73.8567], "aqi": aqi, "dominant": "pm25", "iaqi": {"pm25": {"v": current["pm25"]}, "pm10": {"v": current["pm10"]}}, "time": current["time"], "iso": current["time"], "attributions": [], "forecast": {}}],
+        "unavailable": False,
+        "historical": {
+            "monthly_2025": monthly_2025,
+            "monthly_2026": monthly_2026,
+            "yearly_2025": yearly_2025,
+            "yearly_2026": yearly_2026,
+            "current_month_daily": current_month,
+            "prev_month_daily": prev_month,
+        },
+        "cache": {"hit": False, "age_s": 0},
+    }
+    try:
+        to_cache = dict(result)
+        to_cache["_fetched_at"] = time.time()
+        _AQ_CACHE_PATH.write_text(json.dumps(to_cache))
+    except Exception:
+        pass  # cache write failure is non-fatal
+    return result
 
 
 def _ward_ring(ward_no: int) -> Optional[List[Any]]:

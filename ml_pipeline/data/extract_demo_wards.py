@@ -164,6 +164,24 @@ def export_ward_scores():
     print(f"ward_scores.json: {len(out)} wards, size = {dst.stat().st_size} bytes")
 
 
+def export_air_quality_cache():
+    """Bake the last measured air-quality reading into the pack.
+
+    Some hosts are rate-limited by Open-Meteo (HTTP 429 from shared cloud IPs),
+    so a fresh deployment has no live reading to show. Copying the local cache
+    into the pack lets those hosts serve the last measured reading, timestamped,
+    instead of an empty tab. Refresh it before a demo with:
+    `echo '{"mode":"air_quality"}' | python backend/python/ml_bridge.py`.
+    """
+    src = DATA / "air_quality_cache.json"
+    dst = OUT / "air_quality_cache.json"
+    if not src.exists():
+        print("air_quality_cache.json not found, skipping")
+        return
+    shutil.copy2(src, dst)
+    print(f"air_quality_cache.json: {dst.stat().st_size // 1024} KB")
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     extract_reference()
@@ -171,3 +189,4 @@ if __name__ == "__main__":
     extract_cube()
     export_wards_geojson()
     export_ward_scores()
+    export_air_quality_cache()

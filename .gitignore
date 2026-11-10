@@ -67,7 +67,9 @@ ml_pipeline/data/canopy_ledger_cache.json
 !ml_pipeline/data/demo/*.sqlite
 !ml_pipeline/data/demo/*.geojson
 !ml_pipeline/data/demo/canopy_ledger_cache.json
-ml_pipeline/data/demo/air_quality_cache.json
+# Baked last measured air-quality reading: deployed hosts are rate-limited by
+# Open-Meteo and must serve a real reading, not an empty tab.
+!ml_pipeline/data/demo/air_quality_cache.json
 
 # Vercel CLI local metadata
 .vercel
