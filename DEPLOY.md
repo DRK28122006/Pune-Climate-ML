@@ -89,5 +89,11 @@ Identical results for all five wards (default proposal, both stacks):
 | 33 | 13.7 | 86.3 | PARTIAL |
 | 41 | 14.6 | 85.4 | PARTIAL |
 
-Cold score 4–12 s (canopy ledger built once per ward), warm 0.6 s; air quality
-4.7 s cold, cached for an hour.
+First score on a freshly started container is 0.5–0.7 s, not 4–12 s: the canopy
+ledger for the five wards is precomputed into
+`ml_pipeline/data/demo/canopy_ledger_cache.json` and baked into the image, so a
+cold host never rebuilds it. Air quality is 4.7 s cold and cached for an hour.
+
+`PMC_CACHE_DIR` must point at the same directory as the pack
+(`/app/ml_pipeline/data/demo`) or the baked ledger is ignored and every first
+score pays the census scan again.

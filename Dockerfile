@@ -14,7 +14,7 @@ ENV NODE_ENV=production \
     PORT=8080 \
     PYTHON_COMMAND=python3 \
     PMC_DATA_DIR=/app/ml_pipeline/data/demo \
-    PMC_CACHE_DIR=/app/ml_pipeline/data/demo/cache \
+    PMC_CACHE_DIR=/app/ml_pipeline/data/demo \
     PMC_DEMO_WARDS=2,12,23,33,41
 
 RUN apt-get update \
@@ -35,7 +35,7 @@ COPY backend ./backend
 COPY ml_pipeline ./ml_pipeline
 COPY api ./api
 
-RUN mkdir -p /app/ml_pipeline/data/demo/cache /app/backend/data /app/backend/uploads
+RUN mkdir -p /app/backend/data /app/backend/uploads
 
 EXPOSE 8080
 

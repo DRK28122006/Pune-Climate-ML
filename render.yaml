@@ -27,7 +27,7 @@ services:
       - key: PMC_DATA_DIR
         value: /app/ml_pipeline/data/demo
       - key: PMC_CACHE_DIR
-        value: /app/ml_pipeline/data/demo/cache
+        value: /app/ml_pipeline/data/demo
       - key: PMC_DEMO_WARDS
         value: "2,12,23,33,41"
       - key: RATE_LIMIT_MAX
