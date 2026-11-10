@@ -33,7 +33,6 @@ RUN cd backend && npm ci --omit=dev
 
 COPY backend ./backend
 COPY ml_pipeline ./ml_pipeline
-COPY api ./api
 
 RUN mkdir -p /app/backend/data /app/backend/uploads
 
