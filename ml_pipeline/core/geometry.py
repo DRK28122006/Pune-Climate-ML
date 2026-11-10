@@ -18,9 +18,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+from ml_pipeline.paths import data_dir
+
 REPO = Path(__file__).resolve().parents[2]
-REF_DB = REPO / "ml_pipeline" / "data" / "reference_layers.sqlite"
-TREE_DB = REPO / "ml_pipeline" / "data" / "tree_index.sqlite"
+_DATA_DIR = data_dir()
+REF_DB = _DATA_DIR / "reference_layers.sqlite"
+TREE_DB = _DATA_DIR / "tree_index.sqlite"
 
 UTM43N = "EPSG:32643"
 EARTH_RADIUS_M = 6_371_008.8

@@ -1,0 +1,46 @@
+# Render blueprint: the Express API + Python ML bridge, shipped as the same
+# stack that runs locally. Deploy from the repo root.
+#
+# The frontend stays on Vercel. After the service is live, set VITE_API_URL in
+# the Vercel frontend project to https://<service>.onrender.com/api/v1 and set
+# FRONTEND_ORIGIN here to the Vercel URL (comma-separate several origins).
+
+services:
+  - type: web
+    name: pune-climate-backend
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AUTH_REQUIRED
+        value: "false"
+      - key: STORAGE_DRIVER
+        value: file
+      - key: ML_MODE
+        value: fixture
+      - key: PYTHON_COMMAND
+        value: python3
+      - key: PMC_DATA_DIR
+        value: /app/ml_pipeline/data/demo
+      - key: PMC_CACHE_DIR
+        value: /app/ml_pipeline/data/demo/cache
+      - key: PMC_DEMO_WARDS
+        value: "2,12,23,33,41"
+      - key: RATE_LIMIT_MAX
+        value: "600"
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: qwen/qwen3.8-27b
+      - key: GEMINI_API_KEY
+        sync: false

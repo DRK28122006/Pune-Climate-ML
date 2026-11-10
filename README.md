@@ -182,12 +182,16 @@ These are enforced in code and tests, not intentions:
 
 ## Deployed services
 
-The application is deployed as two Vercel projects:
+The application is deployed as two services, because the ML endpoints need a
+Python runtime that Vercel's Node functions do not provide:
 
-- **Frontend:** `pune-climate-ml` — the Vite web interface.
-- **Backend:** `pune-climate-backend` — the Express API exposed through a Vercel serverless function.
+- **Frontend:** Vercel — the Vite web interface.
+- **Backend:** a Docker host (Render blueprint in `render.yaml`) — the Express
+  API plus `backend/python/ml_bridge.py`.
 
-The frontend is configured with `VITE_API_URL` pointing to the backend deployment. Keep this variable set in Vercel Preview and Production environments whenever the backend URL changes.
+The frontend reads `VITE_API_URL`; point it at `<backend>/api/v1`. See
+[DEPLOY.md](DEPLOY.md) for the full setup, environment variables and the
+5-ward data pack.
 
 ## Running it
 

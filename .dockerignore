@@ -1,0 +1,29 @@
+# Keep the image small: the 1.1 GB census index, the frontend build and local
+# caches are all out. The 5-ward demo pack inside ml_pipeline/data/demo is
+# required by PMC_DATA_DIR and must stay in.
+.git
+.github
+.vercel
+node_modules
+**/node_modules
+frontend
+Dishadharti_Video
+docs
+prompts
+research
+
+ml_pipeline/data/census
+ml_pipeline/data/archive
+ml_pipeline/data/tree_index.sqlite
+ml_pipeline/data/reference_layers.sqlite
+ml_pipeline/data/flood_layers.sqlite
+ml_pipeline/data/air_quality_cache.json
+ml_pipeline/data/canopy_ledger_cache.json
+ml_pipeline/data/demo/cache
+
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+backend/.env
+backend/data/*.json
+backend/uploads/*

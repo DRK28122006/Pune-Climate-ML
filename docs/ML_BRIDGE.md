@@ -130,6 +130,21 @@ to a cold run. Delete them to force re-computation.
 If `tree_index.sqlite` is absent, green is `UNAVAILABLE` (not zero). If
 `epoch_cube.json` is absent, flood and heat are `UNAVAILABLE`.
 
+A deployment that cannot ship the 1.1 GB index uses the committed 5-ward pack in
+`ml_pipeline/data/demo/` (same file names, 311,666 trees). Selection is by
+environment, not by code paths:
+
+| Variable | Meaning |
+|---|---|
+| `PMC_DATA_DIR` | Directory holding `epoch_cube.json`, `reference_layers.sqlite`, `tree_index.sqlite`. Unset: `ml_pipeline/data` when it has a tree index, otherwise `ml_pipeline/data/demo`. |
+| `PMC_CACHE_DIR` | Writable cache directory (air quality, canopy aggregates). Falls back to the system temp dir on read-only filesystems. |
+| `PMC_DEMO_WARDS` | Comma-separated wards this deployment will score, e.g. `2,12,23,33,41`. Any other ward is rejected with `400` and a message naming the pack, rather than returning a partial score for a ward whose trees were never shipped. |
+
+The demo pack is byte-for-byte equivalent for its five wards: same impact,
+climate, evidence status, sub-scores, canopy area and recommendations as the
+full index (see `DEPLOY.md`).
+
+
 ### Smoke test
 
 ```bash

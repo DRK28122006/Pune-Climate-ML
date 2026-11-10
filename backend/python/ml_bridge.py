@@ -27,6 +27,9 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from ml_pipeline.paths import cache_dir, data_dir, demo_wards  # noqa: E402
+
 
 def _repository_root() -> Path:
     return Path(__file__).resolve().parents[2]
@@ -56,7 +59,7 @@ def _run_extraction(request: Dict[str, Any]) -> Dict[str, Any]:
     return {**result, "source": "gee-segformer"}
 
 
-_AQ_CACHE_PATH = Path(__file__).resolve().parents[2] / "ml_pipeline" / "data" / "air_quality_cache.json"
+_AQ_CACHE_PATH = cache_dir() / "air_quality_cache.json"
 _AQ_CACHE_TTL_S = 3600  # 1 hour — Open-Meteo forecast updates hourly
 
 def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
@@ -245,7 +248,7 @@ def _run_air_quality(request: Dict[str, Any]) -> Dict[str, Any]:
 def _ward_ring(ward_no: int) -> Optional[List[Any]]:
     import sqlite3
 
-    ref_db = _repository_root() / "ml_pipeline" / "data" / "reference_layers.sqlite"
+    ref_db = data_dir() / "reference_layers.sqlite"
     if not ref_db.exists():
         return None
     try:
@@ -268,7 +271,7 @@ def _ward_for_point(lat: float, lon: float) -> Optional[int]:
     import sqlite3
     from shapely.geometry import Point, Polygon
 
-    ref_db = _repository_root() / "ml_pipeline" / "data" / "reference_layers.sqlite"
+    ref_db = data_dir() / "reference_layers.sqlite"
     if not ref_db.exists():
         return None
     try:
@@ -332,7 +335,7 @@ def _indicators_from_cube(ring: List[Any], cube: Optional[Dict[str, Any]]) -> Di
     }
 
 
-_CANOPY_CACHE_PATH = Path(__file__).resolve().parents[2] / "ml_pipeline" / "data" / "canopy_ledger_cache.json"
+_CANOPY_CACHE_PATH = cache_dir() / "canopy_ledger_cache.json"
 
 def _canopy_ledger(ring: List[Any], plot_area_m2: float, ward_no: Optional[int] = None) -> Optional[Dict[str, Any]]:
     """Build a canopy ledger if the tree index is available, else None.
@@ -364,7 +367,7 @@ def _canopy_ledger(ring: List[Any], plot_area_m2: float, ward_no: Optional[int] 
         except Exception:
             pass  # corrupt cache — recompute
 
-    tree_db = repository_root / "ml_pipeline" / "data" / "tree_index.sqlite"
+    tree_db = data_dir() / "tree_index.sqlite"
     if not tree_db.exists():
         return None
     try:
@@ -441,6 +444,13 @@ def _run_scoring(request: Dict[str, Any]) -> Dict[str, Any]:
     materials_table = _json.loads((config_dir / "materials.json").read_text())
 
     ward_no = request.get("ward")
+    pack = demo_wards()
+    if ward_no is not None and pack and int(ward_no) not in pack:
+        raise ValueError(
+            f"Ward {int(ward_no)} is not in this deployment. This build ships the "
+            f"demo pack for wards {', '.join(str(w) for w in pack)}; the other "
+            f"wards need the full census index built locally."
+        )
     ring = None
     coords = request.get("coordinates")
     if ward_no is not None:
@@ -476,7 +486,7 @@ def _run_scoring(request: Dict[str, Any]) -> Dict[str, Any]:
     if geom is None:
         raise ValueError("geometry could not be measured")
 
-    cube_path = repository_root / "ml_pipeline" / "data" / "epoch_cube.json"
+    cube_path = data_dir() / "epoch_cube.json"
     cube = None
     if cube_path.exists():
         try:

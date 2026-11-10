@@ -64,7 +64,24 @@ export function createApp({ config, store, authService, objectStorage, jobQueue 
   app.disable("x-powered-by");
   app.use(createRequestLogger(config));
   app.use(helmet());
-  app.use(cors({ origin: config.frontendOrigin, exposedHeaders: ["x-request-id", "ratelimit"] }));
+  // FRONTEND_ORIGIN accepts a comma-separated list so one backend can serve the
+  // Vercel production URL and preview deployments at the same time.
+  const allowedOrigins = Array.isArray(config.frontendOrigin)
+    ? config.frontendOrigin
+    : config.frontendOrigin === true
+      ? true
+      : String(config.frontendOrigin ?? "")
+          .split(",")
+          .map((origin) => origin.trim())
+          .filter(Boolean);
+  app.use(cors({
+    origin: allowedOrigins === true
+      ? true
+      : allowedOrigins.length > 1
+        ? allowedOrigins
+        : allowedOrigins[0] ?? false,
+    exposedHeaders: ["x-request-id", "ratelimit"],
+  }));
   app.use(express.json({ limit: "1mb" }));
   app.use("/api", apiLimiter);
 

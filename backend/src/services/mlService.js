@@ -78,73 +78,40 @@ export async function getMlOutput(input, config) {
   return validateMlOutput(output);
 }
 
+const REJECTED_INPUT = /validation failed|could not be measured|is required|not in this deployment|cannot exceed|does not fall inside|must be/i;
+
 export async function getScore(input, config) {
   // Scoring uses only baked artefacts (epoch cube, reference layers, tree
-  // index) — no GEE, no model weights. Try the real bridge first; fall back
-  // to fixture data only if the bridge is unavailable.
+  // index) — no GEE, no model weights.
+  //
+  // There is deliberately no fixture fallback here. A fabricated score is
+  // indistinguishable from a measured one once it reaches the UI, and this
+  // project does not ship numbers it did not measure. Bridge failures surface
+  // as 400 when the submission was rejected and 502 when the pipeline itself
+  // is unavailable, so the reason reaches the officer.
+  const scoreInput = {
+    mode: "score",
+    ward: input.ward,
+    coordinates: input.coordinates,
+    geometry: input.geometry,
+    builtUpAreaSqm: input.builtUpAreaSqm,
+    plotAreaSqm: input.plotAreaSqm,
+    materials: input.materials,
+    storeys: input.storeys,
+    projectType: input.projectType,
+    epoch: input.epoch || 2024,
+    impervious: input.impervious,
+    vegetation: input.vegetation,
+    water: input.water,
+    slope: input.slope,
+  };
   try {
-    const scoreInput = {
-      mode: "score",
-      ward: input.ward,
-      coordinates: input.coordinates,
-      geometry: input.geometry,
-      builtUpAreaSqm: input.builtUpAreaSqm,
-      plotAreaSqm: input.plotAreaSqm,
-      materials: input.materials,
-      storeys: input.storeys,
-      projectType: input.projectType,
-      epoch: input.epoch || 2024,
-      impervious: input.impervious,
-      vegetation: input.vegetation,
-      water: input.water,
-      slope: input.slope,
-    };
-    const child = spawn(config.pythonCommand, [path.join(config.backendRoot, "python", "ml_bridge.py")], {
-      cwd: config.repositoryRoot,
-      env: process.env,
-      shell: false,
-      windowsHide: true,
-    });
-    const result = await new Promise((resolve, reject) => {
-      let stdout = "";
-      let stderr = "";
-      const timeout = setTimeout(() => child.kill(), 10 * 60 * 1000);
-      child.stdout.on("data", (chunk) => { stdout += chunk; });
-      child.stderr.on("data", (chunk) => { stderr += chunk; });
-      child.on("error", reject);
-      child.on("close", (code) => {
-        clearTimeout(timeout);
-        if (code !== 0) return reject(new Error(stderr.trim() || `ML process exited with code ${code}`));
-        try { resolve(JSON.parse(stdout)); }
-        catch { reject(new Error("ML process returned invalid JSON")); }
-      });
-      child.stdin.end(JSON.stringify(scoreInput));
-    });
-    return result;
+    return await runPython(scoreInput, config);
   } catch (error) {
-    // Bridge unavailable — return fixture data so local dev still works.
-    return {
-      source: "development-fixture",
-      mode: "score",
-      score: {
-        impact_score: 50.0,
-        climate_score: 50.0,
-        risk_band: "Moderate",
-        evidence_status: "PARTIAL",
-        decision_grade: false,
-        factors: {
-          flood: { score: 40.0, status: "OK" },
-          heat: { score: 60.0, status: "OK" },
-          green: { score: 70.0, status: "OK" },
-          carbon: { score: 28.2, status: "OK" },
-        },
-        recommendations: [],
-      },
-      recommendations: [],
-      canopy: null,
-      indicators: {},
-      satellite_cube_available: false,
-    };
+    if (!error.status) {
+      error.status = REJECTED_INPUT.test(error.message || "") ? 400 : 502;
+    }
+    throw error;
   }
 }
 

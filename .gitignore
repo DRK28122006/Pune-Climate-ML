@@ -69,3 +69,6 @@ ml_pipeline/data/canopy_ledger_cache.json
 
 # Vercel CLI local metadata
 .vercel
+
+# Recorded demo deliverables (large binaries, shared out-of-band)
+Dishadharti_Video/
